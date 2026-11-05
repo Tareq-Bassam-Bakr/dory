@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\Businesses\BranchController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessCategoryController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessController;
+use App\Http\Controllers\Api\V1\Businesses\ServiceController;
 use App\Http\Controllers\Api\V1\System\HealthController;
 use App\Http\Controllers\Api\V1\Users\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -67,5 +68,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('branches/{branch}', [BranchController::class, 'show'])->name('branches.show');
         Route::put('branches/{branch}', [BranchController::class, 'update'])->name('branches.update');
         Route::delete('branches/{branch}', [BranchController::class, 'destroy'])->name('branches.destroy');
+
+        // Services
+        Route::get('branches/{branch}/services', [ServiceController::class, 'index'])->name('services.index');
+        Route::post('branches/{branch}/services', [ServiceController::class, 'store'])->name('services.store');
+        Route::get('services/{service}', [ServiceController::class, 'show'])->name('services.show');
+        Route::put('services/{service}', [ServiceController::class, 'update'])->name('services.update');
+        Route::delete('services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
     });
 });
