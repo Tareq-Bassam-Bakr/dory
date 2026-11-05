@@ -8,10 +8,22 @@ import 'package:dory_app/features/authentication/presentation/pages/splash_page.
 import 'package:dory_app/features/authentication/presentation/pages/welcome_page.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_controller.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_state.dart';
+import 'package:dory_app/features/branch_management/presentation/pages/branch_details_page.dart';
+import 'package:dory_app/features/branch_management/presentation/pages/branch_form_page.dart';
+import 'package:dory_app/features/branch_management/presentation/pages/branch_list_page.dart';
 import 'package:dory_app/features/business_dashboard/presentation/pages/business_dashboard_page.dart';
+import 'package:dory_app/features/businesses/presentation/pages/business_onboarding_page.dart';
+import 'package:dory_app/features/businesses/presentation/pages/business_overview_page.dart';
+import 'package:dory_app/features/businesses/presentation/pages/create_business_page.dart';
+import 'package:dory_app/features/businesses/presentation/pages/edit_business_page.dart';
 import 'package:dory_app/features/home/presentation/pages/customer_home_page.dart';
 import 'package:dory_app/features/profile/presentation/pages/account_page.dart';
 import 'package:dory_app/features/queues/presentation/pages/business_queues_page.dart';
+import 'package:dory_app/features/services/presentation/pages/service_form_page.dart';
+import 'package:dory_app/features/services/presentation/pages/services_list_page.dart';
+import 'package:dory_app/features/team/presentation/pages/invitation_details_page.dart';
+import 'package:dory_app/features/team/presentation/pages/invite_member_page.dart';
+import 'package:dory_app/features/team/presentation/pages/team_members_page.dart';
 import 'package:dory_app/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:dory_app/shared/enums/app_workspace.dart';
 import 'package:flutter/foundation.dart';
@@ -97,15 +109,38 @@ List<RouteBase> _buildRoutes() => <RouteBase>[
     path: AppRoutes.businessRoot,
     redirect: (_, _) => AppRoutes.workspaceHome(AppWorkspace.business),
   ),
+  // Business creation is full screen (outside the tab shell).
+  GoRoute(
+    path: AppRoutes.businessCreate,
+    builder: (context, state) => const CreateBusinessPage(),
+    routes: <RouteBase>[
+      GoRoute(
+        path: 'onboarding',
+        builder: (context, state) => const BusinessOnboardingPage(),
+      ),
+    ],
+  ),
+  // Invitation links (dory://app/invitations/<token>). Viewing is public;
+  // accepting requires signing in with the invited account.
+  GoRoute(
+    path: '${AppRoutes.invitations}/:token',
+    builder: (context, state) =>
+        InvitationDetailsPage(token: state.pathParameters['token']!),
+  ),
   StatefulShellRoute.indexedStack(
     builder: (context, state, navigationShell) => WorkspaceShell(
       navigationShell: navigationShell,
       destinations: _businessDestinations,
     ),
     branches: <StatefulShellBranch>[
-      _branch(
-        AppRoutes.businessDashboard,
-        (_) => const BusinessDashboardPage(),
+      StatefulShellBranch(
+        routes: <RouteBase>[
+          GoRoute(
+            path: AppRoutes.businessDashboard,
+            builder: (context, state) => const BusinessDashboardPage(),
+            routes: _businessManagementRoutes(),
+          ),
+        ],
       ),
       _branch(AppRoutes.businessQueues, (_) => const BusinessQueuesPage()),
       _branch(
@@ -115,6 +150,93 @@ List<RouteBase> _buildRoutes() => <RouteBase>[
     ],
   ),
 ];
+
+/// Screens of one business, nested under the dashboard tab:
+/// /business/dashboard/:businessId/...
+List<RouteBase> _businessManagementRoutes() {
+  String business(GoRouterState state) => state.pathParameters['businessId']!;
+  String branch(GoRouterState state) => state.pathParameters['branchId']!;
+
+  return <RouteBase>[
+    GoRoute(
+      path: ':businessId',
+      builder: (context, state) =>
+          BusinessOverviewPage(businessId: business(state)),
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'edit',
+          builder: (context, state) =>
+              EditBusinessPage(businessId: business(state)),
+        ),
+        GoRoute(
+          path: 'branches',
+          builder: (context, state) =>
+              BranchListPage(businessId: business(state)),
+          routes: <RouteBase>[
+            // Before ':branchId': "new" is never a branch id (ULIDs).
+            GoRoute(
+              path: 'new',
+              builder: (context, state) =>
+                  CreateBranchPage(businessId: business(state)),
+            ),
+            GoRoute(
+              path: ':branchId',
+              builder: (context, state) => BranchDetailsPage(
+                businessId: business(state),
+                branchId: branch(state),
+              ),
+              routes: <RouteBase>[
+                GoRoute(
+                  path: 'edit',
+                  builder: (context, state) => EditBranchPage(
+                    businessId: business(state),
+                    branchId: branch(state),
+                  ),
+                ),
+                GoRoute(
+                  path: 'services',
+                  builder: (context, state) => ServicesListPage(
+                    businessId: business(state),
+                    branchId: branch(state),
+                  ),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: 'new',
+                      builder: (context, state) => CreateServicePage(
+                        businessId: business(state),
+                        branchId: branch(state),
+                      ),
+                    ),
+                    GoRoute(
+                      path: ':serviceId/edit',
+                      builder: (context, state) => EditServicePage(
+                        businessId: business(state),
+                        branchId: branch(state),
+                        serviceId: state.pathParameters['serviceId']!,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: 'team',
+          builder: (context, state) =>
+              TeamMembersPage(businessId: business(state)),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'invite',
+              builder: (context, state) =>
+                  InviteMemberPage(businessId: business(state)),
+            ),
+          ],
+        ),
+      ],
+    ),
+  ];
+}
 
 StatefulShellBranch _branch(String path, WidgetBuilder builder) {
   return StatefulShellBranch(

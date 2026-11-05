@@ -302,48 +302,6 @@ abstract class AppLocalizations {
   /// **'Businesses near you will appear here once location-based discovery is available.'**
   String get homeNearbyEmptyMessage;
 
-  /// Business category: restaurants and cafes.
-  ///
-  /// In en, this message translates to:
-  /// **'Restaurants'**
-  String get categoryRestaurants;
-
-  /// Business category: medical clinics.
-  ///
-  /// In en, this message translates to:
-  /// **'Clinics'**
-  String get categoryClinics;
-
-  /// Business category: beauty and barber salons.
-  ///
-  /// In en, this message translates to:
-  /// **'Salons'**
-  String get categorySalons;
-
-  /// Business category: banks.
-  ///
-  /// In en, this message translates to:
-  /// **'Banks'**
-  String get categoryBanks;
-
-  /// Business category: government service centers.
-  ///
-  /// In en, this message translates to:
-  /// **'Government services'**
-  String get categoryGovernment;
-
-  /// Business category: repair and maintenance shops.
-  ///
-  /// In en, this message translates to:
-  /// **'Repair shops'**
-  String get categoryRepair;
-
-  /// Business category: any other service provider.
-  ///
-  /// In en, this message translates to:
-  /// **'Other services'**
-  String get categoryOther;
-
   /// Title of the customer tickets screen.
   ///
   /// In en, this message translates to:
@@ -440,18 +398,6 @@ abstract class AppLocalizations {
   /// **'العربية'**
   String get languageArabic;
 
-  /// Business dashboard title.
-  ///
-  /// In en, this message translates to:
-  /// **'Dashboard'**
-  String get dashboardTitle;
-
-  /// Business dashboard overview section title.
-  ///
-  /// In en, this message translates to:
-  /// **'Business overview'**
-  String get dashboardOverviewTitle;
-
   /// Card title inviting the owner to register a business.
   ///
   /// In en, this message translates to:
@@ -511,24 +457,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No data'**
   String get dashboardMetricNoValue;
-
-  /// Business dashboard employees section title.
-  ///
-  /// In en, this message translates to:
-  /// **'Employees'**
-  String get dashboardEmployeesTitle;
-
-  /// Empty state title for the employees section.
-  ///
-  /// In en, this message translates to:
-  /// **'No employees yet'**
-  String get dashboardEmployeesEmptyTitle;
-
-  /// Empty state message for the employees section.
-  ///
-  /// In en, this message translates to:
-  /// **'Invite staff to call customers and run your service counters.'**
-  String get dashboardEmployeesEmptyMessage;
 
   /// Business queues screen title.
   ///
@@ -709,6 +637,1146 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get commonCancel;
+
+  /// Status label: active.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get commonActive;
+
+  /// Status label: inactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get commonInactive;
+
+  /// Status label: suspended by the platform.
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get commonSuspended;
+
+  /// Button that returns to the previous step.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get commonBack;
+
+  /// Button that continues to the next step.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get commonNext;
+
+  /// Button that saves changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get commonSave;
+
+  /// Button that creates a new item.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get commonCreate;
+
+  /// Button that opens editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get commonEdit;
+
+  /// Button that deletes an item.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get commonDelete;
+
+  /// Button that removes an item from a list.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get commonRemove;
+
+  /// Button that copies text to the clipboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get commonCopy;
+
+  /// Confirmation after copying text.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to the clipboard.'**
+  String get commonCopied;
+
+  /// Confirmation after saving changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes saved.'**
+  String get commonSaved;
+
+  /// Error when the server refuses an action (HTTP 403).
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission to do this.'**
+  String get errorForbidden;
+
+  /// Error when a resource does not exist or is not visible (HTTP 404).
+  ///
+  /// In en, this message translates to:
+  /// **'This was not found. It may have been removed, or you no longer have access.'**
+  String get errorNotFound;
+
+  /// Error when the server rejects some fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please correct the highlighted fields.'**
+  String get errorValidation;
+
+  /// Error when changing a business suspended by the platform.
+  ///
+  /// In en, this message translates to:
+  /// **'This business is suspended, so changes are disabled.'**
+  String get errorBusinessSuspended;
+
+  /// Label of a time zone field.
+  ///
+  /// In en, this message translates to:
+  /// **'Time zone'**
+  String get timezoneLabel;
+
+  /// Helper text of the time zone field.
+  ///
+  /// In en, this message translates to:
+  /// **'IANA name, e.g. Asia/Damascus. Leave empty to keep the current one.'**
+  String get timezoneHint;
+
+  /// Validation error for a malformed time zone.
+  ///
+  /// In en, this message translates to:
+  /// **'Use an IANA time zone, e.g. Asia/Damascus.'**
+  String get timezoneInvalid;
+
+  /// Title of the list of businesses the user works in.
+  ///
+  /// In en, this message translates to:
+  /// **'My businesses'**
+  String get myBusinessesTitle;
+
+  /// Button that starts creating a business when the user already has one.
+  ///
+  /// In en, this message translates to:
+  /// **'Create another business'**
+  String get myBusinessesCreate;
+
+  /// Button that opens an invitation link the user received.
+  ///
+  /// In en, this message translates to:
+  /// **'I have an invitation'**
+  String get myBusinessesJoin;
+
+  /// Business role: owner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get businessRoleOwner;
+
+  /// Business role: manager.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager'**
+  String get businessRoleManager;
+
+  /// Business role: employee.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee'**
+  String get businessRoleEmployee;
+
+  /// The viewer's role in the business.
+  ///
+  /// In en, this message translates to:
+  /// **'Your role: {role}'**
+  String businessYourRole(String role);
+
+  /// Business profile completion.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile {percent}% complete'**
+  String businessProfileCompletion(int percent);
+
+  /// Number of services.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No services} =1{1 service} other{{count} services}}'**
+  String businessStatsServices(int count);
+
+  /// Title of the branches section and screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Branches'**
+  String get businessBranches;
+
+  /// Title of the team section and screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Team'**
+  String get businessTeam;
+
+  /// Section header for business management actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage'**
+  String get businessManageSection;
+
+  /// Opens the business profile editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get businessEditProfile;
+
+  /// Switch that activates or deactivates the business.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepting customers'**
+  String get businessStatusTitle;
+
+  /// Shown when the business is active.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers can find this business.'**
+  String get businessStatusActiveHint;
+
+  /// Shown when the business is inactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden from customers until you reactivate it.'**
+  String get businessStatusInactiveHint;
+
+  /// Notice on a business suspended by the platform.
+  ///
+  /// In en, this message translates to:
+  /// **'DORY has suspended this business. You can view it, but changes are disabled.'**
+  String get businessSuspendedNotice;
+
+  /// Title of the profile completion card.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get businessCompletionTitle;
+
+  /// Title of the profile completion card when complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile is complete'**
+  String get businessCompletionDone;
+
+  /// Missing profile step: category.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category'**
+  String get businessMissingBasics;
+
+  /// Missing profile step: description.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a description'**
+  String get businessMissingDescription;
+
+  /// Missing profile step: contact details.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email or phone number'**
+  String get businessMissingContact;
+
+  /// Missing profile step: branch.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an active branch'**
+  String get businessMissingBranch;
+
+  /// Missing profile step: service.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an active service'**
+  String get businessMissingService;
+
+  /// Section header for irreversible actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger zone'**
+  String get businessDangerZone;
+
+  /// Button that deletes the business.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete business'**
+  String get businessDelete;
+
+  /// Title of the delete business confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete {name}?'**
+  String businessDeleteConfirmTitle(String name);
+
+  /// Message of the delete business confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'The business, its branches and services will be archived, and your team will lose access. This cannot be undone in the app.'**
+  String get businessDeleteConfirmMessage;
+
+  /// Confirmation after deleting a business.
+  ///
+  /// In en, this message translates to:
+  /// **'Business deleted.'**
+  String get businessDeleted;
+
+  /// Label of the business name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Business name'**
+  String get businessNameLabel;
+
+  /// Validation error for a name.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name between 2 and 150 characters.'**
+  String get businessNameInvalid;
+
+  /// Label of the category picker.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get businessCategoryLabel;
+
+  /// Validation error when no category is chosen.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a category.'**
+  String get businessCategoryRequired;
+
+  /// Shown when categories cannot be loaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load categories.'**
+  String get businessCategoriesLoadError;
+
+  /// Label of the business description field.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get businessDescriptionLabel;
+
+  /// Hint of the business description field.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you offer? Customers will see this.'**
+  String get businessDescriptionHint;
+
+  /// Hint above the contact fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an email or phone number so customers can reach you. Both are optional.'**
+  String get businessContactHint;
+
+  /// Label of the business email field.
+  ///
+  /// In en, this message translates to:
+  /// **'Business email'**
+  String get businessEmailLabel;
+
+  /// Label of the business phone field.
+  ///
+  /// In en, this message translates to:
+  /// **'Business phone'**
+  String get businessPhoneLabel;
+
+  /// Label of the website field.
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get businessWebsiteLabel;
+
+  /// Validation error for a website.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a full web address, e.g. https://example.com.'**
+  String get businessWebsiteInvalid;
+
+  /// Title of the business profile editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit business profile'**
+  String get editBusinessTitle;
+
+  /// Title of the business creation entry screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your business'**
+  String get createBusinessTitle;
+
+  /// Introduction on the business creation entry screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Set up your business in five short steps. You can change everything later.'**
+  String get createBusinessIntro;
+
+  /// Header above the list of onboarding steps.
+  ///
+  /// In en, this message translates to:
+  /// **'What you will set up'**
+  String get createBusinessStepsTitle;
+
+  /// Button that starts the onboarding steps.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get createBusinessStart;
+
+  /// Title of the onboarding screen.
+  ///
+  /// In en, this message translates to:
+  /// **'New business'**
+  String get onboardingTitle;
+
+  /// Onboarding progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String onboardingStepProgress(int current, int total);
+
+  /// Onboarding step 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Name and category'**
+  String get onboardingStepBasics;
+
+  /// Onboarding step 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Description and contact'**
+  String get onboardingStepDetails;
+
+  /// Onboarding step 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Main branch'**
+  String get onboardingStepBranch;
+
+  /// Onboarding step 4.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get onboardingStepServices;
+
+  /// Onboarding step 5.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get onboardingStepReview;
+
+  /// Introduction of the services step.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the services customers can queue for. You can add more later.'**
+  String get onboardingServicesIntro;
+
+  /// Button that adds a service in onboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Add service'**
+  String get onboardingAddService;
+
+  /// Shown when no service was added in onboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'No services yet. You can add them later.'**
+  String get onboardingNoServices;
+
+  /// Introduction of the review step.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the details, then create your business.'**
+  String get onboardingReviewIntro;
+
+  /// Placeholder for an empty optional value.
+  ///
+  /// In en, this message translates to:
+  /// **'Not provided'**
+  String get onboardingNotProvided;
+
+  /// Button that creates the business at the end of onboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Create business'**
+  String get onboardingCreate;
+
+  /// Confirmation after creating a business.
+  ///
+  /// In en, this message translates to:
+  /// **'Your business is ready.'**
+  String get onboardingCreated;
+
+  /// Title of the confirmation when leaving onboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard this business?'**
+  String get onboardingLeaveTitle;
+
+  /// Message of the confirmation when leaving onboarding.
+  ///
+  /// In en, this message translates to:
+  /// **'What you entered will be lost.'**
+  String get onboardingLeaveMessage;
+
+  /// Button that leaves onboarding and discards the input.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get onboardingLeaveConfirm;
+
+  /// Button that opens the new branch form.
+  ///
+  /// In en, this message translates to:
+  /// **'Add branch'**
+  String get branchAdd;
+
+  /// Empty state title of the branch list.
+  ///
+  /// In en, this message translates to:
+  /// **'No branches yet'**
+  String get branchesEmptyTitle;
+
+  /// Empty state message for users who can add branches.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your first branch so customers know where to find you.'**
+  String get branchesEmptyMessage;
+
+  /// Empty state message for users limited to assigned branches.
+  ///
+  /// In en, this message translates to:
+  /// **'No branches are assigned to you.'**
+  String get branchesEmptyLimitedMessage;
+
+  /// Title of the new branch form.
+  ///
+  /// In en, this message translates to:
+  /// **'New branch'**
+  String get branchCreateTitle;
+
+  /// Title of the branch editor and its entry button.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit branch'**
+  String get branchEditTitle;
+
+  /// Confirmation after creating a branch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch created.'**
+  String get branchCreated;
+
+  /// Label of the branch name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch name'**
+  String get branchNameLabel;
+
+  /// Default name suggested for the first branch.
+  ///
+  /// In en, this message translates to:
+  /// **'Main branch'**
+  String get branchNameDefault;
+
+  /// Label of the address field.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get branchAddressLabel;
+
+  /// Label of the city field.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get branchCityLabel;
+
+  /// Label of the region field.
+  ///
+  /// In en, this message translates to:
+  /// **'Region or state'**
+  String get branchRegionLabel;
+
+  /// Label of the two-letter country code field.
+  ///
+  /// In en, this message translates to:
+  /// **'Country code'**
+  String get branchCountryLabel;
+
+  /// Validation error for a country code.
+  ///
+  /// In en, this message translates to:
+  /// **'Use a two-letter country code, e.g. SY.'**
+  String get branchCountryInvalid;
+
+  /// Header of the coordinates fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Map location'**
+  String get branchLocationSection;
+
+  /// Explains the coordinates fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. Decimal coordinates (WGS 84), as shown on openstreetmap.org.'**
+  String get branchLocationHint;
+
+  /// Label of the latitude field.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude'**
+  String get branchLatitudeLabel;
+
+  /// Label of the longitude field.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude'**
+  String get branchLongitudeLabel;
+
+  /// Validation error for latitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude must be between -90 and 90.'**
+  String get branchLatitudeInvalid;
+
+  /// Validation error for longitude.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude must be between -180 and 180.'**
+  String get branchLongitudeInvalid;
+
+  /// Validation error when only one coordinate is given.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter both latitude and longitude, or neither.'**
+  String get branchCoordinatesPair;
+
+  /// Shown when a branch has no coordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'No map location set'**
+  String get branchNoLocation;
+
+  /// Label of the branch phone field.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch phone'**
+  String get branchPhoneLabel;
+
+  /// Label of the branch email field.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch email'**
+  String get branchEmailLabel;
+
+  /// Switch that activates or deactivates a branch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch is open'**
+  String get branchStatusLabel;
+
+  /// Header of the branch details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get branchDetailsSection;
+
+  /// Button that deletes a branch.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete branch'**
+  String get branchDelete;
+
+  /// Title of the delete branch confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this branch?'**
+  String get branchDeleteConfirmTitle;
+
+  /// Message of the delete branch confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'The branch and its services will be archived.'**
+  String get branchDeleteConfirmMessage;
+
+  /// Confirmation after deleting a branch.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch deleted.'**
+  String get branchDeleted;
+
+  /// Title of the services list.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get servicesTitle;
+
+  /// Empty state title of the services list.
+  ///
+  /// In en, this message translates to:
+  /// **'No services yet'**
+  String get servicesEmptyTitle;
+
+  /// Empty state message of the services list.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the services customers can queue for at this branch.'**
+  String get servicesEmptyMessage;
+
+  /// Button that opens the new service form.
+  ///
+  /// In en, this message translates to:
+  /// **'Add service'**
+  String get serviceAdd;
+
+  /// Title of the new service form.
+  ///
+  /// In en, this message translates to:
+  /// **'New service'**
+  String get serviceCreateTitle;
+
+  /// Title of the service editor.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit service'**
+  String get serviceEditTitle;
+
+  /// Label of the service name field.
+  ///
+  /// In en, this message translates to:
+  /// **'Service name'**
+  String get serviceNameLabel;
+
+  /// Validation error for a service name.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name between 2 and 150 characters.'**
+  String get serviceNameInvalid;
+
+  /// Error for a duplicate service name.
+  ///
+  /// In en, this message translates to:
+  /// **'This branch already has a service with this name.'**
+  String get serviceNameDuplicate;
+
+  /// Label of the service description field.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get serviceDescriptionLabel;
+
+  /// Label of the service duration field.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated duration (minutes)'**
+  String get serviceDurationLabel;
+
+  /// Validation error for a service duration.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a duration between 1 and 1440 minutes.'**
+  String get serviceDurationInvalid;
+
+  /// A service duration.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String serviceDurationValue(int minutes);
+
+  /// Switch that activates or deactivates a service.
+  ///
+  /// In en, this message translates to:
+  /// **'Offered to customers'**
+  String get serviceStatusLabel;
+
+  /// Confirmation after creating a service.
+  ///
+  /// In en, this message translates to:
+  /// **'Service created.'**
+  String get serviceCreated;
+
+  /// Button that archives a service.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive service'**
+  String get serviceArchive;
+
+  /// Title of the archive service confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive this service?'**
+  String get serviceArchiveConfirmTitle;
+
+  /// Message of the archive service confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'It will no longer be offered. Its history is kept.'**
+  String get serviceArchiveConfirmMessage;
+
+  /// Confirmation after archiving a service.
+  ///
+  /// In en, this message translates to:
+  /// **'Service archived.'**
+  String get serviceArchived;
+
+  /// Header of the team members list.
+  ///
+  /// In en, this message translates to:
+  /// **'Members'**
+  String get teamMembersSection;
+
+  /// Header of the pending invitations list.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending invitations'**
+  String get teamInvitationsSection;
+
+  /// Button that opens the invitation form.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a team member'**
+  String get teamInvite;
+
+  /// Badge next to the viewer in the team list.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get teamYou;
+
+  /// Branch access: all branches.
+  ///
+  /// In en, this message translates to:
+  /// **'All branches'**
+  String get teamAllBranches;
+
+  /// Tooltip of the member options menu.
+  ///
+  /// In en, this message translates to:
+  /// **'Member options'**
+  String get teamChangeRole;
+
+  /// Menu action that makes a member a manager.
+  ///
+  /// In en, this message translates to:
+  /// **'Make manager'**
+  String get teamMakeManager;
+
+  /// Menu action that makes a member an employee.
+  ///
+  /// In en, this message translates to:
+  /// **'Make employee'**
+  String get teamMakeEmployee;
+
+  /// Menu action that removes a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from team'**
+  String get teamRemove;
+
+  /// Title of the remove member confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String teamRemoveConfirmTitle(String name);
+
+  /// Message of the remove member confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'They will lose access to this business immediately.'**
+  String get teamRemoveConfirmMessage;
+
+  /// Confirmation after changing a member's role.
+  ///
+  /// In en, this message translates to:
+  /// **'Member updated.'**
+  String get teamMemberUpdated;
+
+  /// Confirmation after removing a member.
+  ///
+  /// In en, this message translates to:
+  /// **'Member removed.'**
+  String get teamMemberRemoved;
+
+  /// Shown when there are no pending invitations.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending invitations.'**
+  String get teamNoInvitations;
+
+  /// Title of the invitation form.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite a team member'**
+  String get inviteTitle;
+
+  /// Label of the invitee email field.
+  ///
+  /// In en, this message translates to:
+  /// **'Their email address'**
+  String get inviteEmailLabel;
+
+  /// Header of the role choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get inviteRoleLabel;
+
+  /// Explains the employee role.
+  ///
+  /// In en, this message translates to:
+  /// **'Views the business and its branches.'**
+  String get inviteRoleEmployeeHint;
+
+  /// Explains the manager role.
+  ///
+  /// In en, this message translates to:
+  /// **'Manages branches and services, and sees the team.'**
+  String get inviteRoleManagerHint;
+
+  /// Header of the branch access choice.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch access'**
+  String get inviteAccessLabel;
+
+  /// Switch: access to all branches.
+  ///
+  /// In en, this message translates to:
+  /// **'All branches'**
+  String get inviteAccessAll;
+
+  /// Error when no branch is selected.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose at least one branch.'**
+  String get inviteSelectBranches;
+
+  /// Button that creates the invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Create invitation'**
+  String get inviteSubmit;
+
+  /// Title after creating an invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation created'**
+  String get inviteCreatedTitle;
+
+  /// The invitation email was accepted by the mail server.
+  ///
+  /// In en, this message translates to:
+  /// **'The invitation was emailed to {email}.'**
+  String inviteDeliverySent(String email);
+
+  /// No email was sent because mail is not configured.
+  ///
+  /// In en, this message translates to:
+  /// **'Email delivery is not set up yet, so no email was sent. Share the link below with {email}.'**
+  String inviteDeliveryNotConfigured(String email);
+
+  /// The invitation email failed.
+  ///
+  /// In en, this message translates to:
+  /// **'The email could not be sent. Share the link below with {email}.'**
+  String inviteDeliveryFailed(String email);
+
+  /// No delivery and no shareable link.
+  ///
+  /// In en, this message translates to:
+  /// **'The invitation was created, but no email was sent and this server does not show links. Ask your administrator to deliver it.'**
+  String get inviteNoShareLink;
+
+  /// Header of the shareable invitation link.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation link'**
+  String get inviteShareLinkLabel;
+
+  /// Warning under the invitation link.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone with this link can see the invitation. Share it only with the invited person.'**
+  String get inviteShareWarning;
+
+  /// Button that closes the invitation result.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get inviteDone;
+
+  /// Error when an invitation is already pending.
+  ///
+  /// In en, this message translates to:
+  /// **'An invitation for this email is already pending.'**
+  String get inviteErrorPending;
+
+  /// Error when the invitee is already a member.
+  ///
+  /// In en, this message translates to:
+  /// **'This person is already a member of the team.'**
+  String get inviteErrorMember;
+
+  /// Title of the invitation screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation'**
+  String get invitationTitle;
+
+  /// Headline of the invitation screen.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re invited to join {business}'**
+  String invitationHeadline(String business);
+
+  /// The role offered by an invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Role: {role}'**
+  String invitationRoleLine(String role);
+
+  /// Who sent the invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Invited by {name}'**
+  String invitationInvitedBy(String name);
+
+  /// The (masked) invited email.
+  ///
+  /// In en, this message translates to:
+  /// **'Sent to {email}'**
+  String invitationSentTo(String email);
+
+  /// Invitation expiry date.
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until {date}'**
+  String invitationExpires(String date);
+
+  /// Expiry date in the pending invitations list.
+  ///
+  /// In en, this message translates to:
+  /// **'Expires {date}'**
+  String invitationExpiresOn(String date);
+
+  /// Invitation status: expired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get invitationStatusExpired;
+
+  /// Button that accepts the invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept and join'**
+  String get invitationAccept;
+
+  /// Button that declines the invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline'**
+  String get invitationDecline;
+
+  /// Title of the decline confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Decline this invitation?'**
+  String get invitationDeclineConfirmTitle;
+
+  /// Message of the decline confirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need a new invitation to join later.'**
+  String get invitationDeclineConfirmMessage;
+
+  /// Confirmation after accepting an invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to {business}!'**
+  String invitationAccepted(String business);
+
+  /// Confirmation after declining an invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation declined.'**
+  String get invitationDeclined;
+
+  /// Button that revokes a pending invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get invitationRevoke;
+
+  /// Confirmation after revoking an invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation revoked.'**
+  String get invitationRevoked;
+
+  /// Shown to signed-out viewers of an invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Log in or create an account with the invited email address to respond.'**
+  String get invitationSignInPrompt;
+
+  /// Shown when the signed-in account is not the invited one.
+  ///
+  /// In en, this message translates to:
+  /// **'This invitation was sent to a different email address. Log in with that account to accept it.'**
+  String get invitationWrongAccount;
+
+  /// Shown for accepted, declined or revoked invitations.
+  ///
+  /// In en, this message translates to:
+  /// **'This invitation is no longer open.'**
+  String get invitationNotOpen;
+
+  /// Shown for expired invitations.
+  ///
+  /// In en, this message translates to:
+  /// **'This invitation has expired. Ask for a new one.'**
+  String get invitationExpiredMessage;
+
+  /// Shown for unknown invitation links.
+  ///
+  /// In en, this message translates to:
+  /// **'This invitation link is not valid.'**
+  String get invitationNotFound;
+
+  /// Title of the dialog for pasting an invitation link.
+  ///
+  /// In en, this message translates to:
+  /// **'Open an invitation'**
+  String get joinInvitationTitle;
+
+  /// Label of the invitation link field.
+  ///
+  /// In en, this message translates to:
+  /// **'Invitation link or code'**
+  String get joinInvitationHint;
+
+  /// Validation error for the invitation link field.
+  ///
+  /// In en, this message translates to:
+  /// **'This doesn\'t look like a DORY invitation link.'**
+  String get joinInvitationInvalid;
+
+  /// Button that opens the pasted invitation.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get joinInvitationOpen;
 }
 
 class _AppLocalizationsDelegate
