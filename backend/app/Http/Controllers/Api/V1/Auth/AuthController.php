@@ -19,6 +19,7 @@ class AuthController extends Controller
     public function register(RegisterRequest $request): JsonResponse
     {
         $result = $this->auth->register($request->userAttributes(), $request->deviceName());
+        $result->user->load('memberships.business');
 
         return ApiResponse::created(new AuthTokenResource($result), __('api.auth.registered'));
     }
@@ -30,6 +31,10 @@ class AuthController extends Controller
             $request->validated('password'),
             $request->validated('device_name'),
         );
+
+        // Same user shape as /auth/me, so clients know the memberships
+        // (and the right home workspace) right after signing in.
+        $result->user->load('memberships.business');
 
         return ApiResponse::success(new AuthTokenResource($result), __('api.auth.logged_in'));
     }

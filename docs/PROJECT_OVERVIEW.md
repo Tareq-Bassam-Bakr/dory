@@ -46,10 +46,10 @@ their roles grant. See [ARCHITECTURE.md](ARCHITECTURE.md#roles-and-workspaces).
 | Component | Technology | Phase |
 |---|---|---|
 | Mobile app | Flutter, Riverpod, GoRouter | Phase 01+ |
-| Backend API | Laravel 13, MySQL, Redis, Sanctum (`backend/`) | Phase 02 (foundation, auth, multi-tenancy) |
+| Backend API | Laravel 13, MySQL, Redis, Sanctum (`backend/`) | Phase 02 (foundation, auth, multi-tenancy), Phase 03 (businesses, branches, services, team) |
 | Real-time updates | Laravel Reverb | Later phase |
 | Push notifications | Firebase Cloud Messaging | Later phase |
-| Maps | OpenStreetMap (flutter_map) | Later phase |
+| Maps | OpenStreetMap (flutter_map) | Coordinates stored since Phase 03 (WGS 84); map display later |
 | AI services | Python FastAPI, only where justified | Later phase |
 
 ## Phase 01 scope: Architecture & Foundation
@@ -88,3 +88,5 @@ Explicitly **not** in Phase 01:
 - **Login and registration fields are provisional** (email + password, plus
   name and phone for registration). The final set depends on the
   authentication method chosen in Phase 02, for example phone and OTP.
+  *Decided before Phase 03:* email + password is the primary method; the
+  phone number is optional profile data; phone OTP may come later.

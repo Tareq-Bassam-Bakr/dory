@@ -30,9 +30,20 @@ implemented and covered by tests unless marked *planned*.
   allow-lists).
 - Profile endpoints have no user id parameter, so users can only modify
   themselves.
-- Tenant isolation: see [MULTI_TENANCY.md](MULTI_TENANCY.md). Business
-  access is resolved only through the caller's active membership, never
-  from client-supplied ids.
+- Tenant isolation: see [MULTI_TENANCY.md](MULTI_TENANCY.md). Businesses,
+  branches, services, members and invitations are resolved only through
+  the caller's active membership and branch access, never from
+  client-supplied ids; anything unreachable is the same 404 as missing
+  (tested for all 20 tenant endpoints).
+- Identity and ownership fields (`business_id`, `branch_id`, `slug`,
+  `created_by`, `owner_id`, `category_id`, storage paths, membership
+  `user_id`/`status`) are prohibited inputs (422).
+- Ownership cannot be granted or transferred through the API; the owner
+  membership and the caller's own membership cannot be changed or removed.
+- Form requests authorize before validating, so forbidden users learn
+  nothing from validation messages.
+- Suspended accounts are rejected right after authentication, before route
+  bindings touch tenant data.
 
 ## Data exposure
 
@@ -50,6 +61,15 @@ implemented and covered by tests unless marked *planned*.
 - Request bodies, passwords and tokens are never logged. Laravel excludes
   `password`, `password_confirmation`, and `current_password` from exception
   context. Expected client errors (`ApiException`) are not logged as errors.
+- **Stack traces carry no argument values** (Phase 03 fix):
+  `bootstrap/app.php` forces `zend.exception_ignore_args=1`. Before, with
+  PHP's development `php.ini`, a server error during login could write the
+  password (as an argument of `AuthService::login`) into the log.
+  `SensitiveDataTest` and `InvitationAcceptanceTest` fail without the fix.
+- Invitation tokens are stored only as SHA-256 hashes; the invitation email
+  is never sent through the `log` or `array` mailers. Keep
+  `/api/v1/invitations/*` out of web-server access logs (see
+  [MEMBERSHIP_AND_INVITATIONS.md](MEMBERSHIP_AND_INVITATIONS.md#tokens-and-logs)).
 - `MAIL_MAILER=log` (local only) writes emails, **including reset links**,
   to a separate `storage/logs/mail-*.log` (kept 3 days). **Never use the log
   mailer in production.**
@@ -96,8 +116,11 @@ implemented and covered by tests unless marked *planned*.
 
 - Email verification endpoints, with a configured mail provider.
 - Arabic translations of API and validation messages.
-- Audit log for privileged actions (platform admin, membership changes).
+- Platform-admin actions in the audit log (membership and business changes
+  are recorded since Phase 03; there is no API to read the log yet).
+- Requiring a verified email to accept invitations, once email delivery is
+  configured.
 - Two-factor authentication / phone OTP (depends on the Phase 03+ auth
   method decision).
 - Dependency auditing in CI (`composer audit` currently run manually: no
-  advisories at Phase 02).
+  advisories at Phase 02 or Phase 03).

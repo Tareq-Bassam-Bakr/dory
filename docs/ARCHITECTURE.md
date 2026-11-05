@@ -79,10 +79,16 @@ injected with `ProviderScope` overrides. Their providers throw a descriptive
 - Tests replace dependencies with `ProviderContainer.test(overrides: ...)`.
   See `test/helpers/test_app.dart`.
 
-**Decision: no Riverpod code generation (yet).** Phase 01 has three
-providers, and hand-written providers avoid a build_runner step. When
-`freezed`/`json_serializable` bring build_runner in (Phase 02 DTOs), we will
-re-evaluate `riverpod_generator`.
+**Decision: no code generation (yet).** Providers and JSON mapping are
+hand-written (`core/network/json.dart` typed readers), which avoids a
+build_runner step and keeps parsing strict-cast safe. Re-evaluate
+`freezed`/`riverpod_generator` when the models grow (queues, tickets).
+
+- `FutureProvider.autoDispose.family` per resource (`businessProvider`,
+  `branchesProvider`, ...); they watch the signed-in user's id, so a new
+  session never sees the previous user's data.
+- `AuthController` (Notifier) owns the session; `OnboardingController`
+  (autoDispose Notifier) owns the onboarding draft.
 
 ## Navigation (GoRouter 18)
 
@@ -98,9 +104,13 @@ re-evaluate `riverpod_generator`.
 - Routes are built fresh per `GoRouter` instance, because shell branches own
   navigator `GlobalKey`s that must not be shared.
 
-**Access control (Phase 02).** Phase 01 has no session, so no route is guarded.
-Phase 02 adds a top-level `redirect` that reads the session, uses
-`UserRoleSet.canAccess(workspace)`, and refreshes on session changes.
+**Access control (Phase 03).** A top-level `redirect` (`auth_redirect.dart`)
+reads the session from `AuthController` and is re-evaluated on every session
+change (`refreshListenable`). The business workspace needs a signed-in user
+(restoring → splash, signed out → login, both with `?from=`); welcome, login
+and registration send signed-in users home. Business-scoped permissions come
+from the API (`permissions` in responses), not from client-side roles. See
+[FLUTTER_API_INTEGRATION.md](FLUTTER_API_INTEGRATION.md).
 
 ## Roles and workspaces
 
@@ -115,8 +125,10 @@ enum AppWorkspace { customer, business, administration }
   naturally.
 - The active workspace is the shell the user is in (`/customer/...` or
   `/business/...`), and they switch from the Account tab.
-- Business-scoped roles (owner, manager, employee) will be granted **per
-  business/branch** by the backend. Phase 01 models only the role kinds.
+- Business-scoped roles (owner, manager, employee) are granted **per
+  business and branch** by the backend (`BusinessRole`, memberships in
+  `/auth/me`). Which actions a screen offers follows the server's
+  `permissions` hints; the server re-checks every request.
 
 ## Error handling
 

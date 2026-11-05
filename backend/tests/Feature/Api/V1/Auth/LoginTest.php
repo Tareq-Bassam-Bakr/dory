@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\V1\Auth;
 
 use App\Models\User;
+use App\Services\Business\BusinessMembershipService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
@@ -30,6 +31,23 @@ class LoginTest extends TestCase
 
         $this->assertNotNull($user->fresh()->last_login_at);
         $this->assertSame(1, $user->tokens()->count());
+    }
+
+    public function test_login_returns_the_users_memberships_like_me_does(): void
+    {
+        $user = User::factory()->create();
+        $business = app(BusinessMembershipService::class)
+            ->createBusinessWithOwner($user, 'Shifa Clinic');
+
+        $response = $this->postJson(self::URL, [
+            'email' => $user->email,
+            'password' => $this->factoryPassword(),
+            'device_name' => 'phpunit',
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('data.user.memberships.0.role', 'owner')
+            ->assertJsonPath('data.user.memberships.0.business.id', $business->public_id);
     }
 
     public function test_login_email_is_case_insensitive(): void

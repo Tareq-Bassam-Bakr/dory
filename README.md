@@ -11,13 +11,14 @@ This repository contains both parts of the product:
 | Part | Location | Stack |
 |---|---|---|
 | Mobile app | repository root (`lib/`, `android/`, `ios/`, …) | Flutter 3.44, Riverpod 3, GoRouter 18 |
-| API | [`backend/`](backend) | Laravel 13, PHP 8.4, MySQL, Sanctum |
+| API | [`backend/`](backend) | Laravel 13, PHP 8.4, MySQL/MariaDB, Sanctum |
 
-> **Status: Phase 02 complete.** The Flutter app has its architecture, design
-> system, Arabic/English localization and UI shells (Phase 01). The Laravel API
-> provides authentication, the database foundation and multi-tenant
-> authorization (Phase 02). **The app is not connected to the API yet**, and
-> there is no queue functionality yet. Both arrive in later phases.
+> **Status: Phase 03 complete.** The app signs users in with email and
+> password against the Laravel API, keeps the session securely across
+> restarts, and lets businesses onboard and manage their profile, branches,
+> services and team (with invitations). Categories come from the database.
+> Tenant isolation is enforced by the API and covered by tests. **There is no
+> queue functionality yet** (later phase).
 
 ## Required software
 
@@ -50,6 +51,28 @@ flutter test
 
 Details: [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md).
 
+### Run the app against the local API
+
+Start the API (see below), connect the phone by USB, then:
+
+```powershell
+adb reverse tcp:8000 tcp:8000
+```
+
+```bash
+flutter run -d <device-id>
+```
+
+Debug builds call `http://127.0.0.1:8000/api/v1`; other targets use
+`--dart-define=DORY_API_BASE_URL=...` (required for release builds). The
+on-device end-to-end test needs the running API:
+
+```bash
+flutter test integration_test/phase03_e2e_test.dart -d <device-id>
+```
+
+Details: [docs/FLUTTER_API_INTEGRATION.md](docs/FLUTTER_API_INTEGRATION.md).
+
 ## API (Laravel)
 
 Full guide, including database creation and Redis: [docs/LOCAL_BACKEND_SETUP.md](docs/LOCAL_BACKEND_SETUP.md).
@@ -80,6 +103,12 @@ D:\php84\php.exe artisan key:generate
 
 ```powershell
 D:\php84\php.exe artisan migrate
+```
+
+Seed the business categories (reference data, safe in every environment):
+
+```powershell
+D:\php84\php.exe artisan db:seed --class=BusinessCategorySeeder
 ```
 
 Run the API at `http://127.0.0.1:8000/api/v1`:
@@ -131,3 +160,11 @@ D:\php84\php.exe D:\composer\composer.phar lint
 | [SECURITY.md](docs/SECURITY.md) | Security controls and production checklist |
 | [LOCAL_BACKEND_SETUP.md](docs/LOCAL_BACKEND_SETUP.md) | Installing and running the API locally |
 | [PHASE_02_REPORT.md](docs/PHASE_02_REPORT.md) | What Phase 02 delivered, test results, open items |
+| [API_ENDPOINTS_PHASE_03.md](docs/API_ENDPOINTS_PHASE_03.md) | Every Phase 03 endpoint with examples and error codes |
+| [BUSINESS_MANAGEMENT.md](docs/BUSINESS_MANAGEMENT.md) | Businesses, categories, lifecycle, ownership, audit trail |
+| [BUSINESS_ONBOARDING.md](docs/BUSINESS_ONBOARDING.md) | The five-step onboarding flow |
+| [BRANCH_MANAGEMENT.md](docs/BRANCH_MANAGEMENT.md) | Branches, OpenStreetMap coordinates, branch access |
+| [SERVICE_MANAGEMENT.md](docs/SERVICE_MANAGEMENT.md) | The generic service model |
+| [MEMBERSHIP_AND_INVITATIONS.md](docs/MEMBERSHIP_AND_INVITATIONS.md) | Roles, ownership protection, invitations and delivery |
+| [FLUTTER_API_INTEGRATION.md](docs/FLUTTER_API_INTEGRATION.md) | API client, secure session, guards, running against the API |
+| [PHASE_03_REPORT.md](docs/PHASE_03_REPORT.md) | What Phase 03 delivered, test results, open items |

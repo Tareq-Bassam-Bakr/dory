@@ -46,20 +46,27 @@ and business roles come only from `business_members`.
 | public_id | char(26) unique | ULID |
 | name | varchar(150) | |
 | slug | varchar(160) unique | generated; falls back to `business-xxxxxx` for non-Latin names |
+| category_id | FK → business_categories.id, nullable, **restrict on delete** | Phase 03; required by the API for new businesses |
 | description | text nullable | |
-| status | varchar(20) default `active`, indexed | `active`, `suspended`, `archived` |
+| email, phone, website | nullable | Phase 03 contact details |
+| timezone | varchar(64) default `UTC` | Phase 03 |
+| logo_path, cover_path | nullable | Phase 03; server-side uploads only (none yet) |
+| status | varchar(20) default `active`, indexed | `active`, `inactive`, `suspended`, `archived` |
 | created_by | FK → users.id, nullable, **null on delete** | audit only; ownership lives in `business_members` |
-| created_at / updated_at | timestamps | |
+| idempotency_key | varchar(64) nullable | Phase 03; `UNIQUE (created_by, idempotency_key)` |
+| created_at / updated_at, deleted_at | timestamps, soft delete | deleting archives |
 
 ### `business_members`
 
 | Column | Type | Notes |
 |---|---|---|
 | id | bigint PK | |
+| public_id | char(26) unique | Phase 03; ULID used by `/members/{member}` (existing rows backfilled) |
 | business_id | FK → businesses.id, **cascade on delete** | |
 | user_id | FK → users.id, **cascade on delete** | |
 | role | varchar(20) | `owner`, `manager`, `employee` |
 | status | varchar(20) default `active` | `invited`, `active`, `suspended`. Only `active` grants access. |
+| branch_access | varchar(20) default `all` | Phase 03; `all` or `selected` (see `business_member_branch`) |
 | joined_at | timestamp nullable | set when the membership becomes active |
 | created_at / updated_at | timestamps | |
 
@@ -71,6 +78,20 @@ Constraints and indexes:
 
 A user may belong to many businesses, for example owning one and working in
 another.
+
+### Phase 03 tables
+
+| Table | Key columns | Constraints |
+|---|---|---|
+| `business_categories` | `slug` (public id), `name` JSON `{en, ar}`, `icon`, `sort_order`, `is_active`, `parent_id` | `UNIQUE slug`; self FK restrict |
+| `branches` | `public_id`, `business_id`, address fields, `country` char(2), `latitude`/`longitude` decimal(10,7) WGS 84, `timezone`, `status`, `deleted_at` | FK business cascade; `INDEX (business_id, status)` |
+| `services` | `public_id`, `branch_id`, `name`, `description`, `estimated_duration_minutes`, `display_order`, `status`, `deleted_at` | FK branch cascade; `INDEX (branch_id, status, display_order)` |
+| `business_member_branch` | `business_member_id`, `branch_id` | both FK cascade; `UNIQUE` pair |
+| `business_invitations` | `public_id`, `business_id`, `email`, `role`, `branch_access`, `branch_ids` JSON, `token_hash` char(64), `status`, `pending_key` char(64), `invited_by`, `accepted_by`, `expires_at`, `responded_at` | `UNIQUE token_hash`; `UNIQUE pending_key` (one pending invitation per email per business); `INDEX (business_id, status)` |
+| `business_audit_logs` | `business_id`, `actor_id`, `action`, `subject_type`/`subject_id`, `properties` JSON, `created_at` | FK business cascade, actor null on delete |
+
+Migrations: `2026_11_05_200100` … `200700`. They only add to the Phase 02
+tables, and were verified on SQLite and MariaDB 10.4 (full suite on both).
 
 ### Framework tables
 
@@ -93,10 +114,15 @@ SQLite, and adding a value requires no `ALTER TABLE`.
 ## Factories and seeders
 
 - Factories: `UserFactory` (states: `unverified`, `suspended`,
-  `platformAdmin`), `BusinessFactory` (`suspended`), and
-  `BusinessMemberFactory` (`owner`, `manager`, `suspended`, `invited`). The
+  `platformAdmin`), `BusinessFactory` (`suspended`, `inactive`,
+  `categorized`), `BusinessMemberFactory` (`owner`, `manager`, `suspended`,
+  `invited`, `selectedBranches`), and Phase 03 `BusinessCategoryFactory`,
+  `BranchFactory`, `ServiceFactory`, `BusinessInvitationFactory`
+  (`withToken`, `expired`, `accepted`). The
   factory password is random per test run; there is no hardcoded password.
-- `DatabaseSeeder` seeds nothing in production. Locally it runs
+- `BusinessCategorySeeder` seeds the 11 launch categories. It is reference
+  data: idempotent and run by `DatabaseSeeder` in every environment.
+- `DatabaseSeeder` seeds no demo data in production. Locally it runs
   `DemoDataSeeder`, which creates `owner@dory.test`, `employee@dory.test`,
   `customer@dory.test`, and a demo clinic, **only if `SEED_DEMO_PASSWORD` is
   set**.

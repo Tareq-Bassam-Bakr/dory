@@ -76,7 +76,15 @@ D:\php84\php.exe artisan key:generate
 D:\php84\php.exe artisan migrate
 ```
 
-Optional demo data: set `SEED_DEMO_PASSWORD` in `.env`, then:
+Seed the business categories (required; reference data, idempotent and
+safe in every environment, including production with `--force`):
+
+```powershell
+D:\php84\php.exe artisan db:seed --class=BusinessCategorySeeder
+```
+
+Optional demo data: set `SEED_DEMO_PASSWORD` in `.env`, then (this also
+seeds the categories):
 
 ```powershell
 D:\php84\php.exe artisan db:seed
@@ -94,8 +102,16 @@ The API is then at `http://127.0.0.1:8000/api/v1`. Quick check:
 curl.exe http://127.0.0.1:8000/api/v1/health
 ```
 
-To reach the API from a **physical phone** on the same Wi-Fi, listen on all
-interfaces and use the PC's LAN IP from the app:
+To reach the API from a **USB-connected phone**, forward the phone's port
+8000 to the PC (repeat after reconnecting); the debug app then uses
+`http://127.0.0.1:8000/api/v1` as is:
+
+```powershell
+adb reverse tcp:8000 tcp:8000
+```
+
+Over Wi-Fi instead, listen on all interfaces and build the app with
+`--dart-define=DORY_API_BASE_URL=http://<PC LAN IP>:8000/api/v1`:
 
 ```powershell
 D:\php84\php.exe artisan serve --host=0.0.0.0 --port=8000
@@ -167,6 +183,14 @@ Finally set `CACHE_STORE=redis` and `QUEUE_CONNECTION=redis`, run
 `storage/logs/mail-*.log`, and **nothing is delivered**. To send real email,
 configure an SMTP or API provider in `.env` (`MAIL_MAILER`, `MAIL_HOST`,
 `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM_ADDRESS`).
+
+Team invitations are never sent through the `log` mailer (the link
+contains a secret token). Locally the API returns the invitation link to
+the owner for manual sharing (`INVITATION_SHARE_LINKS`, on outside
+production). With a real provider, set `INVITATION_SEND_EMAILS=true`. Other
+settings: `INVITATION_URL` (default `dory://app/invitations/{token}`) and
+`INVITATION_EXPIRES_IN_DAYS` (default 7). See
+[MEMBERSHIP_AND_INVITATIONS.md](MEMBERSHIP_AND_INVITATIONS.md).
 
 ## Troubleshooting
 

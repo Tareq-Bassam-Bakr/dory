@@ -23,11 +23,11 @@ dory_app/
 │   │       ├── language_controller.dart
 │   │       └── l10n.dart          # context.l10n + re-export of AppLocalizations
 │   ├── core/                      # Technical infrastructure, no product features
-│   │   ├── config/                # (later) environments, API base URLs
+│   │   ├── config/                # ApiConfig (base URL, timeouts)
 │   │   ├── constants/             # AppConstants, AppAssets
-│   │   ├── errors/                # ErrorReporter
-│   │   ├── network/               # (later) Dio client, interceptors
-│   │   ├── storage/               # KeyValueStorage + implementations, StorageKeys
+│   │   ├── errors/                # ErrorReporter, AppFailure
+│   │   ├── network/               # ApiClient, envelope, ApiException, token interceptor, providers
+│   │   ├── storage/               # KeyValueStorage (preferences), SecureStore (tokens), StorageKeys
 │   │   ├── services/              # (later) device/platform services
 │   │   ├── realtime/              # (later) Reverb/WebSocket client
 │   │   ├── notifications/         # (later) FCM integration
@@ -35,24 +35,31 @@ dory_app/
 │   │   ├── utils/                 # (later) pure helpers
 │   │   └── widgets/               # Design-system widgets (DoryButton, DoryCard, ...)
 │   ├── features/                  # One folder per product feature
-│   │   ├── authentication/        # splash, welcome, login, register
-│   │   ├── home/                  # customer home
+│   │   ├── authentication/        # session: data (datasources, models, repository),
+│   │   │                          #   domain (entities, repository, usecases),
+│   │   │                          #   presentation (providers, pages, validation)
+│   │   ├── home/                  # customer home (categories from the API)
 │   │   ├── tickets/               # customer tickets
-│   │   ├── profile/               # account tab, workspace switch
-│   │   ├── business_dashboard/    # business dashboard
-│   │   ├── queues/                # business queues
-│   │   ├── discovery/ businesses/ branches/ services/ maps/
-│   │   ├── notifications/ branch_management/ employee/
+│   │   ├── profile/               # account tab (user, logout), workspace switch
+│   │   ├── business_dashboard/    # "My businesses" (business workspace home)
+│   │   ├── businesses/            # categories, create, onboarding, overview, edit
+│   │   ├── branch_management/     # branch list, details, create/edit form
+│   │   ├── services/              # services list, create/edit form
+│   │   ├── team/                  # members, invitations, invitation link
+│   │   ├── queues/                # business queues (later phase)
+│   │   ├── discovery/ branches/ maps/ notifications/ employee/
 │   │   └── analytics/ subscriptions/      # (later phases)
-│   │       └── each feature: data/ domain/ presentation/{pages,widgets}/
+│   │       └── each feature: data/ domain/ presentation/{pages,providers,widgets}/
 │   └── shared/                    # Cross-feature product code
-│       ├── components/            # language picker, coming-soon message, category visuals
-│       ├── enums/                 # UserRole, AppWorkspace, BusinessCategory
+│       ├── components/            # language picker, async view, failure messages,
+│       │                          #   status chip, confirm dialog, category icons
+│       ├── enums/                 # UserRole, AppWorkspace, BusinessRole
 │       └── models/                # (later) shared domain models
 ├── test/                          # Mirrors lib/
-│   ├── helpers/test_app.dart      # Test containers and pump helpers
-│   ├── app/ core/ shared/
-├── integration_test/              # On-device tests (real bootstrap)
+│   ├── helpers/                   # test_app (containers, pumpAppAt), fake HTTP transport,
+│   │                              #   fake auth repository, API JSON fixtures
+│   ├── app/ core/ shared/ features/
+├── integration_test/              # On-device tests (real bootstrap; phase03_e2e needs the API)
 ├── assets/fonts/ibm_plex_sans_arabic/   # Bundled font + OFL license
 ├── docs/                          # Project documentation
 ├── l10n.yaml                      # gen-l10n configuration
@@ -65,9 +72,11 @@ dory_app/
   private helpers may share it).
 - **Pages** end with `Page` and live in `presentation/pages/`. Feature-specific
   widgets live in `presentation/widgets/`.
-- **Controllers** (Riverpod Notifiers) will live in
-  `presentation/controllers/`, named `<Thing>Controller` with a
-  `<thing>ControllerProvider`.
+- **Providers and controllers** (Riverpod) live in
+  `presentation/providers/`: `<Thing>Controller` + `<thing>ControllerProvider`
+  for state, `<Thing>Actions` for mutations that refresh affected data.
+- **No API calls in widgets**: widgets use providers and actions, which use
+  repository contracts from `domain/`.
 - **Design-system widgets** are prefixed `Dory` and hold no user-facing strings
   of their own: callers pass localized text.
 - **Empty folders** contain a `.gitkeep` so git keeps the agreed structure.
