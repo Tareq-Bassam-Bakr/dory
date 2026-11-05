@@ -1,0 +1,12 @@
+arb-dir: lib/app/localization/arb
+template-arb-file: app_en.arb
+output-dir: lib/app/localization/generated
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+# Return non-null AppLocalizations from AppLocalizations.of(context).
+nullable-getter: false
+# Every message in the template must carry an @description for translators.
+required-resource-attributes: true
+# Messages missing from a non-template locale are listed here during generation.
+# test/app/localization/arb_parity_test.dart fails the build if any exist.
+untranslated-messages-file: build/l10n_untranslated_messages.json

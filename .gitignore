@@ -1,0 +1,85 @@
+# ---------------------------------------------------------------------------
+# Secrets and private configuration: never commit these.
+# ---------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.env
+auth.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.p8
+*.mobileprovision
+*.keystore
+*.jks
+key.properties
+**/android/key.properties
+google-services.json
+GoogleService-Info.plist
+service-account*.json
+*credentials*.json
+secrets/
+.secrets/
+
+# Local AI assistant / editor state
+.claude/settings.local.json
+
+# ---------------------------------------------------------------------------
+# Miscellaneous
+# ---------------------------------------------------------------------------
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+Thumbs.db
+.atom/
+.build/
+.buildlog/
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+#.vscode/
+
+# ---------------------------------------------------------------------------
+# Flutter/Dart/Pub related
+# ---------------------------------------------------------------------------
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+/coverage/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+/android/app/debug
+/android/app/profile
+/android/app/release
+
+# ---------------------------------------------------------------------------
+# Backend (Laravel): see backend/.gitignore for the full list
+# ---------------------------------------------------------------------------
+/backend/vendor/
+/backend/.phpunit.cache/
+/backend/.phpunit.result.cache

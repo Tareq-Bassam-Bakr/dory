@@ -1,0 +1,63 @@
+name: dory_app
+description: "DORY - Smart Queue and Appointment Management Platform. Your Turn. Your Time."
+# Private application package: never published to pub.dev.
+publish_to: 'none'
+
+# <build-name>+<build-number>. Override at build time with
+# --build-name / --build-number (Android versionName/versionCode,
+# iOS CFBundleShortVersionString/CFBundleVersion).
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.2
+  flutter: '>=3.44.0'
+
+# Phase 01 keeps the dependency surface minimal. Every package below is used
+# by Phase 01 code. Packages evaluated and deferred to later phases are listed
+# in docs/DEVELOPMENT_GUIDE.md ("Dependency policy").
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Material Design library, decoupled from the Flutter framework.
+  # go_router 18+ is built on it, so the app must use it too.
+  material_ui: ^1.2.0
+  # State management and dependency injection.
+  flutter_riverpod: ^3.4.3
+  # Declarative navigation, deep links, and navigation shells.
+  go_router: ^18.1.3
+  # Persisted user preferences (selected language).
+  shared_preferences: ^2.5.6
+  # Required by generated localizations. Version is pinned by flutter_localizations.
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  # Generates lib/app/localization/generated/ from the ARB files (see l10n.yaml).
+  generate: true
+
+  assets:
+    - assets/fonts/ibm_plex_sans_arabic/OFL.txt
+
+  fonts:
+    # IBM Plex Sans Arabic (SIL Open Font License 1.1). Covers Arabic and Latin
+    # glyphs, so a single family serves both supported languages.
+    - family: IBMPlexSansArabic
+      fonts:
+        - asset: assets/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-Bold.ttf
+          weight: 700

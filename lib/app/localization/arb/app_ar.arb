@@ -1,0 +1,97 @@
+{
+  "@@locale": "ar",
+
+  "appTagline": "دورك. وقتك.",
+
+  "commonRetry": "حاول مجددًا",
+  "commonComingSoonMessage": "ستتوفر هذه الميزة في تحديث قادم.",
+  "commonGenericErrorTitle": "حدث خطأ ما",
+
+  "welcomeHeadline": "طوابير ذكية لكل خدمة",
+  "welcomeBody": "انضم إلى الطوابير عن بُعد، وتابع دورك مباشرةً، واحضر في الوقت المناسب تمامًا.",
+  "welcomeLogin": "تسجيل الدخول",
+  "welcomeCreateAccount": "إنشاء حساب",
+  "welcomeExploreAsGuest": "تصفّح كضيف",
+
+  "authEmailLabel": "البريد الإلكتروني",
+  "authPasswordLabel": "كلمة المرور",
+  "authFullNameLabel": "الاسم الكامل",
+  "authPhoneLabel": "رقم الهاتف",
+  "authShowPassword": "إظهار كلمة المرور",
+  "authHidePassword": "إخفاء كلمة المرور",
+  "authUnavailableNotice": "تسجيل الدخول إلى الحسابات غير متاح بعد، وسيتم تفعيله في تحديث قادم.",
+
+  "loginTitle": "مرحبًا بعودتك",
+  "loginSubtitle": "سجّل الدخول لإدارة تذاكرك وأعمالك.",
+  "loginSubmit": "تسجيل الدخول",
+  "loginNoAccountPrompt": "ليس لديك حساب؟",
+
+  "registerTitle": "أنشئ حسابك",
+  "registerSubtitle": "انضم إلى DORY وقلّل وقت انتظارك في الطوابير.",
+  "registerSubmit": "إنشاء حساب",
+  "registerHaveAccountPrompt": "لديك حساب بالفعل؟",
+
+  "navHome": "الرئيسية",
+  "navTickets": "التذاكر",
+  "navAccount": "الحساب",
+  "navDashboard": "لوحة التحكم",
+  "navQueues": "الطوابير",
+
+  "homeTitle": "إلى أين تتجه اليوم؟",
+  "homeSearchHint": "ابحث عن الأعمال والخدمات",
+  "homeCategoriesTitle": "الفئات",
+  "homeNearbyTitle": "أعمال قريبة منك",
+  "homeNearbyEmptyTitle": "لا توجد أعمال قريبة بعد",
+  "homeNearbyEmptyMessage": "ستظهر هنا الأعمال القريبة منك عند توفر الاكتشاف حسب الموقع.",
+
+  "categoryRestaurants": "المطاعم",
+  "categoryClinics": "العيادات",
+  "categorySalons": "الصالونات",
+  "categoryBanks": "البنوك",
+  "categoryGovernment": "الخدمات الحكومية",
+  "categoryRepair": "ورش الصيانة",
+  "categoryOther": "خدمات أخرى",
+
+  "ticketsTitle": "تذاكري",
+  "ticketsEmptyTitle": "لا توجد تذاكر نشطة",
+  "ticketsEmptyMessage": "عند انضمامك إلى طابور، ستظهر هنا تذكرتك الرقمية وموقعك المباشر في الدور.",
+
+  "accountTitle": "الحساب",
+  "accountGuestTitle": "أنت تتصفح كضيف",
+  "accountGuestMessage": "سجّل الدخول للانضمام إلى الطوابير وتلقي تنبيه عند اقتراب دورك.",
+  "accountPreferencesSection": "التفضيلات",
+  "accountLanguage": "اللغة",
+  "accountWorkspaceSection": "مساحة العمل",
+  "accountSwitchToBusiness": "التبديل إلى مساحة الأعمال",
+  "accountSwitchToBusinessDescription": "أدِر الفروع والطوابير والموظفين.",
+  "accountSwitchToCustomer": "التبديل إلى مساحة العملاء",
+  "accountSwitchToCustomerDescription": "اكتشف الأعمال وانضم إلى الطوابير.",
+
+  "languageSystem": "لغة الجهاز",
+  "languageEnglish": "English",
+  "languageArabic": "العربية",
+
+  "dashboardTitle": "لوحة التحكم",
+  "dashboardOverviewTitle": "نظرة عامة على النشاط",
+  "dashboardSetupTitle": "أعِدّ نشاطك التجاري",
+  "dashboardSetupMessage": "سجّل نشاطك التجاري، وأضف الفروع والخدمات، ثم ابدأ بإدارة طوابيرك.",
+  "dashboardSetupAction": "تسجيل نشاط تجاري",
+  "dashboardQueueSummaryTitle": "ملخص الطوابير",
+  "dashboardQueueSummaryEmpty": "تظهر الأرقام المباشرة عند تفعيل طوابيرك.",
+  "dashboardMetricWaiting": "في الانتظار",
+  "dashboardMetricServing": "قيد الخدمة",
+  "dashboardMetricAverageWait": "متوسط الانتظار",
+  "dashboardMetricServedToday": "خُدموا اليوم",
+  "dashboardMetricNoValue": "لا توجد بيانات",
+  "dashboardEmployeesTitle": "الموظفون",
+  "dashboardEmployeesEmptyTitle": "لا يوجد موظفون بعد",
+  "dashboardEmployeesEmptyMessage": "ادعُ موظفيك لاستدعاء العملاء وإدارة نقاط الخدمة.",
+
+  "queuesTitle": "الطوابير",
+  "queuesEmptyTitle": "لا توجد طوابير بعد",
+  "queuesEmptyMessage": "ستظهر هنا الطوابير التي تنشئها لخدماتك.",
+
+  "notFoundTitle": "الصفحة غير موجودة",
+  "notFoundMessage": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
+  "notFoundAction": "العودة إلى البداية"
+}
