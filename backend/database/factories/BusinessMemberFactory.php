@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\BranchAccess;
 use App\Enums\BusinessRole;
 use App\Enums\MembershipStatus;
 use App\Models\Business;
@@ -24,6 +25,7 @@ class BusinessMemberFactory extends Factory
             'user_id' => User::factory(),
             'role' => BusinessRole::Employee,
             'status' => MembershipStatus::Active,
+            'branch_access' => BranchAccess::All,
             'joined_at' => now(),
         ];
     }
@@ -49,5 +51,13 @@ class BusinessMemberFactory extends Factory
             'status' => MembershipStatus::Invited,
             'joined_at' => null,
         ]);
+    }
+
+    /**
+     * Limits the membership to branches attached afterwards.
+     */
+    public function selectedBranches(): static
+    {
+        return $this->state(fn (array $attributes) => ['branch_access' => BranchAccess::Selected]);
     }
 }

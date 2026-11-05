@@ -6,6 +6,7 @@ use App\Enums\BusinessStatus;
 use App\Enums\MembershipStatus;
 use Database\Factories\BusinessFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -13,26 +14,35 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * A business on DORY: the tenant boundary. Every business-owned record added
- * in later phases (branches, services, queues) hangs off a business.
+ * A business on DORY: the tenant boundary. Branches, services, members and
+ * invitations all hang off a business.
+ *
+ * Ownership lives in business_members (role "owner"), not in created_by.
+ * Deleting a business archives it: status "archived" plus a soft delete,
+ * so its history survives.
  *
  * @property int $id Internal key. Never exposed by the API.
  * @property string $public_id ULID exposed by the API.
  * @property BusinessStatus $status
+ * @property string $timezone
  */
-#[Fillable(['name', 'slug', 'description'])]
+#[Fillable(['name', 'slug', 'description', 'email', 'phone', 'website', 'timezone'])]
+#[Hidden(['id', 'category_id', 'created_by', 'idempotency_key'])]
 class Business extends Model
 {
     /** @use HasFactory<BusinessFactory> */
-    use HasFactory, HasUlids;
+    use HasFactory, HasUlids, SoftDeletes;
 
     /**
      * @var array<string, mixed>
      */
     protected $attributes = [
         'status' => 'active',
+        'timezone' => 'UTC',
     ];
 
     /**
@@ -59,6 +69,14 @@ class Business extends Model
     }
 
     /**
+     * @return BelongsTo<BusinessCategory, $this>
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(BusinessCategory::class, 'category_id');
+    }
+
+    /**
      * @return BelongsTo<User, $this>
      */
     public function creator(): BelongsTo
@@ -72,6 +90,48 @@ class Business extends Model
     public function members(): HasMany
     {
         return $this->hasMany(BusinessMember::class);
+    }
+
+    /**
+     * @return HasMany<Branch, $this>
+     */
+    public function branches(): HasMany
+    {
+        return $this->hasMany(Branch::class);
+    }
+
+    /**
+     * Services of every (non-deleted) branch of the business.
+     *
+     * @return HasManyThrough<Service, Branch, $this>
+     */
+    public function services(): HasManyThrough
+    {
+        return $this->hasManyThrough(Service::class, Branch::class);
+    }
+
+    /**
+     * @return HasMany<BusinessInvitation, $this>
+     */
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(BusinessInvitation::class);
+    }
+
+    /**
+     * @return HasMany<BusinessAuditLog, $this>
+     */
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(BusinessAuditLog::class);
+    }
+
+    /**
+     * Whether members may change the business, its branches, services and team.
+     */
+    public function acceptsChanges(): bool
+    {
+        return $this->status->acceptsChanges();
     }
 
     /**

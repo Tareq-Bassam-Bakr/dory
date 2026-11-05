@@ -7,6 +7,7 @@ use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\ResolveBusinessContext;
 use App\Http\Middleware\SetSecurityHeaders;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -31,6 +32,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'active' => EnsureUserIsActive::class,
             'business.context' => ResolveBusinessContext::class,
         ]);
+
+        // Suspended accounts are rejected right after authentication, before
+        // route bindings look up any tenant data.
+        $middleware->appendToPriorityList(AuthenticatesRequests::class, EnsureUserIsActive::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

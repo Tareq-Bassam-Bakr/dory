@@ -30,6 +30,54 @@ return [
     'business' => [
         'not_found' => 'Business not found',
         'duplicate_membership' => 'This user is already a member of the business',
+        'created' => 'Business created successfully',
+        'already_created' => 'This business was already created by an earlier identical request',
+        'updated' => 'Business updated successfully',
+        'deleted' => 'Business deleted successfully',
+        'suspended' => 'This business is suspended and cannot be changed',
+        'fields_required' => 'Provide at least one field to update',
+        'idempotency_key_invalid' => 'The Idempotency-Key header must be 16 to 64 letters, digits, dashes or underscores',
+        'idempotency_key_reused' => 'This Idempotency-Key belongs to a deleted business. Use a new key',
+    ],
+
+    'branch' => [
+        'not_found' => 'Branch not found',
+        'created' => 'Branch created successfully',
+        'updated' => 'Branch updated successfully',
+        'deleted' => 'Branch deleted successfully',
+        'fields_required' => 'Provide at least one field to update',
+        'coordinates_pair' => 'Latitude and longitude must be updated together',
+    ],
+
+    'service' => [
+        'not_found' => 'Service not found',
+        'created' => 'Service created successfully',
+        'updated' => 'Service updated successfully',
+        'archived' => 'Service archived successfully',
+        'fields_required' => 'Provide at least one field to update',
+        'name_taken' => 'This branch already has a service with this name',
+    ],
+
+    'member' => [
+        'not_found' => 'Member not found',
+        'updated' => 'Member updated successfully',
+        'removed' => 'Member removed successfully',
+        'protected' => 'The owner and your own membership cannot be changed here',
+        'fields_required' => 'Provide at least one field to update',
+    ],
+
+    'invitation' => [
+        'not_found' => 'Invitation not found',
+        'created' => 'Invitation created successfully',
+        'revoked' => 'Invitation revoked successfully',
+        'accepted' => 'Invitation accepted. Welcome to the team',
+        'declined' => 'Invitation declined',
+        'expired' => 'This invitation has expired',
+        'not_pending' => 'This invitation is no longer open',
+        'email_mismatch' => 'This invitation was sent to a different email address',
+        'already_pending' => 'An invitation for this email is already pending',
+        'self_invite' => 'You cannot invite yourself',
+        'branches_invalid' => 'Choose branches of this business',
     ],
 
     'health' => [

@@ -9,10 +9,13 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      *
-     * Production databases are never seeded with demo data.
+     * Reference data (business categories) is seeded everywhere. Demo data
+     * is never seeded in production.
      */
     public function run(): void
     {
+        $this->call(BusinessCategorySeeder::class);
+
         if (app()->isProduction()) {
             $this->command?->warn('Production environment: no demo data seeded.');
 

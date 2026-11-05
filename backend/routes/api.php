@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
+use App\Http\Controllers\Api\V1\Businesses\BusinessCategoryController;
+use App\Http\Controllers\Api\V1\Businesses\BusinessController;
 use App\Http\Controllers\Api\V1\System\HealthController;
 use App\Http\Controllers\Api\V1\Users\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -14,6 +16,11 @@ use Illuminate\Support\Facades\Route;
 | Every route is prefixed with /api (bootstrap/app.php) and /v1 (below).
 | Rate limiters are defined in AppServiceProvider. Authenticated routes use
 | Sanctum bearer tokens and reject suspended accounts (`active`).
+|
+| Tenant parameters ({business}, {branch}, {service}, {member},
+| {invitation}) are resolved through the user's own memberships by
+| TenantResolver (see AppServiceProvider::configureRouteBindings). A
+| resource the user may not reach is a 404, exactly like a missing one.
 |
 */
 
@@ -40,5 +47,17 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     Route::prefix('users')->name('users.')->middleware(['auth:sanctum', 'active'])->group(function (): void {
         Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
         Route::put('locale', [ProfileController::class, 'updateLocale'])->name('locale.update');
+    });
+
+    // Public reference data.
+    Route::get('business-categories', BusinessCategoryController::class)->name('business-categories.index');
+
+    Route::middleware(['auth:sanctum', 'active'])->group(function (): void {
+        // Businesses
+        Route::post('businesses', [BusinessController::class, 'store'])->name('businesses.store');
+        Route::get('businesses/manage', [BusinessController::class, 'index'])->name('businesses.manage');
+        Route::get('businesses/{business}', [BusinessController::class, 'show'])->name('businesses.show');
+        Route::put('businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
+        Route::delete('businesses/{business}', [BusinessController::class, 'destroy'])->name('businesses.destroy');
     });
 });

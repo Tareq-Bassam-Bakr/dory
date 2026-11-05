@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Support\ApiResponse;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -50,6 +51,19 @@ final class ApiExceptionRenderer
     private function renderHttpException(HttpExceptionInterface $e): JsonResponse
     {
         $status = $e->getStatusCode();
+
+        // A policy that denied with an explicit code (Response::deny($message,
+        // $code) or denyAsNotFound($message, $code)) chose a client-facing
+        // message and code; render exactly those.
+        $previous = $e instanceof Throwable ? $e->getPrevious() : null;
+        if ($previous instanceof AuthorizationException && is_string($previous->response()?->code())) {
+            return ApiResponse::error(
+                (string) $previous->response()->message(),
+                $status,
+                $previous->response()->code(),
+                headers: $e->getHeaders(),
+            );
+        }
 
         [$code, $messageKey] = match ($status) {
             401 => ['unauthenticated', 'api.errors.unauthenticated'],
