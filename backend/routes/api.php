@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
+use App\Http\Controllers\Api\V1\Businesses\BranchController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessCategoryController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessController;
 use App\Http\Controllers\Api\V1\System\HealthController;
@@ -59,5 +60,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('businesses/{business}', [BusinessController::class, 'show'])->name('businesses.show');
         Route::put('businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
         Route::delete('businesses/{business}', [BusinessController::class, 'destroy'])->name('businesses.destroy');
+
+        // Branches
+        Route::get('businesses/{business}/branches', [BranchController::class, 'index'])->name('branches.index');
+        Route::post('businesses/{business}/branches', [BranchController::class, 'store'])->name('branches.store');
+        Route::get('branches/{branch}', [BranchController::class, 'show'])->name('branches.show');
+        Route::put('branches/{branch}', [BranchController::class, 'update'])->name('branches.update');
+        Route::delete('branches/{branch}', [BranchController::class, 'destroy'])->name('branches.destroy');
     });
 });
