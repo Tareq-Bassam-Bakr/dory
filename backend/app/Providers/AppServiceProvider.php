@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Contracts\InvitationNotifier;
 use App\Models\User;
 use App\Services\Business\CurrentBusinessContext;
 use App\Services\Business\TenantResolver;
+use App\Services\Invitations\MailInvitationNotifier;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // One business context per request; never shared between requests.
         $this->app->scoped(CurrentBusinessContext::class);
+
+        // Invitation delivery. Swap the implementation to add channels
+        // (SMS, WhatsApp) without touching the invitation workflow.
+        $this->app->bind(InvitationNotifier::class, MailInvitationNotifier::class);
     }
 
     /**

@@ -5,6 +5,9 @@ use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use App\Http\Controllers\Api\V1\Businesses\BranchController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessCategoryController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessController;
+use App\Http\Controllers\Api\V1\Businesses\BusinessInvitationController;
+use App\Http\Controllers\Api\V1\Businesses\BusinessMemberController;
+use App\Http\Controllers\Api\V1\Businesses\InvitationController;
 use App\Http\Controllers\Api\V1\Businesses\ServiceController;
 use App\Http\Controllers\Api\V1\System\HealthController;
 use App\Http\Controllers\Api\V1\Users\ProfileController;
@@ -75,5 +78,27 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('services/{service}', [ServiceController::class, 'show'])->name('services.show');
         Route::put('services/{service}', [ServiceController::class, 'update'])->name('services.update');
         Route::delete('services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
+
+        // Team members
+        Route::get('businesses/{business}/members', [BusinessMemberController::class, 'index'])->name('members.index');
+        Route::put('businesses/{business}/members/{member}', [BusinessMemberController::class, 'update'])->name('members.update');
+        Route::delete('businesses/{business}/members/{member}', [BusinessMemberController::class, 'destroy'])->name('members.destroy');
+
+        // Invitations, business side
+        Route::get('businesses/{business}/invitations', [BusinessInvitationController::class, 'index'])->name('invitations.index');
+        Route::post('businesses/{business}/invitations', [BusinessInvitationController::class, 'store'])
+            ->middleware('throttle:invitations')->name('invitations.store');
+        Route::delete('businesses/{business}/invitations/{invitation}', [BusinessInvitationController::class, 'destroy'])
+            ->name('invitations.destroy');
+
+        // Invitations, invitee side (the token is the secret)
+        Route::middleware('throttle:invitation-token')->group(function (): void {
+            Route::post('invitations/{invitationToken}/accept', [InvitationController::class, 'accept'])->name('invitations.accept');
+            Route::post('invitations/{invitationToken}/decline', [InvitationController::class, 'decline'])->name('invitations.decline');
+        });
     });
+
+    // Viewing an invitation works signed out, so the app can show what it is about.
+    Route::get('invitations/{invitationToken}', [InvitationController::class, 'show'])
+        ->middleware('throttle:invitation-token')->name('invitations.show');
 });

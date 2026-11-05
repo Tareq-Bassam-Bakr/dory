@@ -92,11 +92,14 @@ final class TenantResolver
             throw new MemberNotFoundException;
         }
 
-        return $this->context->business()->members()
+        $business = $this->context->business();
+        $member = $business->members()
             ->where('public_id', $publicId)
             ->with(['user', 'branches'])
             ->first()
             ?? throw new MemberNotFoundException;
+
+        return $member->setRelation('business', $business);
     }
 
     /**
@@ -108,10 +111,14 @@ final class TenantResolver
             throw new InvitationNotFoundException;
         }
 
-        return $this->context->business()->invitations()
+        $business = $this->context->business();
+        $invitation = $business->invitations()
             ->where('public_id', $publicId)
+            ->with('inviter')
             ->first()
             ?? throw new InvitationNotFoundException;
+
+        return $invitation->setRelation('business', $business);
     }
 
     /**
