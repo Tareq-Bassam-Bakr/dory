@@ -1,20 +1,63 @@
+import 'package:dio/dio.dart';
 import 'package:dory_app/app/app.dart';
 import 'package:dory_app/app/localization/app_locales.dart';
 import 'package:dory_app/app/theme/app_theme.dart';
+import 'package:dory_app/core/network/network_providers.dart';
 import 'package:dory_app/core/storage/in_memory_key_value_storage.dart';
 import 'package:dory_app/core/storage/key_value_storage.dart';
+import 'package:dory_app/core/storage/secure_store.dart';
+import 'package:dory_app/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:dory_app/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Creates a [ProviderContainer] wired like `bootstrap()`, but with volatile
-/// storage. Disposed automatically at the end of the test.
-ProviderContainer createTestContainer({KeyValueStorage? storage}) {
+import 'fake_auth_repository.dart';
+import 'fake_http_adapter.dart';
+
+/// Base URL of the fake API in tests. Nothing listens there: every request
+/// goes through the injected [FakeHttpAdapter].
+const String testApiBaseUrl = 'http://dory.test/api/v1';
+
+/// Overrides shared by every test app: volatile storage, a fake HTTP
+/// transport (unhandled requests get a 404 envelope) and, unless the test
+/// passes its own, a signed-out [FakeAuthRepository].
+List<Override> testOverrides({
+  KeyValueStorage? storage,
+  AuthRepository? authRepository,
+  HttpClientAdapter? http,
+  SecureStore? secureStore,
+}) => <Override>[
+  keyValueStorageProvider.overrideWithValue(
+    storage ?? InMemoryKeyValueStorage(),
+  ),
+  secureStoreProvider.overrideWithValue(secureStore ?? InMemorySecureStore()),
+  apiBaseUrlProvider.overrideWithValue(testApiBaseUrl),
+  httpClientAdapterProvider.overrideWithValue(http ?? FakeHttpAdapter()),
+  if (authRepository != null)
+    authRepositoryProvider.overrideWithValue(authRepository)
+  else
+    authRepositoryProvider.overrideWithValue(FakeAuthRepository()),
+];
+
+/// Creates a [ProviderContainer] wired like `bootstrap()`, but with the
+/// test doubles of [testOverrides]. Disposed automatically at the end of
+/// the test.
+ProviderContainer createTestContainer({
+  KeyValueStorage? storage,
+  AuthRepository? authRepository,
+  HttpClientAdapter? http,
+  List<Override> overrides = const <Override>[],
+}) {
   return ProviderContainer.test(
-    overrides: [
-      keyValueStorageProvider.overrideWithValue(
-        storage ?? InMemoryKeyValueStorage(),
+    overrides: <Override>[
+      ...testOverrides(
+        storage: storage,
+        authRepository: authRepository,
+        http: http,
       ),
+      ...overrides,
     ],
   );
 }
@@ -36,12 +79,11 @@ Future<void> pumpLocalizedWidget(
   Widget child, {
   Locale locale = AppLocales.english,
   bool settle = true,
+  List<Override> overrides = const <Override>[],
 }) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [
-        keyValueStorageProvider.overrideWithValue(InMemoryKeyValueStorage()),
-      ],
+      overrides: <Override>[...testOverrides(), ...overrides],
       child: MaterialApp(
         theme: AppTheme.light,
         locale: locale,

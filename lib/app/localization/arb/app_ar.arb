@@ -19,7 +19,6 @@
   "authPhoneLabel": "رقم الهاتف",
   "authShowPassword": "إظهار كلمة المرور",
   "authHidePassword": "إخفاء كلمة المرور",
-  "authUnavailableNotice": "تسجيل الدخول إلى الحسابات غير متاح بعد، وسيتم تفعيله في تحديث قادم.",
 
   "loginTitle": "مرحبًا بعودتك",
   "loginSubtitle": "سجّل الدخول لإدارة تذاكرك وأعمالك.",
@@ -93,5 +92,30 @@
 
   "notFoundTitle": "الصفحة غير موجودة",
   "notFoundMessage": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
-  "notFoundAction": "العودة إلى البداية"
+  "notFoundAction": "العودة إلى البداية",
+
+  "authEmailRequired": "أدخل بريدك الإلكتروني.",
+  "authEmailInvalid": "أدخل بريدًا إلكترونيًا صالحًا.",
+  "authPasswordRequired": "أدخل كلمة المرور.",
+  "authNameInvalid": "أدخل اسمك (من 2 إلى 120 حرفًا).",
+  "authPhoneHint": "اختياري. بالصيغة الدولية، مثل +963912345678",
+  "authPhoneInvalid": "استخدم الصيغة الدولية، مثل +963912345678.",
+  "authPasswordRules": "8 أحرف على الأقل، تتضمن أحرفًا كبيرة وصغيرة ورقمًا.",
+  "authPasswordTooWeak": "كلمة المرور لا تستوفي الشروط أدناه.",
+  "authConfirmPasswordLabel": "تأكيد كلمة المرور",
+  "authPasswordMismatch": "كلمتا المرور غير متطابقتين.",
+  "authErrorInvalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
+  "authErrorAccountInactive": "هذا الحساب غير نشط. يرجى التواصل مع الدعم.",
+  "authErrorRateLimited": "محاولات كثيرة جدًا. انتظر دقيقة ثم حاول مجددًا.",
+  "authErrorValidation": "يرجى تصحيح الحقول المحددة.",
+  "authSessionExpired": "انتهت جلستك. يرجى تسجيل الدخول مجددًا.",
+  "errorNetwork": "تعذر الوصول إلى DORY. تحقق من اتصالك وحاول مجددًا.",
+  "errorServer": "يواجه DORY مشكلة حاليًا. حاول مجددًا بعد قليل.",
+  "errorUnknown": "حدث خطأ ما. حاول مجددًا.",
+  "accountSignedInSection": "تم تسجيل الدخول باسم",
+  "accountLogout": "تسجيل الخروج",
+  "accountLogoutConfirmTitle": "تسجيل الخروج من DORY؟",
+  "accountLogoutConfirmMessage": "ستحتاج إلى تسجيل الدخول مجددًا لإدارة أعمالك.",
+  "accountOfflineNotice": "أنت غير متصل. نعرض آخر بياناتك المعروفة.",
+  "commonCancel": "إلغاء"
 }

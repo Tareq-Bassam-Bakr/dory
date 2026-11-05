@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../helpers/fake_auth_repository.dart';
 import '../helpers/test_app.dart';
 
 /// Renders every screen in both languages on small and large windows.
@@ -41,8 +42,13 @@ void main() {
             storage: InMemoryKeyValueStorage(<String, String>{
               StorageKeys.languageCode: languageCode,
             }),
+            // The business workspace is only shown to signed-in users.
+            authRepository: AppRoutes.requiresAuthentication(location)
+                ? FakeAuthRepository.signedIn()
+                : null,
           );
           await pumpDoryApp(tester, container);
+          await tester.pump();
           container.read(appRouterProvider).go(location);
           await tester.pumpAndSettle();
 

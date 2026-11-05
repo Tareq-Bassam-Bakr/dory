@@ -55,10 +55,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authHidePassword => 'إخفاء كلمة المرور';
 
   @override
-  String get authUnavailableNotice =>
-      'تسجيل الدخول إلى الحسابات غير متاح بعد، وسيتم تفعيله في تحديث قادم.';
-
-  @override
   String get loginTitle => 'مرحبًا بعودتك';
 
   @override
@@ -254,4 +250,82 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notFoundAction => 'العودة إلى البداية';
+
+  @override
+  String get authEmailRequired => 'أدخل بريدك الإلكتروني.';
+
+  @override
+  String get authEmailInvalid => 'أدخل بريدًا إلكترونيًا صالحًا.';
+
+  @override
+  String get authPasswordRequired => 'أدخل كلمة المرور.';
+
+  @override
+  String get authNameInvalid => 'أدخل اسمك (من 2 إلى 120 حرفًا).';
+
+  @override
+  String get authPhoneHint => 'اختياري. بالصيغة الدولية، مثل +963912345678';
+
+  @override
+  String get authPhoneInvalid => 'استخدم الصيغة الدولية، مثل +963912345678.';
+
+  @override
+  String get authPasswordRules =>
+      '8 أحرف على الأقل، تتضمن أحرفًا كبيرة وصغيرة ورقمًا.';
+
+  @override
+  String get authPasswordTooWeak => 'كلمة المرور لا تستوفي الشروط أدناه.';
+
+  @override
+  String get authConfirmPasswordLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get authPasswordMismatch => 'كلمتا المرور غير متطابقتين.';
+
+  @override
+  String get authErrorInvalidCredentials =>
+      'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+
+  @override
+  String get authErrorAccountInactive =>
+      'هذا الحساب غير نشط. يرجى التواصل مع الدعم.';
+
+  @override
+  String get authErrorRateLimited =>
+      'محاولات كثيرة جدًا. انتظر دقيقة ثم حاول مجددًا.';
+
+  @override
+  String get authErrorValidation => 'يرجى تصحيح الحقول المحددة.';
+
+  @override
+  String get authSessionExpired => 'انتهت جلستك. يرجى تسجيل الدخول مجددًا.';
+
+  @override
+  String get errorNetwork =>
+      'تعذر الوصول إلى DORY. تحقق من اتصالك وحاول مجددًا.';
+
+  @override
+  String get errorServer => 'يواجه DORY مشكلة حاليًا. حاول مجددًا بعد قليل.';
+
+  @override
+  String get errorUnknown => 'حدث خطأ ما. حاول مجددًا.';
+
+  @override
+  String get accountSignedInSection => 'تم تسجيل الدخول باسم';
+
+  @override
+  String get accountLogout => 'تسجيل الخروج';
+
+  @override
+  String get accountLogoutConfirmTitle => 'تسجيل الخروج من DORY؟';
+
+  @override
+  String get accountLogoutConfirmMessage =>
+      'ستحتاج إلى تسجيل الدخول مجددًا لإدارة أعمالك.';
+
+  @override
+  String get accountOfflineNotice => 'أنت غير متصل. نعرض آخر بياناتك المعروفة.';
+
+  @override
+  String get commonCancel => 'إلغاء';
 }

@@ -1,10 +1,13 @@
 import 'package:dory_app/app/router/app_routes.dart';
+import 'package:dory_app/app/router/auth_redirect.dart';
 import 'package:dory_app/app/router/not_found_page.dart';
 import 'package:dory_app/app/router/workspace_shell.dart';
 import 'package:dory_app/features/authentication/presentation/pages/login_page.dart';
 import 'package:dory_app/features/authentication/presentation/pages/register_page.dart';
 import 'package:dory_app/features/authentication/presentation/pages/splash_page.dart';
 import 'package:dory_app/features/authentication/presentation/pages/welcome_page.dart';
+import 'package:dory_app/features/authentication/presentation/providers/auth_controller.dart';
+import 'package:dory_app/features/authentication/presentation/providers/auth_state.dart';
 import 'package:dory_app/features/business_dashboard/presentation/pages/business_dashboard_page.dart';
 import 'package:dory_app/features/home/presentation/pages/customer_home_page.dart';
 import 'package:dory_app/features/profile/presentation/pages/account_page.dart';
@@ -18,20 +21,37 @@ import 'package:material_ui/material_ui.dart';
 
 /// The application [GoRouter].
 ///
-/// Access control: Phase 01 has no session, so no route is guarded. Phase 02
-/// adds a top-level `redirect` that reads the session and uses
-/// `UserRoleSet.canAccess` to keep users out of workspaces their roles do
-/// not grant, with `refreshListenable` tied to session changes.
+/// Access control (UX only; the API authorizes every request): the
+/// top-level `redirect` applies [authRedirect] to every navigation, and the
+/// router re-evaluates it whenever the session changes (login, logout, or
+/// a token the server rejected).
 final Provider<GoRouter> appRouterProvider = Provider<GoRouter>((ref) {
+  final ValueNotifier<AuthState> session = ValueNotifier<AuthState>(
+    ref.read(authControllerProvider),
+  );
+  ref.listen<AuthState>(
+    authControllerProvider,
+    (previous, next) => session.value = next,
+  );
+
   final GoRouter router = GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: kDebugMode,
+    refreshListenable: session,
+    redirect: (context, state) => authRedirect(session.value, state.uri),
     errorBuilder: (context, state) => const NotFoundPage(),
     routes: _buildRoutes(),
   );
-  ref.onDispose(router.dispose);
+  ref.onDispose(() {
+    router.dispose();
+    session.dispose();
+  });
   return router;
 }, name: 'appRouterProvider');
+
+/// `?from=` of the current location, if it points inside the app.
+String? _from(GoRouterState state) =>
+    AppRoutes.safeReturnLocation(state.uri.queryParameters['from']);
 
 /// Builds a fresh route tree. Shell branches own navigator keys, so route
 /// objects must never be shared between two [GoRouter] instances.
@@ -39,7 +59,7 @@ List<RouteBase> _buildRoutes() => <RouteBase>[
   GoRoute(path: AppRoutes.root, redirect: (_, _) => AppRoutes.splash),
   GoRoute(
     path: AppRoutes.splash,
-    builder: (context, state) => const SplashPage(),
+    builder: (context, state) => SplashPage(from: _from(state)),
   ),
   GoRoute(
     path: AppRoutes.welcome,
@@ -47,11 +67,11 @@ List<RouteBase> _buildRoutes() => <RouteBase>[
     routes: <RouteBase>[
       GoRoute(
         path: AppRoutes.loginSegment,
-        builder: (context, state) => const LoginPage(),
+        builder: (context, state) => LoginPage(from: _from(state)),
       ),
       GoRoute(
         path: AppRoutes.registerSegment,
-        builder: (context, state) => const RegisterPage(),
+        builder: (context, state) => RegisterPage(from: _from(state)),
       ),
     ],
   ),

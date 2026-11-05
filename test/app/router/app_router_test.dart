@@ -16,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../helpers/fake_auth_repository.dart';
 import '../../helpers/test_app.dart';
 
 void main() {
@@ -28,15 +29,23 @@ void main() {
   /// the compact breakpoint and would render the tablet layout.
   const Size phoneSize = Size(390, 844);
 
+  /// Opens [location]. The business workspace requires a session, so it
+  /// is opened signed in unless the test says otherwise.
   Future<void> pumpAppAt(
     WidgetTester tester,
     String location, {
     Size windowSize = phoneSize,
+    bool? signedIn,
   }) async {
     setTestWindowSize(tester, windowSize);
-    container = createTestContainer();
+    final bool withSession =
+        signedIn ?? AppRoutes.requiresAuthentication(Uri.parse(location).path);
+    container = createTestContainer(
+      authRepository: withSession ? FakeAuthRepository.signedIn() : null,
+    );
     router = container.read(appRouterProvider);
     await pumpDoryApp(tester, container);
+    await tester.pump(); // let the stored session be restored
     router.go(location);
     await tester.pumpAndSettle();
   }
@@ -169,7 +178,7 @@ void main() {
     });
 
     testWidgets('account page switches between workspaces', (tester) async {
-      await pumpAppAt(tester, AppRoutes.customerAccount);
+      await pumpAppAt(tester, AppRoutes.customerAccount, signedIn: true);
 
       await tester.tap(find.text('Switch to business workspace'));
       await tester.pumpAndSettle();
@@ -193,6 +202,58 @@ void main() {
 
       expect(find.byType(NavigationRail), findsOneWidget);
       expect(find.byType(NavigationBar), findsNothing);
+    });
+  });
+
+  group('Session guard', () {
+    testWidgets('guests opening the business workspace are sent to login', (
+      tester,
+    ) async {
+      await pumpAppAt(tester, AppRoutes.businessDashboard, signedIn: false);
+
+      expect(currentPath(), AppRoutes.login);
+      expect(find.byType(LoginPage), findsOneWidget);
+      expect(
+        router.routerDelegate.currentConfiguration.uri.queryParameters['from'],
+        AppRoutes.businessDashboard,
+      );
+    });
+
+    testWidgets(
+      'guests switching to the business workspace are asked to log in',
+      (tester) async {
+        await pumpAppAt(tester, AppRoutes.customerAccount, signedIn: false);
+
+        await tester.tap(find.text('Switch to business workspace'));
+        await tester.pumpAndSettle();
+
+        expect(currentPath(), AppRoutes.login);
+      },
+    );
+
+    testWidgets('signed-in users skip the welcome and login pages', (
+      tester,
+    ) async {
+      await pumpAppAt(tester, AppRoutes.login, signedIn: true);
+
+      expect(currentPath(), AppRoutes.customerHome);
+    });
+
+    testWidgets('logging out from the account tab returns to welcome', (
+      tester,
+    ) async {
+      await pumpAppAt(tester, AppRoutes.businessAccount);
+
+      await tester.ensureVisible(find.text('Log out'));
+      await tester.tap(find.text('Log out'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(FilledButton, 'Log out'));
+      await tester.pumpAndSettle();
+
+      expect(currentPath(), AppRoutes.welcome);
+      router.go(AppRoutes.businessDashboard);
+      await tester.pumpAndSettle();
+      expect(currentPath(), AppRoutes.login);
     });
   });
 

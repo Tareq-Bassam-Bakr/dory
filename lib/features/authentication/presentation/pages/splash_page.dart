@@ -5,34 +5,61 @@ import 'package:dory_app/app/router/app_routes.dart';
 import 'package:dory_app/app/theme/theme.dart';
 import 'package:dory_app/core/constants/app_constants.dart';
 import 'package:dory_app/core/widgets/widgets.dart';
+import 'package:dory_app/features/authentication/presentation/providers/auth_controller.dart';
+import 'package:dory_app/features/authentication/presentation/providers/auth_state.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Brand screen shown at launch.
+/// Brand screen shown at launch while the stored session is restored.
 ///
-/// Phase 01 has no session to restore, so it always continues to welcome.
-/// Phase 02 resolves the stored session here and routes to the right
-/// workspace instead.
-class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+/// It continues once both the minimum brand time has passed and the
+/// session check finished: to `?from=` (a deep link that needed the
+/// session), to the signed-in user's home workspace, or to welcome.
+class SplashPage extends ConsumerStatefulWidget {
+  const SplashPage({super.key, this.from});
+
+  final String? from;
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  ConsumerState<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _SplashPageState extends ConsumerState<SplashPage> {
   Timer? _timer;
+  bool _minimumElapsed = false;
+  bool _sessionChecked = false;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer(AppConstants.splashMinimumDuration, _continue);
+    _timer = Timer(AppConstants.splashMinimumDuration, () {
+      _minimumElapsed = true;
+      _continue();
+    });
+    unawaited(
+      ref.read(authControllerProvider.notifier).ready.then((_) {
+        _sessionChecked = true;
+        _continue();
+      }),
+    );
   }
 
   void _continue() {
-    if (mounted) {
-      context.go(AppRoutes.welcome);
+    if (!mounted || !_minimumElapsed || !_sessionChecked) {
+      return;
     }
+    final AuthState auth = ref.read(authControllerProvider);
+    final String? from = widget.from;
+    final Uri? target = from == null ? null : Uri.parse(from);
+    context.go(switch (auth) {
+      Authenticated(:final user) => from ?? AppRoutes.homeFor(user),
+      _ when target == null => AppRoutes.welcome,
+      // A protected deep link: sign in first, then continue there.
+      _ when AppRoutes.requiresAuthentication(target.path) =>
+        AppRoutes.withFrom(AppRoutes.login, target),
+      _ => from!,
+    });
   }
 
   @override

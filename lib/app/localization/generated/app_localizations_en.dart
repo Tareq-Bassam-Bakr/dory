@@ -56,10 +56,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authHidePassword => 'Hide password';
 
   @override
-  String get authUnavailableNotice =>
-      'Account sign-in is not available yet. It will be enabled in an upcoming update.';
-
-  @override
   String get loginTitle => 'Welcome back';
 
   @override
@@ -259,4 +255,88 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notFoundAction => 'Back to start';
+
+  @override
+  String get authEmailRequired => 'Enter your email address.';
+
+  @override
+  String get authEmailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get authPasswordRequired => 'Enter your password.';
+
+  @override
+  String get authNameInvalid => 'Enter your name (2 to 120 characters).';
+
+  @override
+  String get authPhoneHint =>
+      'Optional. International format, e.g. +963912345678';
+
+  @override
+  String get authPhoneInvalid =>
+      'Use the international format, e.g. +963912345678.';
+
+  @override
+  String get authPasswordRules =>
+      'At least 8 characters, with upper and lower case letters and a number.';
+
+  @override
+  String get authPasswordTooWeak =>
+      'The password does not meet the requirements below.';
+
+  @override
+  String get authConfirmPasswordLabel => 'Confirm password';
+
+  @override
+  String get authPasswordMismatch => 'The passwords do not match.';
+
+  @override
+  String get authErrorInvalidCredentials =>
+      'The email or password is incorrect.';
+
+  @override
+  String get authErrorAccountInactive =>
+      'This account is not active. Please contact support.';
+
+  @override
+  String get authErrorRateLimited =>
+      'Too many attempts. Please wait a minute and try again.';
+
+  @override
+  String get authErrorValidation => 'Please correct the highlighted fields.';
+
+  @override
+  String get authSessionExpired =>
+      'Your session has ended. Please log in again.';
+
+  @override
+  String get errorNetwork =>
+      'Cannot reach DORY. Check your connection and try again.';
+
+  @override
+  String get errorServer =>
+      'DORY is having trouble right now. Please try again shortly.';
+
+  @override
+  String get errorUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String get accountSignedInSection => 'Signed in as';
+
+  @override
+  String get accountLogout => 'Log out';
+
+  @override
+  String get accountLogoutConfirmTitle => 'Log out of DORY?';
+
+  @override
+  String get accountLogoutConfirmMessage =>
+      'You will need to log in again to manage your businesses.';
+
+  @override
+  String get accountOfflineNotice =>
+      'You are offline. Showing your last known details.';
+
+  @override
+  String get commonCancel => 'Cancel';
 }

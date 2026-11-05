@@ -28,6 +28,11 @@ class DoryTextField extends StatefulWidget {
     this.onChanged,
     this.onFieldSubmitted,
     this.enabled = true,
+    this.errorText,
+    this.helperText,
+    this.maxLines = 1,
+    this.minLines,
+    this.textCapitalization = TextCapitalization.none,
   });
 
   final String label;
@@ -46,6 +51,18 @@ class DoryTextField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onFieldSubmitted;
   final bool enabled;
+
+  /// An error to show regardless of [validator], e.g. one returned by the
+  /// server. Clear it when the user edits the field.
+  final String? errorText;
+
+  /// Guidance shown under the field while there is no error.
+  final String? helperText;
+
+  /// Lines of a multi-line field. Ignored for password fields.
+  final int maxLines;
+  final int? minLines;
+  final TextCapitalization textCapitalization;
 
   @override
   State<DoryTextField> createState() => _DoryTextFieldState();
@@ -73,9 +90,16 @@ class _DoryTextFieldState extends State<DoryTextField> {
       validator: widget.validator,
       onChanged: widget.onChanged,
       onFieldSubmitted: widget.onFieldSubmitted,
+      maxLines: _isPassword ? 1 : widget.maxLines,
+      minLines: _isPassword ? null : widget.minLines,
+      textCapitalization: widget.textCapitalization,
       decoration: InputDecoration(
         labelText: widget.label,
         hintText: widget.hint,
+        errorText: widget.errorText,
+        helperText: widget.helperText,
+        helperMaxLines: 3,
+        errorMaxLines: 3,
         prefixIcon: widget.prefixIcon == null ? null : Icon(widget.prefixIcon),
         suffixIcon: labels == null
             ? null

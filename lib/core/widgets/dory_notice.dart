@@ -2,7 +2,7 @@ import 'package:dory_app/app/theme/theme.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Tone of a [DoryNotice].
-enum DoryNoticeTone { info, warning }
+enum DoryNoticeTone { info, success, warning, error }
 
 /// Inline message banner, e.g. to explain why an action is unavailable.
 class DoryNotice extends StatelessWidget {
@@ -23,10 +23,20 @@ class DoryNotice extends StatelessWidget {
         AppColors.onPrimaryContainer,
         Icons.info_outline_rounded,
       ),
+      DoryNoticeTone.success => (
+        AppColors.successContainer,
+        AppColors.success,
+        Icons.check_circle_outline_rounded,
+      ),
       DoryNoticeTone.warning => (
         AppColors.warningContainer,
         AppColors.warning,
         Icons.warning_amber_rounded,
+      ),
+      DoryNoticeTone.error => (
+        AppColors.errorContainer,
+        AppColors.onErrorContainer,
+        Icons.error_outline_rounded,
       ),
     };
 

@@ -188,12 +188,6 @@ abstract class AppLocalizations {
   /// **'Hide password'**
   String get authHidePassword;
 
-  /// Notice on login and registration screens while authentication is not implemented.
-  ///
-  /// In en, this message translates to:
-  /// **'Account sign-in is not available yet. It will be enabled in an upcoming update.'**
-  String get authUnavailableNotice;
-
   /// Login screen title.
   ///
   /// In en, this message translates to:
@@ -571,6 +565,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to start'**
   String get notFoundAction;
+
+  /// Validation error when the email field is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address.'**
+  String get authEmailRequired;
+
+  /// Validation error when the email is malformed.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get authEmailInvalid;
+
+  /// Validation error when the password field is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your password.'**
+  String get authPasswordRequired;
+
+  /// Validation error for the full name on registration.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name (2 to 120 characters).'**
+  String get authNameInvalid;
+
+  /// Helper text under the optional phone field on registration.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional. International format, e.g. +963912345678'**
+  String get authPhoneHint;
+
+  /// Validation error for a malformed phone number.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the international format, e.g. +963912345678.'**
+  String get authPhoneInvalid;
+
+  /// Password requirements shown under the new password field.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 8 characters, with upper and lower case letters and a number.'**
+  String get authPasswordRules;
+
+  /// Validation error when the new password is too weak.
+  ///
+  /// In en, this message translates to:
+  /// **'The password does not meet the requirements below.'**
+  String get authPasswordTooWeak;
+
+  /// Label of the password confirmation field on registration.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm password'**
+  String get authConfirmPasswordLabel;
+
+  /// Validation error when the confirmation differs from the password.
+  ///
+  /// In en, this message translates to:
+  /// **'The passwords do not match.'**
+  String get authPasswordMismatch;
+
+  /// Error shown when login credentials are rejected.
+  ///
+  /// In en, this message translates to:
+  /// **'The email or password is incorrect.'**
+  String get authErrorInvalidCredentials;
+
+  /// Error shown when a suspended or deactivated account tries to log in.
+  ///
+  /// In en, this message translates to:
+  /// **'This account is not active. Please contact support.'**
+  String get authErrorAccountInactive;
+
+  /// Error shown when login or registration is rate limited.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please wait a minute and try again.'**
+  String get authErrorRateLimited;
+
+  /// Error shown when the server rejects some fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please correct the highlighted fields.'**
+  String get authErrorValidation;
+
+  /// Notice on the login screen after the server rejected the stored session.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has ended. Please log in again.'**
+  String get authSessionExpired;
+
+  /// Error shown when the server cannot be reached.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot reach DORY. Check your connection and try again.'**
+  String get errorNetwork;
+
+  /// Error shown when the server fails (HTTP 5xx).
+  ///
+  /// In en, this message translates to:
+  /// **'DORY is having trouble right now. Please try again shortly.'**
+  String get errorServer;
+
+  /// Fallback error message.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errorUnknown;
+
+  /// Label above the signed-in user's name on the account screen.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed in as'**
+  String get accountSignedInSection;
+
+  /// Button that ends the session.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out'**
+  String get accountLogout;
+
+  /// Title of the logout confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Log out of DORY?'**
+  String get accountLogoutConfirmTitle;
+
+  /// Message of the logout confirmation dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'You will need to log in again to manage your businesses.'**
+  String get accountLogoutConfirmMessage;
+
+  /// Notice on the account screen when the session was restored without reaching the server.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline. Showing your last known details.'**
+  String get accountOfflineNotice;
+
+  /// Button that dismisses a dialog without acting.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get commonCancel;
 }
 
 class _AppLocalizationsDelegate

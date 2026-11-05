@@ -32,6 +32,8 @@ dependencies:
   shared_preferences: ^2.5.6
   # Required by generated localizations. Version is pinned by flutter_localizations.
   intl: ^0.20.2
+  dio: ^5.11.1
+  flutter_secure_storage: ^11.2.0
 
 dev_dependencies:
   flutter_test:
