@@ -8,7 +8,10 @@ use App\Models\QueueSession;
 use App\Models\QueueTicket;
 use App\Models\User;
 use App\Services\Queues\GuestTicketCookies;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Testing\TestResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 use Tests\Concerns\BuildsQueues;
@@ -226,6 +229,41 @@ class GuestQueuePageTest extends TestCase
             $response->assertStatus(419)->assertSee('This page has expired');
         }
         $this->assertSame(0, QueueTicket::query()->count());
+    }
+
+    /**
+     * Regression: with Referrer-Policy no-referrer, browsers post forms with
+     * "Origin: null"; Sec-Fetch-Site decides.
+     */
+    public function test_a_real_browser_form_post_with_a_null_origin_is_accepted(): void
+    {
+        $nonce = $this->formNonce();
+
+        $browser = $this->withCookie(GuestTicketCookies::FORM_COOKIE, $nonce)
+            ->withHeaders(['Sec-Fetch-Site' => 'same-origin', 'Origin' => 'null'])
+            ->post($this->joinUri(), ['name' => 'Rami', '_form' => $nonce]);
+        $crossSite = $this->withCookie(GuestTicketCookies::FORM_COOKIE, $nonce)
+            ->withHeaders(['Sec-Fetch-Site' => 'cross-site', 'Origin' => 'null'])
+            ->post($this->joinUri(), ['name' => 'Rami', '_form' => $nonce]);
+
+        $browser->assertStatus(303);
+        $crossSite->assertStatus(419);
+        $this->assertSame(1, QueueTicket::query()->count());
+    }
+
+    /**
+     * The test suite skips Laravel's session-based forgery checks, so this
+     * guards that the guest forms (which keep no session) never rely on them.
+     */
+    public function test_guest_forms_do_not_depend_on_session_csrf(): void
+    {
+        foreach (['guest.join.store', 'guest.ticket.cancel'] as $name) {
+            $route = Route::getRoutes()->getByName($name);
+
+            $this->assertContains(PreventRequestForgery::class, $route->excludedMiddleware(), $name);
+            $this->assertContains(ValidateCsrfToken::class, $route->excludedMiddleware(), $name);
+            $this->assertContains('guest.form', $route->gatherMiddleware(), $name);
+        }
     }
 
     // ----- Cancelling ---------------------------------------------------

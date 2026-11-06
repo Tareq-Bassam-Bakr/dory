@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\GuestQueueController;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,9 @@ Route::pattern('guestToken', '[A-Za-z0-9]{40}');
 Route::pattern('guestTicket', '[0-9A-Za-z]{26}');
 
 Route::middleware(['guest.locale', 'throttle:queue-public'])
-    ->withoutMiddleware([ValidateCsrfToken::class])
+    // Both of Laravel's session-based forgery checks (13 uses
+    // PreventRequestForgery in the web group); see the comment above.
+    ->withoutMiddleware([ValidateCsrfToken::class, PreventRequestForgery::class])
     ->name('guest.')
     ->group(function (): void {
         Route::get('join/{guestToken}', [GuestQueueController::class, 'show'])->name('join');

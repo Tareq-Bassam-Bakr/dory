@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Laravel's session CSRF token (the backend keeps no sessions):
  *
  * - Sec-Fetch-Site, when the browser sends it, must be same-origin or none;
- * - Origin, when sent, must be this site.
+ * - Origin, when sent and not "null", must be this site.
  *
  * The join form also carries a double-submit nonce, and the cancel form
  * relies on the SameSite=Strict ticket cookie (GuestTicketCookies).
@@ -23,8 +23,11 @@ class VerifyGuestFormSubmission
         $site = $request->headers->get('Sec-Fetch-Site');
         $origin = $request->headers->get('Origin');
 
+        // Browsers send "Origin: null" on form posts from pages with
+        // Referrer-Policy: no-referrer (ours), so "null" proves nothing
+        // either way; a real foreign origin is always refused.
         $crossSite = ($site !== null && ! in_array($site, ['same-origin', 'none'], true))
-            || ($origin !== null && rtrim($origin, '/') !== $request->getSchemeAndHttpHost());
+            || ($origin !== null && $origin !== 'null' && rtrim($origin, '/') !== $request->getSchemeAndHttpHost());
 
         if ($crossSite) {
             return response()->view('guest.message', [
