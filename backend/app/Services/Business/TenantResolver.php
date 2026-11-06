@@ -6,11 +6,16 @@ use App\Exceptions\BranchNotFoundException;
 use App\Exceptions\BusinessNotFoundException;
 use App\Exceptions\InvitationNotFoundException;
 use App\Exceptions\MemberNotFoundException;
+use App\Exceptions\QueueException;
 use App\Exceptions\ServiceNotFoundException;
 use App\Models\Branch;
 use App\Models\Business;
 use App\Models\BusinessInvitation;
 use App\Models\BusinessMember;
+use App\Models\Queue;
+use App\Models\QueueSession;
+use App\Models\QueueStaffAssignment;
+use App\Models\QueueTicket;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -81,6 +86,89 @@ final class TenantResolver
         $this->context->use($membership);
 
         return $service;
+    }
+
+    /**
+     * A queue of a branch the user may reach.
+     */
+    public function queue(?User $user, string $publicId): Queue
+    {
+        $queue = $user === null ? null : Queue::query()
+            ->where('public_id', $publicId)
+            ->whereHas('branch.business', fn (Builder $business) => $business->accessibleBy($user))
+            ->with(['branch.business', 'service'])
+            ->first();
+
+        $this->useBranchMembership($user, $queue?->branch) ?? throw QueueException::notFound('queue');
+
+        return $queue;
+    }
+
+    /**
+     * A session of a queue the user may reach.
+     */
+    public function queueSession(?User $user, string $publicId): QueueSession
+    {
+        $session = $user === null ? null : QueueSession::query()
+            ->where('public_id', $publicId)
+            ->whereHas('queue', fn (Builder $queue) => $queue->whereHas(
+                'branch.business',
+                fn (Builder $business) => $business->accessibleBy($user),
+            ))
+            ->with(['queue.branch.business', 'queue.service'])
+            ->first();
+
+        $this->useBranchMembership($user, $session?->queue?->branch) ?? throw QueueException::notFound('session');
+
+        return $session;
+    }
+
+    /**
+     * A ticket of a queue the user may reach (staff access).
+     */
+    public function staffTicket(?User $user, string $publicId): QueueTicket
+    {
+        $ticket = $user === null ? null : QueueTicket::query()
+            ->where('public_id', $publicId)
+            ->whereHas('queue', fn (Builder $queue) => $queue->whereHas(
+                'branch.business',
+                fn (Builder $business) => $business->accessibleBy($user),
+            ))
+            ->with(['queue.branch.business', 'queue.service', 'session'])
+            ->first();
+
+        $this->useBranchMembership($user, $ticket?->queue?->branch) ?? throw QueueException::notFound('ticket');
+
+        return $ticket;
+    }
+
+    /**
+     * A staff assignment of the queue already resolved for this request.
+     */
+    public function assignment(?Queue $queue, string $publicId): QueueStaffAssignment
+    {
+        return $queue?->staffAssignments()->where('public_id', $publicId)->with('member.user')->first()
+            ?? throw QueueException::notFound('assignment');
+    }
+
+    /**
+     * Sets the context from the user's membership when it reaches the
+     * branch; null otherwise.
+     */
+    private function useBranchMembership(?User $user, ?Branch $branch): ?BusinessMember
+    {
+        if ($user === null || $branch === null || $branch->business === null) {
+            return null;
+        }
+
+        $membership = $this->memberships->findMembership($user, $branch->business);
+        if ($membership === null || ! $membership->canAccessBranch($branch)) {
+            return null;
+        }
+
+        $membership->setRelation('business', $branch->business);
+
+        return $this->context->use($membership);
     }
 
     /**

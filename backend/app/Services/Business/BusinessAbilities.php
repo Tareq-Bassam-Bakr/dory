@@ -6,6 +6,8 @@ use App\Enums\BusinessRole;
 use App\Models\Branch;
 use App\Models\Business;
 use App\Models\BusinessMember;
+use App\Models\Queue;
+use App\Models\QueueStaffAssignment;
 
 /**
  * What one membership may do in its business: the single source of the
@@ -107,6 +109,51 @@ final readonly class BusinessAbilities
     public function canManageServices(Branch $branch): bool
     {
         return $this->canUpdateBranch($branch);
+    }
+
+    /**
+     * Configure the branch's queues, open/close them, assign staff, rotate
+     * public links: the owner, or a manager with access to the branch.
+     */
+    public function canManageQueues(Branch $branch): bool
+    {
+        return $this->canUpdateBranch($branch);
+    }
+
+    /**
+     * Run a queue (sessions, calling and serving): queue managers, plus
+     * employees assigned to this queue who still reach its branch.
+     */
+    public function canOperateQueue(Queue $queue): bool
+    {
+        if (! $this->acceptsChanges() || ! $this->canViewBranch($queue->branch)) {
+            return false;
+        }
+
+        return $this->canManageQueues($queue->branch) || $this->isAssignedTo($queue);
+    }
+
+    public function isAssignedTo(Queue $queue): bool
+    {
+        return $this->membership !== null
+            && QueueStaffAssignment::query()
+                ->where('queue_id', $queue->getKey())
+                ->where('business_member_id', $this->membership->getKey())
+                ->whereNull('unassigned_at')
+                ->exists();
+    }
+
+    /**
+     * @return array<string, bool>
+     */
+    public function queuePermissions(Queue $queue): array
+    {
+        $manage = $this->canManageQueues($queue->branch);
+
+        return [
+            'manage' => $manage,
+            'operate' => $manage || $this->canOperateQueue($queue),
+        ];
     }
 
     /**

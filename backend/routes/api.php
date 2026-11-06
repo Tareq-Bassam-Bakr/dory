@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\V1\Businesses\BusinessInvitationController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessMemberController;
 use App\Http\Controllers\Api\V1\Businesses\InvitationController;
 use App\Http\Controllers\Api\V1\Businesses\ServiceController;
+use App\Http\Controllers\Api\V1\Queues\QueueController;
+use App\Http\Controllers\Api\V1\Queues\QueueSessionController;
 use App\Http\Controllers\Api\V1\System\HealthController;
 use App\Http\Controllers\Api\V1\Users\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -90,6 +92,27 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             ->middleware('throttle:invitations')->name('invitations.store');
         Route::delete('businesses/{business}/invitations/{invitation}', [BusinessInvitationController::class, 'destroy'])
             ->name('invitations.destroy');
+
+        // Queue configuration (docs/QUEUE_API_REFERENCE.md)
+        Route::get('businesses/{business}/queues', [QueueController::class, 'businessIndex'])->name('queues.business-index');
+        Route::get('branches/{branch}/queues', [QueueController::class, 'index'])->name('queues.index');
+        Route::post('branches/{branch}/queues', [QueueController::class, 'store'])->name('queues.store');
+        Route::get('queues/{queue}', [QueueController::class, 'show'])->name('queues.show');
+        Route::put('queues/{queue}', [QueueController::class, 'update'])->name('queues.update');
+        Route::delete('queues/{queue}', [QueueController::class, 'destroy'])->name('queues.destroy');
+        Route::get('queues/{queue}/public-link', [QueueController::class, 'publicLink'])->name('queues.public-link');
+        Route::post('queues/{queue}/rotate-public-token', [QueueController::class, 'rotatePublicToken'])
+            ->name('queues.rotate-public-token');
+
+        // Queue sessions
+        Route::get('queues/{queue}/current-session', [QueueSessionController::class, 'current'])->name('queues.current-session');
+        Route::get('queues/{queue}/sessions', [QueueSessionController::class, 'index'])->name('queues.sessions');
+        Route::middleware('throttle:queue-operations')->group(function (): void {
+            Route::post('queues/{queue}/open', [QueueSessionController::class, 'open'])->name('queues.open');
+            Route::post('queues/{queue}/pause', [QueueSessionController::class, 'pause'])->name('queues.pause');
+            Route::post('queues/{queue}/resume', [QueueSessionController::class, 'resume'])->name('queues.resume');
+            Route::post('queues/{queue}/close', [QueueSessionController::class, 'close'])->name('queues.close');
+        });
 
         // Invitations, invitee side (the token is the secret)
         Route::middleware('throttle:invitation-token')->group(function (): void {

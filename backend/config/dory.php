@@ -27,6 +27,12 @@ return [
         'password_reset' => (int) env('RATE_LIMIT_PASSWORD_RESET_PER_MINUTE', 3),
         'invitations' => (int) env('RATE_LIMIT_INVITATIONS_PER_MINUTE', 10),
         'invitation_token' => (int) env('RATE_LIMIT_INVITATION_TOKEN_PER_MINUTE', 30),
+        // Joining a queue, per user (or IP for guests) and queue.
+        'queue_join' => (int) env('RATE_LIMIT_QUEUE_JOIN_PER_MINUTE', 10),
+        // Public queue and ticket lookups, per IP.
+        'queue_public' => (int) env('RATE_LIMIT_QUEUE_PUBLIC_PER_MINUTE', 60),
+        // Staff queue actions (call next, start, complete...), per user.
+        'queue_operations' => (int) env('RATE_LIMIT_QUEUE_OPERATIONS_PER_MINUTE', 120),
     ],
 
     /*
@@ -45,6 +51,29 @@ return [
         'expires_in_days' => (int) env('INVITATION_EXPIRES_IN_DAYS', 7),
         'share_links' => (bool) env('INVITATION_SHARE_LINKS', env('APP_ENV', 'production') !== 'production'),
         'send_emails' => (bool) env('INVITATION_SEND_EMAILS', false),
+    ],
+
+    /*
+     * Queue engine (docs/QUEUE_ENGINE_ARCHITECTURE.md).
+     *
+     * - public_join_url: the link behind each queue's QR code; "{token}" is
+     *   replaced by the queue's public token. The default is the guest web
+     *   page served by this backend (routes/web.php), so a QR code works on
+     *   any phone camera without the app installed.
+     * - wait_history_minimum: completed tickets needed before wait times are
+     *   estimated from history instead of the configured service duration.
+     * - wait_history_size: how many recent completed tickets the history
+     *   average uses.
+     * - guest_cookie_days: lifetime of the guest ticket cookie on the web page.
+     */
+    'queues' => [
+        'public_join_url' => env(
+            'QUEUE_PUBLIC_JOIN_URL',
+            rtrim((string) env('APP_URL', 'http://localhost'), '/').'/join/{token}',
+        ),
+        'wait_history_minimum' => (int) env('QUEUE_WAIT_HISTORY_MINIMUM', 5),
+        'wait_history_size' => (int) env('QUEUE_WAIT_HISTORY_SIZE', 20),
+        'guest_cookie_days' => (int) env('QUEUE_GUEST_COOKIE_DAYS', 2),
     ],
 
     /*

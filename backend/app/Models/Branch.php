@@ -90,4 +90,12 @@ class Branch extends Model
     {
         return $this->status === BranchStatus::Active;
     }
+
+    /**
+     * @return HasMany<Queue, $this>
+     */
+    public function queues(): HasMany
+    {
+        return $this->hasMany(Queue::class);
+    }
 }

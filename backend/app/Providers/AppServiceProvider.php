@@ -3,14 +3,17 @@
 namespace App\Providers;
 
 use App\Contracts\InvitationNotifier;
+use App\Models\Queue;
 use App\Models\User;
 use App\Services\Business\CurrentBusinessContext;
 use App\Services\Business\TenantResolver;
 use App\Services\Invitations\MailInvitationNotifier;
+use App\Services\Queues\PublicQueueResolver;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Route as RouteInstance;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -51,10 +54,15 @@ class AppServiceProvider extends ServiceProvider
      */
     private function configureRouteBindings(): void
     {
-        foreach (['business', 'branch', 'service', 'member', 'invitation'] as $parameter) {
+        $publicIds = [
+            'business', 'branch', 'service', 'member', 'invitation',
+            'queue', 'queueSession', 'ticket', 'assignment', 'joinableQueue', 'myTicket', 'publicTicket',
+        ];
+        foreach ($publicIds as $parameter) {
             Route::pattern($parameter, '[0-9A-Za-z]{26}');
         }
         Route::pattern('invitationToken', '[A-Za-z0-9]{64}');
+        Route::pattern('publicQueueToken', '[A-Za-z0-9]{40}');
 
         $resolver = fn (): TenantResolver => $this->app->make(TenantResolver::class);
         $user = fn (): ?User => request()->user();
@@ -65,6 +73,23 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('member', fn (string $value) => $resolver()->member($value));
         Route::bind('invitation', fn (string $value) => $resolver()->invitation($value));
         Route::bind('invitationToken', fn (string $value) => $resolver()->invitationByToken($value));
+
+        // Queue engine, business side (members only).
+        Route::bind('queue', fn (string $value) => $resolver()->queue($user(), $value));
+        Route::bind('queueSession', fn (string $value) => $resolver()->queueSession($user(), $value));
+        Route::bind('ticket', fn (string $value) => $resolver()->staffTicket($user(), $value));
+        Route::bind('assignment', function (string $value, RouteInstance $route) use ($resolver) {
+            $queue = $route->parameter('queue');
+
+            return $resolver()->assignment($queue instanceof Queue ? $queue : null, $value);
+        });
+
+        // Queue engine, customer and guest side (no membership needed).
+        $public = fn (): PublicQueueResolver => $this->app->make(PublicQueueResolver::class);
+        Route::bind('joinableQueue', fn (string $value) => $public()->joinableQueue($value));
+        Route::bind('myTicket', fn (string $value) => $public()->myTicket($user(), $value));
+        Route::bind('publicQueueToken', fn (string $value) => $public()->byPublicToken($value));
+        Route::bind('publicTicket', fn (string $value) => $public()->publicTicket($value));
     }
 
     /**
@@ -127,6 +152,29 @@ class AppServiceProvider extends ServiceProvider
         // characters, and this keeps guessing impractical as well as impossible.
         RateLimiter::for('invitation-token', function (Request $request) {
             return Limit::perMinute(config('dory.rate_limits.invitation_token'))->by('invite-token:'.$request->ip());
+        });
+
+        // Joining a queue: per user (or IP for guests) and queue, and per IP.
+        RateLimiter::for('queue-join', function (Request $request) {
+            $route = $request->route();
+            $queue = (string) ($route?->originalParameter('joinableQueue') ?? $route?->originalParameter('publicQueueToken') ?? '');
+            $who = $request->user()?->getAuthIdentifier() ?: $request->ip();
+
+            return [
+                Limit::perMinute(config('dory.rate_limits.queue_join'))->by('queue-join:'.$who.'|'.hash('sha256', $queue)),
+                Limit::perMinute(config('dory.rate_limits.auth_per_ip'))->by('queue-join-ip:'.$request->ip()),
+            ];
+        });
+
+        // Public queue and ticket lookups (guest page, polling), per IP.
+        RateLimiter::for('queue-public', function (Request $request) {
+            return Limit::perMinute(config('dory.rate_limits.queue_public'))->by('queue-public:'.$request->ip());
+        });
+
+        // Staff actions on queues and tickets, per user.
+        RateLimiter::for('queue-operations', function (Request $request) {
+            return Limit::perMinute(config('dory.rate_limits.queue_operations'))
+                ->by('queue-ops:'.($request->user()?->getAuthIdentifier() ?: $request->ip()));
         });
     }
 

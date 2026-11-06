@@ -40,6 +40,14 @@ class BranchPolicy
         return $this->decide($user, $branch, fn (BusinessAbilities $a) => $a->canManageServices($branch));
     }
 
+    /**
+     * Create and list-manage the branch's queues.
+     */
+    public function manageQueues(User $user, Branch $branch): Response
+    {
+        return $this->decide($user, $branch, fn (BusinessAbilities $a) => $a->canManageQueues($branch));
+    }
+
     public static function notFound(): Response
     {
         return Response::denyAsNotFound(__('api.branch.not_found'), 'branch_not_found');
