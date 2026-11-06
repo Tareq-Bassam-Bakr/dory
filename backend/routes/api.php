@@ -12,7 +12,10 @@ use App\Http\Controllers\Api\V1\Businesses\ServiceController;
 use App\Http\Controllers\Api\V1\Queues\CustomerTicketController;
 use App\Http\Controllers\Api\V1\Queues\PublicQueueController;
 use App\Http\Controllers\Api\V1\Queues\QueueController;
+use App\Http\Controllers\Api\V1\Queues\QueueDashboardController;
+use App\Http\Controllers\Api\V1\Queues\QueueOperationsController;
 use App\Http\Controllers\Api\V1\Queues\QueueSessionController;
+use App\Http\Controllers\Api\V1\Queues\QueueStaffController;
 use App\Http\Controllers\Api\V1\System\HealthController;
 use App\Http\Controllers\Api\V1\Users\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -114,6 +117,28 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('queues/{queue}/pause', [QueueSessionController::class, 'pause'])->name('queues.pause');
             Route::post('queues/{queue}/resume', [QueueSessionController::class, 'resume'])->name('queues.resume');
             Route::post('queues/{queue}/close', [QueueSessionController::class, 'close'])->name('queues.close');
+        });
+
+        // Staff assigned to a queue
+        Route::get('queues/{queue}/staff', [QueueStaffController::class, 'index'])->name('queues.staff.index');
+        Route::post('queues/{queue}/staff', [QueueStaffController::class, 'store'])->name('queues.staff.store');
+        Route::delete('queues/{queue}/staff/{assignment}', [QueueStaffController::class, 'destroy'])->name('queues.staff.destroy');
+
+        // Live session view and serving customers
+        Route::get('queue-sessions/{queueSession}/dashboard', [QueueDashboardController::class, 'dashboard'])
+            ->name('queue-sessions.dashboard');
+        Route::get('queue-sessions/{queueSession}/tickets', [QueueDashboardController::class, 'tickets'])
+            ->name('queue-sessions.tickets');
+        Route::get('tickets/{ticket}', [QueueOperationsController::class, 'show'])->name('tickets.show');
+        Route::middleware('throttle:queue-operations')->group(function (): void {
+            Route::post('queue-sessions/{queueSession}/call-next', [QueueOperationsController::class, 'callNext'])
+                ->name('queue-sessions.call-next');
+            Route::post('tickets/{ticket}/call', [QueueOperationsController::class, 'call'])->name('tickets.call');
+            Route::post('tickets/{ticket}/start', [QueueOperationsController::class, 'start'])->name('tickets.start');
+            Route::post('tickets/{ticket}/complete', [QueueOperationsController::class, 'complete'])->name('tickets.complete');
+            Route::post('tickets/{ticket}/skip', [QueueOperationsController::class, 'skip'])->name('tickets.skip');
+            Route::post('tickets/{ticket}/no-show', [QueueOperationsController::class, 'noShow'])->name('tickets.no-show');
+            Route::post('tickets/{ticket}/recall', [QueueOperationsController::class, 'recall'])->name('tickets.recall');
         });
 
         // Customers: joining and following their own tickets
