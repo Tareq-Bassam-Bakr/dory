@@ -101,7 +101,8 @@ jobs:
           php artisan key:generate --ansi
 
       - name: Show the database server version
-        run: php -r '$pdo = new PDO("mysql:host=127.0.0.1;port=3306", "root", ""); echo "Server: ", $pdo->query("SELECT VERSION()")->fetchColumn(), PHP_EOL;'
+        run: |
+          php -r '$pdo = new PDO("mysql:host=127.0.0.1;port=3306", "root", ""); echo "Server version ", $pdo->query("SELECT VERSION()")->fetchColumn(), PHP_EOL;'
 
       - name: Migrations (fresh, then rollback, then fresh again)
         run: |
