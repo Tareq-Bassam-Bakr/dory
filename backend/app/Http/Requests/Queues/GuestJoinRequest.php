@@ -8,7 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
 
 /**
- * POST /public/queues/{token}/join: a guest joins with the minimum the
+ * POST /public/queues/{token or id}/join: a guest joins with the minimum the
  * queue asks for. A phone number is optional unless the queue requires
  * it; when given, the guest must accept how it is used ("consent"), and it
  * is stored encrypted and only shown to the business's staff.
@@ -80,7 +80,7 @@ class GuestJoinRequest extends FormRequest
     public function queue(): Queue
     {
         /** @var Queue */
-        return $this->route('publicQueueToken');
+        return $this->route('publicQueueToken') ?? $this->route('joinableQueue');
     }
 
     public function guestName(): ?string

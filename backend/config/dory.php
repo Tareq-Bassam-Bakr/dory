@@ -33,6 +33,8 @@ return [
         'queue_public' => (int) env('RATE_LIMIT_QUEUE_PUBLIC_PER_MINUTE', 60),
         // Staff queue actions (call next, start, complete...), per user.
         'queue_operations' => (int) env('RATE_LIMIT_QUEUE_OPERATIONS_PER_MINUTE', 120),
+        // Public business discovery and search, per IP.
+        'discovery' => (int) env('RATE_LIMIT_DISCOVERY_PER_MINUTE', 120),
     ],
 
     /*
@@ -74,6 +76,24 @@ return [
         'wait_history_minimum' => (int) env('QUEUE_WAIT_HISTORY_MINIMUM', 5),
         'wait_history_size' => (int) env('QUEUE_WAIT_HISTORY_SIZE', 20),
         'guest_cookie_days' => (int) env('QUEUE_GUEST_COOKIE_DAYS', 2),
+    ],
+
+    /*
+     * Public business discovery (docs/BUSINESS_DISCOVERY.md).
+     *
+     * - default_radius_km / max_radius_km: nearby search around a location.
+     * - max_per_page: largest page of any discovery list.
+     * - wait_candidates: queues or businesses compared when results are
+     *   sorted or filtered by estimated wait, which only PHP can compute.
+     * - min_ratings: real ratings a business needs before it shows a rating
+     *   or takes part in "best rated" sorting.
+     */
+    'discovery' => [
+        'default_radius_km' => (int) env('DISCOVERY_DEFAULT_RADIUS_KM', 10),
+        'max_radius_km' => (int) env('DISCOVERY_MAX_RADIUS_KM', 100),
+        'max_per_page' => (int) env('DISCOVERY_MAX_PER_PAGE', 50),
+        'wait_candidates' => (int) env('DISCOVERY_WAIT_CANDIDATES', 200),
+        'min_ratings' => (int) env('DISCOVERY_MIN_RATINGS', 3),
     ],
 
     /*

@@ -99,6 +99,16 @@ class User extends Authenticatable
             ->wherePivot('status', MembershipStatus::Active->value);
     }
 
+    /**
+     * Businesses this customer saved. Unrelated to memberships.
+     *
+     * @return BelongsToMany<Business, $this>
+     */
+    public function favoriteBusinesses(): BelongsToMany
+    {
+        return $this->belongsToMany(Business::class, 'customer_favorites');
+    }
+
     public function isActive(): bool
     {
         return $this->status->canAuthenticate();

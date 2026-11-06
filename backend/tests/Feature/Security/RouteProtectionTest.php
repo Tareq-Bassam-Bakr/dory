@@ -35,6 +35,18 @@ class RouteProtectionTest extends TestCase
         'api.v1.public.queues.join',
         'api.v1.public.tickets.show',
         'api.v1.public.tickets.cancel',
+        // The same guest access by queue id, for queues found in discovery.
+        'api.v1.public.queues.by-id.show',
+        'api.v1.public.queues.by-id.join',
+        // Public discovery: only public businesses, branches and services.
+        'api.v1.discovery.businesses',
+        'api.v1.discovery.businesses.show',
+        'api.v1.discovery.businesses.branches',
+        'api.v1.discovery.nearby',
+        'api.v1.discovery.queues',
+        'api.v1.discovery.cities',
+        'api.v1.discovery.branches.show',
+        'api.v1.discovery.branches.services',
     ];
 
     /**

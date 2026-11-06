@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
@@ -159,6 +160,14 @@ class QueueTicket extends Model
     public function events(): HasMany
     {
         return $this->hasMany(QueueEvent::class, 'ticket_id');
+    }
+
+    /**
+     * @return HasOne<TicketReview, $this>
+     */
+    public function review(): HasOne
+    {
+        return $this->hasOne(TicketReview::class);
     }
 
     public function isGuest(): bool

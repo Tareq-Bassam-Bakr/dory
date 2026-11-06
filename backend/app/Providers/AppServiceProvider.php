@@ -8,6 +8,7 @@ use App\Models\Queue;
 use App\Models\User;
 use App\Services\Business\CurrentBusinessContext;
 use App\Services\Business\TenantResolver;
+use App\Services\Discovery\PublicCatalogResolver;
 use App\Services\Invitations\MailInvitationNotifier;
 use App\Services\Queues\HistoricalWaitTimeEstimator;
 use App\Services\Queues\PublicQueueResolver;
@@ -63,12 +64,15 @@ class AppServiceProvider extends ServiceProvider
         $publicIds = [
             'business', 'branch', 'service', 'member', 'invitation',
             'queue', 'queueSession', 'ticket', 'assignment', 'joinableQueue', 'myTicket', 'publicTicket',
+            'publicBranch', 'favoriteBusiness',
         ];
         foreach ($publicIds as $parameter) {
             Route::pattern($parameter, '[0-9A-Za-z]{26}');
         }
         Route::pattern('invitationToken', '[A-Za-z0-9]{64}');
         Route::pattern('publicQueueToken', '[A-Za-z0-9]{40}');
+        // A slug or a public id.
+        Route::pattern('publicBusiness', '[A-Za-z0-9-]{1,160}');
 
         $resolver = fn (): TenantResolver => $this->app->make(TenantResolver::class);
         $user = fn (): ?User => request()->user();
@@ -96,6 +100,12 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('myTicket', fn (string $value) => $public()->myTicket($user(), $value));
         Route::bind('publicQueueToken', fn (string $value) => $public()->byPublicToken($value));
         Route::bind('publicTicket', fn (string $value) => $public()->publicTicket($value));
+
+        // Public catalogue (no membership needed; only public records).
+        $catalog = fn (): PublicCatalogResolver => $this->app->make(PublicCatalogResolver::class);
+        Route::bind('publicBusiness', fn (string $value) => $catalog()->business($value));
+        Route::bind('publicBranch', fn (string $value) => $catalog()->branch($value));
+        Route::bind('favoriteBusiness', fn (string $value) => $catalog()->favoriteTarget($value));
     }
 
     /**
@@ -178,6 +188,11 @@ class AppServiceProvider extends ServiceProvider
         // Public queue and ticket lookups (guest page, polling), per IP.
         RateLimiter::for('queue-public', function (Request $request) {
             return Limit::perMinute(config('dory.rate_limits.queue_public'))->by('queue-public:'.$request->ip());
+        });
+
+        // Public discovery and search, per IP.
+        RateLimiter::for('discovery', function (Request $request) {
+            return Limit::perMinute(config('dory.rate_limits.discovery'))->by('discovery:'.$request->ip());
         });
 
         // Staff actions on queues and tickets, per user.

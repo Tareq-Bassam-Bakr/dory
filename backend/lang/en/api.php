@@ -82,6 +82,8 @@ return [
 
     'queue' => [
         'queue_not_found' => 'Queue not found',
+        'business_not_found' => 'Business not found',
+        'branch_not_found' => 'Branch not found',
         'session_not_found' => 'Queue session not found',
         'ticket_not_found' => 'Ticket not found',
         'assignment_not_found' => 'Staff assignment not found',
@@ -103,6 +105,12 @@ return [
         'queue_closed' => 'This queue is closed',
         'queue_paused' => 'This queue is paused and not accepting new customers right now',
         'queue_full' => 'This queue is full right now. Please try again later',
+        'business_unavailable' => 'This business is not taking customers right now',
+        'branch_inactive' => 'This branch is not taking customers right now',
+        'service_unavailable' => 'This service is not available right now',
+        'ticket_not_reviewable' => 'Only completed tickets can be rated',
+        'already_reviewed' => 'This ticket was already rated',
+        'review_saved' => 'Thank you for your rating',
         'guest_join_disabled' => 'This queue requires signing in to join',
         'duplicate_active_ticket' => 'You already have an active ticket in this queue',
         'invalid_ticket_transition' => 'A ticket cannot go from :from to :to',
@@ -122,6 +130,12 @@ return [
         'service_not_in_branch' => 'Choose a service of this branch',
         'member_not_eligible' => 'Choose an active manager or employee who works in this branch',
         'consent_required' => 'Please accept how your details are used',
+    ],
+
+    'favorites' => [
+        'saved' => 'Business saved',
+        'already_saved' => 'This business is already saved',
+        'removed' => 'Business removed from your saved list',
     ],
 
     'health' => [

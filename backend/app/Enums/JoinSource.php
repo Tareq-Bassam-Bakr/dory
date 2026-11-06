@@ -7,7 +7,7 @@ namespace App\Enums;
  */
 enum JoinSource: string
 {
-    /** A signed-in customer, through the authenticated API. */
+    /** Inside the DORY app: a signed-in customer, or a guest who found the queue through discovery. */
     case App = 'app';
 
     /** A guest, through the public link or QR code (API or web page). */

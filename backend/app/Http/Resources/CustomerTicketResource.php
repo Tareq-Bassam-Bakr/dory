@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Enums\TicketStatus;
 use App\Models\QueueTicket;
+use App\Models\TicketReview;
 use App\Services\Queues\TicketPositions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -39,6 +40,8 @@ class CustomerTicketResource extends JsonResource
         $queue = $ticket->queue;
         $session = $ticket->session;
         $positions = app(TicketPositions::class);
+        $business = $queue->branch->business;
+        $review = $this->reviewOf($ticket);
 
         return [
             'id' => $ticket->public_id,
@@ -50,8 +53,18 @@ class CustomerTicketResource extends JsonResource
                 'name' => $queue->name,
                 'session_status' => $session->status->value,
             ],
-            'business' => ['id' => $queue->branch->business->public_id, 'name' => $queue->branch->business->name],
-            'branch' => ['id' => $queue->branch->public_id, 'name' => $queue->branch->name],
+            'business' => [
+                'id' => $business->public_id,
+                'slug' => $business->slug,
+                'name' => $business->name,
+                'logo_url' => $business->logoUrl(),
+            ],
+            'branch' => [
+                'id' => $queue->branch->public_id,
+                'name' => $queue->branch->name,
+                'city' => $queue->branch->city,
+                'address' => $queue->branch->address,
+            ],
             'service' => $queue->service === null ? null : ['name' => $queue->service->name],
             ...$positions->describe($ticket, $queue),
             'now_serving' => $ticket->status->isActive() ? $positions->nowServing($session)->values()->all() : [],
@@ -60,6 +73,9 @@ class CustomerTicketResource extends JsonResource
                 ? $ticket->called_at?->copy()->addSeconds($queue->grace_period_seconds)->toIso8601String()
                 : null,
             'can_cancel' => $ticket->status === TicketStatus::Waiting,
+            // Guests cannot rate: only signed-in customers have a verified visit.
+            'can_review' => $ticket->status === TicketStatus::Completed && $ticket->user_id !== null && $review === null,
+            'my_rating' => $review?->rating,
             'cancel_reason' => $ticket->cancel_reason,
             'joined_at' => $ticket->joined_at->toIso8601String(),
             'called_at' => $ticket->called_at?->toIso8601String(),
@@ -68,5 +84,14 @@ class CustomerTicketResource extends JsonResource
             'ended_at' => $ticket->ended_at?->toIso8601String(),
             'access_token' => $this->when($this->accessToken !== null, $this->accessToken),
         ];
+    }
+
+    private function reviewOf(QueueTicket $ticket): ?TicketReview
+    {
+        if ($ticket->user_id === null || $ticket->status !== TicketStatus::Completed) {
+            return null;
+        }
+
+        return $ticket->loadMissing('review')->review;
     }
 }

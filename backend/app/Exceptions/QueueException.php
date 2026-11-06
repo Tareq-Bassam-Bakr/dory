@@ -55,6 +55,25 @@ final class QueueException extends ApiException
         return self::make(409, 'queue_full');
     }
 
+    /**
+     * The queue's business, branch or service cannot take customers.
+     * $reason comes from Queue::unavailabilityReason().
+     */
+    public static function unavailable(string $reason): self
+    {
+        return self::make(409, $reason);
+    }
+
+    public static function ticketNotReviewable(): self
+    {
+        return self::make(409, 'ticket_not_reviewable');
+    }
+
+    public static function alreadyReviewed(): self
+    {
+        return self::make(409, 'already_reviewed');
+    }
+
     public static function guestJoinDisabled(): self
     {
         return self::make(403, 'guest_join_disabled');

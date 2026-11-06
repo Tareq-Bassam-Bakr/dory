@@ -2,10 +2,16 @@
 
 namespace App\Models;
 
+use App\Enums\BusinessStatus;
+use App\Enums\QueueSessionStatus;
 use App\Enums\QueueStatus;
+use App\Enums\ServiceStatus;
+use App\Enums\TicketStatus;
 use Database\Factories\QueueFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -157,6 +163,64 @@ class Queue extends Model
     public function isActive(): bool
     {
         return $this->status === QueueStatus::Active;
+    }
+
+    /**
+     * Why customers cannot use this queue because of what it belongs to:
+     * "business_unavailable", "branch_inactive", "service_unavailable", or
+     * null when the business, branch and service are all available. Expects
+     * branch.business and service. Used by the join guard and by every
+     * public view, so the two can never disagree.
+     */
+    public function unavailabilityReason(): ?string
+    {
+        $business = $this->branch?->business;
+
+        return match (true) {
+            $business === null, $business->status !== BusinessStatus::Active => 'business_unavailable',
+            ! $this->branch->isActive() => 'branch_inactive',
+            $this->service === null, $this->service->trashed(), ! $this->service->isActive() => 'service_unavailable',
+            default => null,
+        };
+    }
+
+    /**
+     * Live queues with an open session: not paused, not closed. Use with
+     * branch and business checks; see DiscoveryQueries.
+     *
+     * @param  Builder<Queue>  $query
+     */
+    #[Scope]
+    protected function openForJoining(Builder $query): void
+    {
+        $query->where('queues.status', QueueStatus::Active->value)
+            ->whereHas('service', function (Builder $service): void {
+                $service->where('services.status', ServiceStatus::Active->value)->whereNull('services.deleted_at');
+            })
+            ->whereHas('activeSession', function (Builder $session): void {
+                $session->where('queue_sessions.status', QueueSessionStatus::Open->value);
+            });
+    }
+
+    /**
+     * Open and not full: a new ticket would be accepted right now. Capacity
+     * counts waiting tickets of the active session, as TicketJoinService does.
+     *
+     * @param  Builder<Queue>  $query
+     */
+    #[Scope]
+    protected function acceptingTickets(Builder $query): void
+    {
+        $query->openForJoining()->where(function (Builder $room): void {
+            $room->whereNull('queues.capacity')->orWhereRaw(
+                'queues.capacity > (select count(*) from queue_tickets
+                    inner join queue_sessions on queue_sessions.id = queue_tickets.queue_session_id
+                    where queue_sessions.queue_id = queues.id
+                    and queue_sessions.active_key is not null
+                    and queue_tickets.status = ?)',
+                [TicketStatus::Waiting->value],
+            );
+        });
     }
 
     /**

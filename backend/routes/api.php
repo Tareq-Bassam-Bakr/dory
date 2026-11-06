@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\V1\Businesses\BusinessInvitationController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessMemberController;
 use App\Http\Controllers\Api\V1\Businesses\InvitationController;
 use App\Http\Controllers\Api\V1\Businesses\ServiceController;
+use App\Http\Controllers\Api\V1\Customers\FavoriteController;
+use App\Http\Controllers\Api\V1\Discovery\DiscoveryController;
 use App\Http\Controllers\Api\V1\Queues\CustomerTicketController;
 use App\Http\Controllers\Api\V1\Queues\PublicQueueController;
 use App\Http\Controllers\Api\V1\Queues\QueueController;
@@ -63,6 +65,19 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
 
     // Public reference data.
     Route::get('business-categories', BusinessCategoryController::class)->name('business-categories.index');
+
+    // Public discovery (docs/CUSTOMER_API_REFERENCE.md). No account needed;
+    // only public businesses, branches and services are ever returned.
+    Route::prefix('discovery')->name('discovery.')->middleware('throttle:discovery')->group(function (): void {
+        Route::get('businesses', [DiscoveryController::class, 'businesses'])->name('businesses');
+        Route::get('businesses/{publicBusiness}', [DiscoveryController::class, 'business'])->name('businesses.show');
+        Route::get('businesses/{publicBusiness}/branches', [DiscoveryController::class, 'businessBranches'])->name('businesses.branches');
+        Route::get('nearby', [DiscoveryController::class, 'nearby'])->name('nearby');
+        Route::get('queues', [DiscoveryController::class, 'queues'])->name('queues');
+        Route::get('cities', [DiscoveryController::class, 'cities'])->name('cities');
+        Route::get('branches/{publicBranch}', [DiscoveryController::class, 'branch'])->name('branches.show');
+        Route::get('branches/{publicBranch}/services', [DiscoveryController::class, 'branchServices'])->name('branches.services');
+    });
 
     Route::middleware(['auth:sanctum', 'active'])->group(function (): void {
         // Businesses
@@ -147,6 +162,12 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('me/tickets', [CustomerTicketController::class, 'index'])->name('me.tickets');
         Route::get('tickets/{myTicket}/position', [CustomerTicketController::class, 'position'])->name('tickets.position');
         Route::post('tickets/{myTicket}/cancel', [CustomerTicketController::class, 'cancel'])->name('tickets.cancel');
+        Route::post('tickets/{myTicket}/review', [CustomerTicketController::class, 'review'])->name('tickets.review');
+
+        // Saved businesses, always the signed-in customer's own.
+        Route::get('me/favorites', [FavoriteController::class, 'index'])->name('me.favorites.index');
+        Route::post('me/favorites', [FavoriteController::class, 'store'])->name('me.favorites.store');
+        Route::delete('me/favorites/{favoriteBusiness}', [FavoriteController::class, 'destroy'])->name('me.favorites.destroy');
 
         // Invitations, invitee side (the token is the secret)
         Route::middleware('throttle:invitation-token')->group(function (): void {
@@ -161,6 +182,10 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::get('queues/{publicQueueToken}', [PublicQueueController::class, 'show'])->name('queues.show');
         Route::post('queues/{publicQueueToken}/join', [PublicQueueController::class, 'join'])
             ->middleware('throttle:queue-join')->name('queues.join');
+        // The same, for a queue found through discovery (26-character id).
+        Route::get('queues/{joinableQueue}', [PublicQueueController::class, 'show'])->name('queues.by-id.show');
+        Route::post('queues/{joinableQueue}/join', [PublicQueueController::class, 'joinById'])
+            ->middleware('throttle:queue-join')->name('queues.by-id.join');
         Route::middleware('ticket.token')->group(function (): void {
             Route::get('tickets/{publicTicket}', [PublicQueueController::class, 'ticket'])->name('tickets.show');
             Route::post('tickets/{publicTicket}/cancel', [PublicQueueController::class, 'cancel'])->name('tickets.cancel');

@@ -6,6 +6,8 @@ use App\Enums\ServiceStatus;
 use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -82,5 +84,19 @@ class Service extends Model
     public function queues(): HasMany
     {
         return $this->hasMany(Queue::class);
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === ServiceStatus::Active;
+    }
+
+    /**
+     * @param  Builder<Service>  $query
+     */
+    #[Scope]
+    protected function publiclyVisible(Builder $query): void
+    {
+        $query->where('services.status', ServiceStatus::Active->value);
     }
 }

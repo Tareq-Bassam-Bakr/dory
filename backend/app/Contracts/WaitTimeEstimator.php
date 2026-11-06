@@ -19,4 +19,13 @@ interface WaitTimeEstimator
      * @param  int  $peopleAhead  Waiting customers who will be called first.
      */
     public function estimate(Queue $queue, int $peopleAhead): WaitEstimate;
+
+    /**
+     * Prepares estimates for many queues at once, so that listing queues
+     * costs a fixed number of queries instead of a few per queue. Optional
+     * for callers: estimate() must work without it.
+     *
+     * @param  iterable<Queue>  $queues
+     */
+    public function warm(iterable $queues): void;
 }

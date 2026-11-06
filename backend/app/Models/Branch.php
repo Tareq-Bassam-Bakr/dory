@@ -6,6 +6,8 @@ use App\Enums\BranchStatus;
 use Database\Factories\BranchFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -89,6 +91,18 @@ class Branch extends Model
     public function isActive(): bool
     {
         return $this->status === BranchStatus::Active;
+    }
+
+    /**
+     * Branches customers may see. Combine with a check of the business
+     * (Business::publiclyVisible) when the query does not start from one.
+     *
+     * @param  Builder<Branch>  $query
+     */
+    #[Scope]
+    protected function publiclyVisible(Builder $query): void
+    {
+        $query->where('branches.status', BranchStatus::Active->value);
     }
 
     /**

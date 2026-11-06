@@ -59,11 +59,17 @@ final class TicketJoinService
     }
 
     /**
-     * A guest joins through the queue's public link or QR code. The result
-     * carries the ticket access token in plaintext, once.
+     * A guest joins through the queue's public link or QR code, or from the
+     * app ($source). The result carries the ticket access token in plaintext,
+     * once.
      */
-    public function joinAsGuest(Queue $queue, ?string $name, ?string $phone, ?string $idempotencyKey = null): JoinResult
-    {
+    public function joinAsGuest(
+        Queue $queue,
+        ?string $name,
+        ?string $phone,
+        ?string $idempotencyKey = null,
+        JoinSource $source = JoinSource::PublicLink,
+    ): JoinResult {
         if (! $queue->allow_guest_join) {
             throw QueueException::guestJoinDisabled();
         }
@@ -72,7 +78,7 @@ final class TicketJoinService
             $queue,
             null,
             ['guest_name' => $name, 'guest_phone' => $phone],
-            JoinSource::PublicLink,
+            $source,
             $idempotencyKey === null ? null : self::idempotencyHash('guest', $idempotencyKey),
         );
     }
@@ -84,6 +90,13 @@ final class TicketJoinService
     {
         if (! $queue->isActive()) {
             throw QueueException::queueInactive();
+        }
+
+        // A session may outlive the business, branch or service it belongs
+        // to being deactivated; the database state decides, not the client.
+        $reason = $queue->loadMissing(['branch.business', 'service'])->unavailabilityReason();
+        if ($reason !== null) {
+            throw QueueException::unavailable($reason);
         }
 
         try {
