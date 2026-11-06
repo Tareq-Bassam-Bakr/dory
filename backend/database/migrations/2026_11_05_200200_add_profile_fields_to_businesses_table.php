@@ -42,12 +42,22 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('businesses', function (Blueprint $table) {
+            // MySQL and MariaDB drop the index they created for the
+            // created_by foreign key as soon as the (created_by,
+            // idempotency_key) index can serve that key, and then refuse to
+            // drop the unique index (error 1553). So the foreign key goes
+            // first and is re-created below, which also re-creates its index.
+            $table->dropForeign(['created_by']);
             $table->dropUnique(['created_by', 'idempotency_key']);
             $table->dropConstrainedForeignId('category_id');
             $table->dropColumn([
                 'email', 'phone', 'website', 'timezone', 'logo_path', 'cover_path',
                 'idempotency_key', 'deleted_at',
             ]);
+        });
+
+        Schema::table('businesses', function (Blueprint $table) {
+            $table->foreign('created_by')->references('id')->on('users')->nullOnDelete();
         });
     }
 };

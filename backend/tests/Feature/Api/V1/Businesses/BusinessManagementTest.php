@@ -15,6 +15,7 @@ use App\Models\BusinessMember;
 use App\Models\User;
 use App\Services\Business\BusinessMembershipService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Concerns\BuildsTenants;
 use Tests\TestCase;
@@ -206,7 +207,11 @@ class BusinessManagementTest extends TestCase
             ->assertOk()->assertJsonPath('data.status', 'active');
 
         $changes = BusinessAuditLog::query()->where('action', AuditAction::BusinessStatusChanged->value)->orderBy('id')->get();
-        $this->assertSame([['from' => 'active', 'to' => 'inactive'], ['from' => 'inactive', 'to' => 'active']], $changes->pluck('properties')->all());
+        // MySQL's JSON type does not keep object key order, so compare with sorted keys.
+        $this->assertSame(
+            [['from' => 'active', 'to' => 'inactive'], ['from' => 'inactive', 'to' => 'active']],
+            $changes->pluck('properties')->map(fn (array $properties): array => Arr::sortRecursive($properties))->all(),
+        );
     }
 
     public function test_a_manager_cannot_change_the_status(): void

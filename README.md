@@ -20,10 +20,11 @@ This repository contains both parts of the product:
 > guests join from any phone without an account (web page in English and
 > Arabic). The business team runs it from 12 queue screens in the app.
 > Numbering and calling are safe under real concurrency (tested with
-> parallel processes on MariaDB). **Not yet:** real-time push (screens
-> poll), the customer-side ticket experience in the app, discovery and maps.
-> MySQL 8.4 has a CI workflow but has **not** been run yet; see
-> [docs/MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md).
+> parallel processes on MariaDB 10.4 and MySQL 8.4). **Not yet:** real-time
+> push (screens poll), the customer-side ticket experience in the app,
+> discovery and maps. MySQL 8.4 was verified on a local server; its CI job
+> does not run yet because GitHub Actions does not start for this
+> repository; see [docs/MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md).
 
 ## Required software
 
@@ -142,8 +143,11 @@ $env:DB_CONNECTION='mariadb'; $env:DB_DATABASE='dory_db_testing'; D:\php84\php.e
 ```
 
 Guests join a queue at `http://127.0.0.1:8000/join/<token>` (the link and QR
-code are on each queue's **QR code & link** screen). CI runs the suite on
-SQLite and MySQL 8.4: [.github/workflows/backend-tests.yml](.github/workflows/backend-tests.yml).
+code are on each queue's **QR code & link** screen). To run the suite on
+the local MySQL 8.4 test server, see
+[docs/MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md#the-local-test-server).
+The CI workflow runs it on SQLite and MySQL 8.4 once GitHub Actions starts for
+this repository: [.github/workflows/backend-tests.yml](.github/workflows/backend-tests.yml).
 
 Check code style:
 

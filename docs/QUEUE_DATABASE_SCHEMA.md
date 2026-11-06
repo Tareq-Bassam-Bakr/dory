@@ -107,5 +107,6 @@ The model throws on update and delete. Indexes on `(ticket_id, created_at)`,
 
 ## Verified on
 
-SQLite (tests), MariaDB 10.4 (local: migrate, rollback, migrate again, full
-suite). MySQL 8.4: see [MYSQL_84_COMPATIBILITY.md](MYSQL_84_COMPATIBILITY.md).
+SQLite (tests), MariaDB 10.4 and MySQL 8.4.13 (local: migrate, rollback of
+every migration, migrate again, full suite). Details:
+[MYSQL_84_COMPATIBILITY.md](MYSQL_84_COMPATIBILITY.md).

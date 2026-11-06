@@ -14,9 +14,12 @@ reused. Every rule that matters under load is enforced by the database
 (locks and unique indexes) and was exercised with real parallel processes on
 MariaDB. The business team runs everything from 12 new Flutter screens.
 
-**Not done / not proven:** MySQL 8.4 was **not** tested (no local server, and
-GitHub did not start the CI workflow for account reasons). There is no
-real-time push yet; screens poll and say so.
+**MySQL 8.4** was verified afterwards, on 2026-11-07, on a local MySQL
+8.4.13 server: the whole suite passes, including the concurrency tests. The
+run found one migration that could not be rolled back (on MariaDB too),
+which is fixed ([details](#mysql-84-verification-2026-11-07)). GitHub
+Actions still does not start for account reasons. There is no real-time push
+yet; screens poll and say so.
 
 ## Delivered, step by step
 
@@ -35,7 +38,7 @@ real-time push yet; screens poll and say so.
 | K. Flutter | 12 screens (below), 154 new strings in English and Arabic. |
 | L. Integration & concurrency tests | Feature tests for every endpoint; 8 multi-process concurrency tests ([strategy](CONCURRENCY_STRATEGY.md)). |
 | M. All tests | See [Test results](#test-results). |
-| N. MariaDB + MySQL 8.4 | MariaDB passes; MySQL 8.4 CI workflow added but not run ([status](MYSQL_84_COMPATIBILITY.md)). |
+| N. MariaDB + MySQL 8.4 | Both pass, MySQL 8.4 on a local server; the CI workflow was added but GitHub does not start it ([status](MYSQL_84_COMPATIBILITY.md)). |
 | O. Documentation | 11 queue documents, this report, README update. |
 | P. Commits | Milestones committed under the owner's identity, pushed and verified. |
 
@@ -63,24 +66,28 @@ business.
 
 ## Test results
 
-All numbers are from runs on 2026-11-06 on the development machine.
+Backend numbers are from the final runs on 2026-11-07, after the MySQL 8.4
+fixes, on the development machine (on 2026-11-06, before them: SQLite 461
+passed + 8 skipped, MariaDB 469 passed). Flutter numbers are from 2026-11-06.
 
 | Suite | Result |
 |---|---|
-| Backend, SQLite (`composer test`) | ✅ **461 passed, 8 skipped** (4214 assertions). The 8 skipped are the multi-process concurrency tests, which SQLite cannot meaningfully run. |
-| Backend, MariaDB 10.4 (`composer test:mariadb`) | ✅ **469 passed** (4405 assertions), including all 8 concurrency tests |
-| Backend, MySQL 8.4 | ❌ **not run** (see below) |
+| Backend, SQLite (`composer test`) | ✅ **462 passed, 8 skipped** (4222 assertions). The 8 skipped are the multi-process concurrency tests, which SQLite cannot meaningfully run. |
+| Backend, MariaDB 10.4 (`composer test:mariadb`) | ✅ **470 passed** (4413 assertions), including all 8 concurrency tests |
+| Backend, MySQL 8.4.13 (`composer test:mysql`, local server) | ✅ **470 passed** (4413 assertions), including all 8 concurrency tests |
 | Pint (code style) | ✅ passed |
 | Flutter (`flutter test`) | ✅ **320 passed** (257 before + 63 new) |
 | Flutter analyzer | ✅ no issues |
 
-Phase 04 added 140 backend tests (329 → 469, of which 8 run only on
+Phase 04 added 141 backend tests (329 → 470, of which 8 run only on
 MySQL/MariaDB) and 63 Flutter tests,
 including every queue screen in the English/Arabic layout smoke test on a
 small phone and a tablet (overflow = failure). No existing test was removed or
 weakened; `RouteProtectionTest`'s explicit list of unauthenticated routes was
 extended with the four guest routes, plus a new check that guest ticket routes
-require the ticket token.
+require the ticket token. Two existing tests were corrected during the MySQL
+8.4 verification without loosening them (see
+[below](#mysql-84-verification-2026-11-07)).
 
 ### Concurrency evidence (MariaDB 10.4)
 
@@ -105,7 +112,8 @@ unsafe read-then-write counter loses updates under it).
   `Referrer-Policy: no-referrer`) was wrongly rejected. Regression tests were
   added. Temporary demo data was removed afterwards.
 - **Migrations on MariaDB**: fresh, then the latest batch (all six queue
-  migrations) rolled back, then migrated again.
+  migrations) rolled back, then migrated again. A full rollback of every
+  migration is now part of the test suite (`MigrationRollbackTest`).
 - The new Flutter screens were **not** run on the phone in this phase; they
   are covered by widget tests against the fake API, the layout smoke test and
   the real-response contract check above.
@@ -116,11 +124,40 @@ unsafe read-then-write counter loses updates under it).
 |---|---|
 | SQLite | ✅ tests (not used as concurrency evidence) |
 | MariaDB 10.4 | ✅ full suite + concurrency tests + migrations |
-| MySQL 8.4 | ❌ **not verified.** Not installed locally. The workflow `.github/workflows/backend-tests.yml` (job `mysql84`, service `mysql:8.4`) was pushed, but every run ended in `startup_failure` with **zero jobs**, including a one-line `echo` probe workflow on a temporary branch (deleted afterwards). That points to an account-level GitHub Actions setting for this private repository (Actions minutes, spending limit or account verification), not to the workflow. The first run also had a real YAML mistake (`"Server: "` in a plain scalar), fixed in `9bab93e`. |
+| MySQL 8.4.13 LTS | ✅ full suite + concurrency tests + full migration rollback, on a local server (2026-11-07) |
+| MySQL 8.4 in GitHub Actions | ⚠️ not run. The workflow `.github/workflows/backend-tests.yml` (job `mysql84`, service `mysql:8.4`) was pushed, but every run ended in `startup_failure` with **zero jobs**, including a one-line `echo` probe workflow on a temporary branch (deleted afterwards). That points to an account-level GitHub Actions setting for this private repository (Actions minutes, spending limit or account verification), not to the workflow. The first run also had a real YAML mistake (`"Server: "` in a plain scalar), fixed in `9bab93e`. |
 
-MySQL 8.4 compatibility must not be claimed until that job (or a local MySQL
-8.4) passes. [MYSQL_84_COMPATIBILITY.md](MYSQL_84_COMPATIBILITY.md) explains
-both ways to run it and why it is expected to work.
+[MYSQL_84_COMPATIBILITY.md](MYSQL_84_COMPATIBILITY.md) has the details, how
+to start, use and remove the local server, and why the design works on both
+engines.
+
+### MySQL 8.4 verification (2026-11-07)
+
+Because GitHub Actions does not start, MySQL Community Server 8.4.13 LTS was
+installed locally from Oracle's official ZIP (checksum and signature
+checked), as a plain process on `127.0.0.1:3307` with its own data folder
+and a test user limited to `dory_db_testing`. XAMPP's MariaDB, `dory_db` and
+`.env` were not touched (`dory_db` still has its 19 migrations and 11
+categories). The run found:
+
+1. **A migration that could not be rolled back** (also on MariaDB):
+   `add_profile_fields_to_businesses_table` (Phase 03) failed in `down()`
+   with error 1553, because the server had folded the `created_by` foreign
+   key's index into the new unique `(created_by, idempotency_key)` index.
+   `down()` now drops and re-creates that foreign key; `up()` is unchanged.
+   New `MigrationRollbackTest` rolls back every migration on every database
+   and was checked to fail with the old `down()` on MySQL 8.4 and MariaDB.
+2. **JSON key order**: MySQL's `JSON` type does not keep object key order,
+   so a `BusinessManagementTest` assertion comparing audit-log properties as
+   ordered arrays failed. It now sorts keys before the same strict
+   comparison. Application code reads JSON by key and is not affected.
+3. **Composer timeout**: `composer test:mysql` / `test:mariadb` hit
+   Composer's 300-second script limit; both now disable it.
+4. Not MySQL-related, found during the run: `CustomerJoinTest`'s "numbering
+   restarts on the next business day" depended on the real date (it failed on
+   every database on 2026-11-07, Damascus time, because `setUp` opens a
+   session at the real time). The test now closes that session first and
+   opens both days itself, with one more assertion.
 
 ## Security highlights
 
@@ -154,7 +191,8 @@ rewrite.
 | `8845e29` | Multi-process concurrency tests and MySQL 8.4 CI workflow (L, N) |
 | `9bab93e` | CI workflow YAML fix |
 | `4aff574` | Guest web forms fixed for real browsers |
-| *(this commit)* | Documentation and this report (O) |
+| `962c56a` | Documentation and this report (O) |
+| *(this commit)* | MySQL 8.4 verification: rollback fix, rollback test, test corrections, Composer timeout, documentation |
 
 ## Repository identity and historical attribution
 
@@ -172,7 +210,8 @@ rewrite.
 
 ## Limitations and open items
 
-1. **MySQL 8.4 not verified** (see above).
+1. **MySQL 8.4 is verified locally only**: the CI job does not run until
+   GitHub Actions starts for this repository (see above).
 2. **No real-time updates.** Screens poll (app 15 s, guest page 20 s).
    `QueueActivity` is ready for Laravel Reverb in a later phase.
 3. **Customer app experience**: customers can join through the API, but the

@@ -118,7 +118,13 @@ class CustomerJoinTest extends TestCase
 
     public function test_numbering_restarts_on_the_next_business_day_of_the_branch(): void
     {
+        // setUp opened a session at the real current time. Close it so both
+        // business days below are set by the test, whatever today's date is.
+        $this->actingAsUser($this->owner, 'POST', $this->queueUri($this->queue, 'close'))->assertOk();
+
         $this->travelTo(CarbonImmutable::parse('2026-11-06 20:00:00', 'Asia/Damascus'));
+        $this->actingAsUser($this->owner, 'POST', $this->queueUri($this->queue, 'open'))
+            ->assertJsonPath('data.business_date', '2026-11-06');
         $this->join(User::factory()->create())->assertJsonPath('data.ticket_number', 'BAR-001');
         $this->actingAsUser($this->owner, 'POST', $this->queueUri($this->queue, 'close'))->assertOk();
 

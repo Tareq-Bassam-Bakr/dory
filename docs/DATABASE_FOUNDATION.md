@@ -133,7 +133,7 @@ SQLite, and adding a value requires no `ALTER TABLE`.
 |---|---|---|
 | SQLite (in-memory) | `composer test` | 104 tests passed |
 | MariaDB 10.4.32 | `php artisan migrate` on `dory_db`, plus `composer test:mariadb` on `dory_db_testing` | migrations OK, 104 tests passed |
-| MySQL 8.x | not available on this machine | run `composer test:mysql` against a MySQL test database before production |
+| MySQL 8.x | not available on this machine in Phase 02 | verified on MySQL 8.4.13 on 2026-11-07 (Phase 04): see [MYSQL_84_COMPATIBILITY.md](MYSQL_84_COMPATIBILITY.md) |
 
 Notes:
 

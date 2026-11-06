@@ -63,19 +63,19 @@ separate PHP processes** (`tests/Concurrency/worker.php`), each with its own
 database connection, released at the same instant. Only the database stands
 between them, as with concurrent HTTP requests.
 
-| Test | Expected | MariaDB 10.4 (local) |
-|---|---|---|
-| harness control: 16 workers run an unsafe read-then-write counter | updates are **lost** (proves the workers overlap) | ✅ |
-| 16 different customers join at once | numbers exactly 1…16, counter = 16 | ✅ |
-| one customer joins 8 times at once | 1 ticket, 7 × `duplicate_active_ticket` | ✅ |
-| 8 retries with one Idempotency-Key | 1 ticket, all 8 get it | ✅ |
-| capacity 5, 16 guests at once | 5 tickets, 11 × `queue_full` | ✅ |
-| 6 staff call next at once, 10 waiting | 6 different tickets, the first six (FIFO) | ✅ |
-| one staff member calls 6 times at once | 1 call, 5 × `staff_busy` | ✅ |
-| 6 opens at once | 1 session, 5 × `session_already_active` | ✅ |
+| Test | Expected | MariaDB 10.4 (local) | MySQL 8.4.13 (local) |
+|---|---|---|---|
+| harness control: 16 workers run an unsafe read-then-write counter | updates are **lost** (proves the workers overlap) | ✅ | ✅ |
+| 16 different customers join at once | numbers exactly 1…16, counter = 16 | ✅ | ✅ |
+| one customer joins 8 times at once | 1 ticket, 7 × `duplicate_active_ticket` | ✅ | ✅ |
+| 8 retries with one Idempotency-Key | 1 ticket, all 8 get it | ✅ | ✅ |
+| capacity 5, 16 guests at once | 5 tickets, 11 × `queue_full` | ✅ | ✅ |
+| 6 staff call next at once, 10 waiting | 6 different tickets, the first six (FIFO) | ✅ | ✅ |
+| one staff member calls 6 times at once | 1 call, 5 × `staff_busy` | ✅ | ✅ |
+| 6 opens at once | 1 session, 5 × `session_already_active` | ✅ | ✅ |
 
 These tests are **skipped on SQLite**: SQLite serializes all writes to the
 whole database file, so passing there would prove nothing about row locking.
 SQLite results are never presented as concurrency evidence.
 
-MySQL 8.4: see [MYSQL_84_COMPATIBILITY.md](MYSQL_84_COMPATIBILITY.md).
+MySQL 8.4 details: [MYSQL_84_COMPATIBILITY.md](MYSQL_84_COMPATIBILITY.md).
