@@ -24,13 +24,7 @@ class GuestJoinRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $data = ContactInput::normalize($this->only('phone'));
-        if (is_string($this->input('name'))) {
-            $name = trim((string) preg_replace('/\s+/u', ' ', $this->input('name')));
-            $data['name'] = $name === '' ? null : $name;
-        }
-
-        $this->merge($data);
+        $this->merge(self::normalize($this->all()));
     }
 
     /**
@@ -38,13 +32,37 @@ class GuestJoinRequest extends FormRequest
      */
     public function rules(): array
     {
-        $queue = $this->queue();
+        return self::rulesFor($this->queue(), $this->filled('phone'));
+    }
 
+    /**
+     * Trims and collapses the name; normalizes the phone number. Shared
+     * with the guest web page (GuestQueueController).
+     *
+     * @param  array<string, mixed>  $input
+     * @return array<string, mixed>
+     */
+    public static function normalize(array $input): array
+    {
+        $data = ContactInput::normalize(array_intersect_key($input, ['phone' => true]));
+        if (is_string($input['name'] ?? null)) {
+            $name = trim((string) preg_replace('/\s+/u', ' ', $input['name']));
+            $data['name'] = $name === '' ? null : $name;
+        }
+
+        return $data;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function rulesFor(Queue $queue, bool $phoneGiven): array
+    {
         return [
             'name' => [$queue->require_guest_name ? 'required' : 'nullable', 'string', 'min:2', 'max:80'],
             'phone' => [$queue->require_guest_phone ? 'required' : 'nullable', 'string', ContactInput::PHONE_RULE],
             // Asked only when a phone number is given.
-            'consent' => $this->filled('phone') ? ['required', 'accepted'] : ['exclude'],
+            'consent' => $phoneGiven ? ['required', 'accepted'] : ['exclude'],
             'user_id' => ['prohibited'],
             'status' => ['prohibited'],
             'priority' => ['prohibited'],

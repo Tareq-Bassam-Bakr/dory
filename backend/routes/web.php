@@ -1,12 +1,35 @@
 <?php
 
+use App\Http\Controllers\Web\GuestQueueController;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 /*
- * DORY's backend is API-only. The root URL just identifies the service.
+ * DORY's backend is an API. The root URL just identifies the service.
  * Load balancers can use /up (framework liveness) or /api/v1/health.
  */
 Route::get('/', fn () => response()->json([
     'name' => config('app.name'),
     'api' => url('/api/v1'),
 ]));
+
+/*
+ * Guest web page behind each queue's QR code (docs/GUEST_JOINING.md).
+ * The backend keeps no sessions, so Laravel's session CSRF token cannot be
+ * used; VerifyGuestFormSubmission, a double-submit nonce and SameSite=Strict
+ * cookies protect the forms instead (docs/QUEUE_SECURITY.md).
+ */
+Route::pattern('guestToken', '[A-Za-z0-9]{40}');
+Route::pattern('guestTicket', '[0-9A-Za-z]{26}');
+
+Route::middleware(['guest.locale', 'throttle:queue-public'])
+    ->withoutMiddleware([ValidateCsrfToken::class])
+    ->name('guest.')
+    ->group(function (): void {
+        Route::get('join/{guestToken}', [GuestQueueController::class, 'show'])->name('join');
+        Route::post('join/{guestToken}', [GuestQueueController::class, 'join'])
+            ->middleware(['guest.form', 'throttle:queue-join'])->name('join.store');
+        Route::get('ticket/{guestTicket}', [GuestQueueController::class, 'ticket'])->name('ticket');
+        Route::post('ticket/{guestTicket}/cancel', [GuestQueueController::class, 'cancel'])
+            ->middleware('guest.form')->name('ticket.cancel');
+    });

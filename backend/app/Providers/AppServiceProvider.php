@@ -163,7 +163,10 @@ class AppServiceProvider extends ServiceProvider
         // Joining a queue: per user (or IP for guests) and queue, and per IP.
         RateLimiter::for('queue-join', function (Request $request) {
             $route = $request->route();
-            $queue = (string) ($route?->originalParameter('joinableQueue') ?? $route?->originalParameter('publicQueueToken') ?? '');
+            $queue = (string) ($route?->originalParameter('joinableQueue')
+                ?? $route?->originalParameter('publicQueueToken')
+                ?? $route?->originalParameter('guestToken')
+                ?? '');
             $who = $request->user()?->getAuthIdentifier() ?: $request->ip();
 
             return [

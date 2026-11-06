@@ -7,7 +7,9 @@ use App\Http\Middleware\EnsureTicketAccessToken;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\ResolveBusinessContext;
+use App\Http\Middleware\SetGuestLocale;
 use App\Http\Middleware\SetSecurityHeaders;
+use App\Http\Middleware\VerifyGuestFormSubmission;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -37,6 +39,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'active' => EnsureUserIsActive::class,
             'business.context' => ResolveBusinessContext::class,
             'ticket.token' => EnsureTicketAccessToken::class,
+            'guest.locale' => SetGuestLocale::class,
+            'guest.form' => VerifyGuestFormSubmission::class,
         ]);
 
         // Suspended accounts are rejected right after authentication, before
