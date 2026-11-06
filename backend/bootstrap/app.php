@@ -3,6 +3,7 @@
 use App\Exceptions\ApiException;
 use App\Exceptions\ApiExceptionRenderer;
 use App\Http\Middleware\AssignRequestId;
+use App\Http\Middleware\EnsureTicketAccessToken;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\ResolveBusinessContext;
@@ -35,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'active' => EnsureUserIsActive::class,
             'business.context' => ResolveBusinessContext::class,
+            'ticket.token' => EnsureTicketAccessToken::class,
         ]);
 
         // Suspended accounts are rejected right after authentication, before

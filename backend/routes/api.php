@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\V1\Businesses\BusinessInvitationController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessMemberController;
 use App\Http\Controllers\Api\V1\Businesses\InvitationController;
 use App\Http\Controllers\Api\V1\Businesses\ServiceController;
+use App\Http\Controllers\Api\V1\Queues\CustomerTicketController;
+use App\Http\Controllers\Api\V1\Queues\PublicQueueController;
 use App\Http\Controllers\Api\V1\Queues\QueueController;
 use App\Http\Controllers\Api\V1\Queues\QueueSessionController;
 use App\Http\Controllers\Api\V1\System\HealthController;
@@ -114,10 +116,29 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             Route::post('queues/{queue}/close', [QueueSessionController::class, 'close'])->name('queues.close');
         });
 
+        // Customers: joining and following their own tickets
+        Route::post('queues/{joinableQueue}/join', [CustomerTicketController::class, 'join'])
+            ->middleware('throttle:queue-join')->name('tickets.join');
+        Route::get('me/tickets', [CustomerTicketController::class, 'index'])->name('me.tickets');
+        Route::get('tickets/{myTicket}/position', [CustomerTicketController::class, 'position'])->name('tickets.position');
+        Route::post('tickets/{myTicket}/cancel', [CustomerTicketController::class, 'cancel'])->name('tickets.cancel');
+
         // Invitations, invitee side (the token is the secret)
         Route::middleware('throttle:invitation-token')->group(function (): void {
             Route::post('invitations/{invitationToken}/accept', [InvitationController::class, 'accept'])->name('invitations.accept');
             Route::post('invitations/{invitationToken}/decline', [InvitationController::class, 'decline'])->name('invitations.decline');
+        });
+    });
+
+    // Guests: public queue link / QR code. No account; the queue token is in
+    // the link, the ticket token travels only in the X-Ticket-Token header.
+    Route::prefix('public')->name('public.')->middleware('throttle:queue-public')->group(function (): void {
+        Route::get('queues/{publicQueueToken}', [PublicQueueController::class, 'show'])->name('queues.show');
+        Route::post('queues/{publicQueueToken}/join', [PublicQueueController::class, 'join'])
+            ->middleware('throttle:queue-join')->name('queues.join');
+        Route::middleware('ticket.token')->group(function (): void {
+            Route::get('tickets/{publicTicket}', [PublicQueueController::class, 'ticket'])->name('tickets.show');
+            Route::post('tickets/{publicTicket}/cancel', [PublicQueueController::class, 'cancel'])->name('tickets.cancel');
         });
     });
 

@@ -29,6 +29,21 @@ class RouteProtectionTest extends TestCase
         'api.v1.auth.password.reset',
         'api.v1.business-categories.index',
         'api.v1.invitations.show',
+        // Guest queue access: the queue token is the link secret, and guest
+        // ticket routes additionally require the X-Ticket-Token header.
+        'api.v1.public.queues.show',
+        'api.v1.public.queues.join',
+        'api.v1.public.tickets.show',
+        'api.v1.public.tickets.cancel',
+    ];
+
+    /**
+     * Guest ticket routes are unauthenticated, so each must check the
+     * ticket access token.
+     */
+    private const TICKET_TOKEN_ROUTES = [
+        'api.v1.public.tickets.show',
+        'api.v1.public.tickets.cancel',
     ];
 
     /**
@@ -40,6 +55,18 @@ class RouteProtectionTest extends TestCase
             Route::getRoutes()->getRoutes(),
             fn (RouteDefinition $route) => str_starts_with($route->uri(), 'api/v1/') && ! str_contains($route->uri(), 'test-probe'),
         ));
+    }
+
+    public function test_guest_ticket_routes_require_the_ticket_access_token(): void
+    {
+        foreach ($this->apiRoutes() as $route) {
+            if (str_starts_with($route->uri(), 'api/v1/public/tickets')) {
+                $this->assertContains($route->getName(), self::TICKET_TOKEN_ROUTES, "Unexpected guest ticket route {$route->uri()}.");
+            }
+            if (in_array($route->getName(), self::TICKET_TOKEN_ROUTES, true)) {
+                $this->assertContains('ticket.token', $route->gatherMiddleware(), "Route {$route->uri()} does not check the ticket token.");
+            }
+        }
     }
 
     public function test_every_non_public_api_route_requires_an_active_authenticated_user(): void

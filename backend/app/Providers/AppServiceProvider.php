@@ -3,11 +3,13 @@
 namespace App\Providers;
 
 use App\Contracts\InvitationNotifier;
+use App\Contracts\WaitTimeEstimator;
 use App\Models\Queue;
 use App\Models\User;
 use App\Services\Business\CurrentBusinessContext;
 use App\Services\Business\TenantResolver;
 use App\Services\Invitations\MailInvitationNotifier;
+use App\Services\Queues\HistoricalWaitTimeEstimator;
 use App\Services\Queues\PublicQueueResolver;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -32,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
         // Invitation delivery. Swap the implementation to add channels
         // (SMS, WhatsApp) without touching the invitation workflow.
         $this->app->bind(InvitationNotifier::class, MailInvitationNotifier::class);
+
+        // Wait-time estimates (docs/WAIT_TIME_ESTIMATION.md). Scoped: the
+        // per-queue rate cache never outlives a request or job.
+        $this->app->scoped(WaitTimeEstimator::class, HistoricalWaitTimeEstimator::class);
     }
 
     /**
