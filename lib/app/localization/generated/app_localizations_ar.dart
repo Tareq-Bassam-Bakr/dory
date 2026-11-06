@@ -927,4 +927,530 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get joinInvitationOpen => 'فتح';
+
+  @override
+  String get queueTicketStatusWaiting => 'في الانتظار';
+
+  @override
+  String get queueTicketStatusCalled => 'تم النداء';
+
+  @override
+  String get queueTicketStatusServing => 'قيد الخدمة';
+
+  @override
+  String get queueTicketStatusCompleted => 'مكتملة';
+
+  @override
+  String get queueTicketStatusCancelled => 'ملغاة';
+
+  @override
+  String get queueTicketStatusSkipped => 'تم التخطي';
+
+  @override
+  String get queueTicketStatusNoShow => 'لم يحضر';
+
+  @override
+  String get queueTicketStatusExpired => 'منتهية';
+
+  @override
+  String get queueSessionStatusOpen => 'مفتوح';
+
+  @override
+  String get queueSessionStatusPaused => 'متوقف مؤقتًا';
+
+  @override
+  String get queueSessionStatusClosed => 'مغلق';
+
+  @override
+  String get queueErrorSessionAlreadyActive => 'هذا الدور مفتوح بالفعل.';
+
+  @override
+  String get queueErrorHasActiveSession => 'أغلق الدور قبل حذفه.';
+
+  @override
+  String get queueErrorNoWaiting => 'لا أحد في الانتظار.';
+
+  @override
+  String get queueErrorStaffBusy => 'أنهِ خدمة عميلك الحالي قبل نداء التالي.';
+
+  @override
+  String get queueErrorOtherStaff => 'موظف آخر يتولى هذه التذكرة.';
+
+  @override
+  String get queueErrorGracePeriod =>
+      'لا يزال أمام العميل وقت للحضور. حاول بعد قليل.';
+
+  @override
+  String get queueErrorTicketChanged =>
+      'غيّر شخص آخر هذه التذكرة للتو. تم تحديث الشاشة.';
+
+  @override
+  String get queueErrorInvalidTransition =>
+      'لم يعد هذا الإجراء ممكنًا لهذه التذكرة.';
+
+  @override
+  String get queueErrorQueueClosed => 'هذا الدور مغلق.';
+
+  @override
+  String get queueErrorQueueInactive =>
+      'هذا الدور غير نشط. فعّله من إعداداته أولًا.';
+
+  @override
+  String get queueErrorNoActiveSession => 'هذا الدور غير مفتوح.';
+
+  @override
+  String get queueErrorSessionNotPaused => 'هذا الدور غير متوقف.';
+
+  @override
+  String get queueCreate => 'دور جديد';
+
+  @override
+  String get queuesNoBusiness =>
+      'أنشئ نشاطًا تجاريًا أولًا، ثم أنشئ دورًا لكل خدمة.';
+
+  @override
+  String queueTileSubtitle(String branch, String prefix) {
+    return 'فرع $branch · $prefix';
+  }
+
+  @override
+  String get queueBranchLabel => 'الفرع';
+
+  @override
+  String get queueServiceLabel => 'الخدمة';
+
+  @override
+  String get queueServiceHelper => 'لكل خدمة دورها الخاص.';
+
+  @override
+  String get queueNoBranches => 'أضف فرعًا لهذا النشاط أولًا.';
+
+  @override
+  String get queueNoServices =>
+      'لا توجد في هذا الفرع خدمات بدون دور. أضف خدمة أولًا.';
+
+  @override
+  String get queueNameLabel => 'اسم الدور';
+
+  @override
+  String get queuePrefixLabel => 'بادئة التذكرة';
+
+  @override
+  String queuePrefixHelper(String example) {
+    return 'من 1 إلى 6 أحرف لاتينية كبيرة أو أرقام، تبدأ بحرف. تظهر التذاكر هكذا: $example.';
+  }
+
+  @override
+  String get queueCapacityLabel => 'الحد الأقصى للعملاء المنتظرين';
+
+  @override
+  String get queueCapacityHelper => 'اتركه فارغًا لعدم وضع حد.';
+
+  @override
+  String get queueDurationLabel => 'الدقائق لكل عميل';
+
+  @override
+  String get queueDurationHelper =>
+      'يُستخدم لتقدير الانتظار حتى يتوفر سجل كافٍ. اتركه فارغًا لاستخدام مدة الخدمة.';
+
+  @override
+  String get queueGraceLabel => 'مهلة الحضور بعد النداء (بالثواني)';
+
+  @override
+  String get queueGraceHelper =>
+      'بعد هذه المهلة يمكن تسجيل العميل الذي تم نداؤه كغائب.';
+
+  @override
+  String get queueGuestJoinLabel => 'يمكن للضيوف الانضمام عبر رمز QR بدون حساب';
+
+  @override
+  String get queueGuestNameLabel => 'طلب اسم الضيف';
+
+  @override
+  String get queueGuestPhoneLabel => 'طلب رقم هاتف الضيف إلزاميًا';
+
+  @override
+  String get queueActiveLabel => 'الدور نشط';
+
+  @override
+  String get queueValidationName => 'أدخل اسمًا من 2 إلى 150 حرفًا.';
+
+  @override
+  String get queueValidationPrefix =>
+      'استخدم من 1 إلى 6 أحرف لاتينية كبيرة أو أرقام، تبدأ بحرف.';
+
+  @override
+  String queueValidationNumber(int min, int max) {
+    return 'أدخل عددًا صحيحًا من $min إلى $max.';
+  }
+
+  @override
+  String get queueValidationService => 'اختر خدمة.';
+
+  @override
+  String get queueCreated => 'تم إنشاء الدور.';
+
+  @override
+  String get queueEditTitle => 'إعدادات الدور';
+
+  @override
+  String get queueDelete => 'حذف الدور';
+
+  @override
+  String get queueDeleteConfirmTitle => 'حذف هذا الدور؟';
+
+  @override
+  String get queueDeleteConfirmMessage =>
+      'يُحتفظ بسجله، لكن لن يتمكن أحد من الانضمام إليه وسيتوقف رمز QR عن العمل.';
+
+  @override
+  String get queueDeleted => 'تم حذف الدور.';
+
+  @override
+  String get queueSessionNone => 'الدور مغلق. افتحه لبدء استقبال العملاء.';
+
+  @override
+  String queueSessionOpenSince(String time, int number) {
+    return 'مفتوح منذ $time · الجلسة $number';
+  }
+
+  @override
+  String get queueSessionPausedNotice =>
+      'متوقف مؤقتًا: لا يمكن لعملاء جدد الانضمام، لكن يمكنك متابعة خدمة المنتظرين.';
+
+  @override
+  String get queueOpen => 'فتح الدور';
+
+  @override
+  String get queuePause => 'إيقاف مؤقت';
+
+  @override
+  String get queueResume => 'استئناف';
+
+  @override
+  String get queueClose => 'إغلاق الدور';
+
+  @override
+  String get queueCloseConfirmTitle => 'إغلاق الدور؟';
+
+  @override
+  String get queueCloseConfirmMessage =>
+      'سيتم إلغاء تذاكر كل من لا يزال في الانتظار. يُحتفظ بمن تم نداؤهم أو تجري خدمتهم لتتمكن من إنهاء خدمتهم.';
+
+  @override
+  String get queueOpened => 'الدور مفتوح الآن.';
+
+  @override
+  String get queuePausedMessage => 'تم إيقاف الدور مؤقتًا.';
+
+  @override
+  String get queueResumed => 'الدور مفتوح من جديد.';
+
+  @override
+  String get queueClosedMessage => 'تم إغلاق الدور.';
+
+  @override
+  String get queueOpenDashboard => 'لوحة الدور المباشرة';
+
+  @override
+  String get queueStaffTitle => 'الموظفون';
+
+  @override
+  String get queueHistoryTitle => 'سجل الجلسات';
+
+  @override
+  String get queueQrTitle => 'رمز QR والرابط';
+
+  @override
+  String queueCapacityValue(int count) {
+    return '$count منتظرًا كحد أقصى';
+  }
+
+  @override
+  String get queueCapacityNone => 'بلا حد';
+
+  @override
+  String get queueGuestsAllowed => 'يمكن للضيوف الانضمام عبر رمز QR';
+
+  @override
+  String get queueGuestsNotAllowed => 'يمكن للعملاء المسجلين فقط الانضمام';
+
+  @override
+  String queueGraceValue(int seconds) {
+    return '$seconds ثانية للحضور';
+  }
+
+  @override
+  String get queueOpenTitle => 'فتح الدور';
+
+  @override
+  String queueOpenMessage(String example) {
+    return 'يبدأ الفتح جلسة لليوم. تبدأ أرقام التذاكر من $example كل يوم (منتصف الليل بتوقيت الفرع) ولا يُعاد استخدامها أبدًا.';
+  }
+
+  @override
+  String get queueOpenGuestsNote =>
+      'يمكن للعملاء الانضمام من التطبيق، وعبر رمز QR إن كان مسموحًا.';
+
+  @override
+  String get queueDashboardTitle => 'الدور المباشر';
+
+  @override
+  String queueAutoRefreshNote(int seconds) {
+    return 'يتحدّث تلقائيًا كل $seconds ثانية.';
+  }
+
+  @override
+  String get queueCountWaiting => 'في الانتظار';
+
+  @override
+  String get queueCountInService => 'قيد الخدمة';
+
+  @override
+  String get queueCountDone => 'مكتملة';
+
+  @override
+  String get queueCountMissed => 'غائبون أو تم تخطيهم';
+
+  @override
+  String get queueEstimateLabel => 'انتظار العميل الجديد';
+
+  @override
+  String queueEstimateValue(int minutes) {
+    return '~$minutes دقيقة';
+  }
+
+  @override
+  String get queueEstimateBasisHistory =>
+      'تقدير مبني على أوقات الخدمة الأخيرة.';
+
+  @override
+  String get queueEstimateBasisConfigured => 'تقدير مبني على المدة المحددة.';
+
+  @override
+  String get queueCallNext => 'نداء العميل التالي';
+
+  @override
+  String get queueYourCustomer => 'عميلك الحالي';
+
+  @override
+  String get queueNextUp => 'التالون في الدور';
+
+  @override
+  String get queueInServiceTitle => 'قيد الخدمة الآن';
+
+  @override
+  String get queueNobodyWaiting => 'لا أحد في الانتظار.';
+
+  @override
+  String get queueNobodyServed => 'لا أحد قيد الخدمة الآن.';
+
+  @override
+  String get queueViewAllWaiting => 'كل المنتظرين';
+
+  @override
+  String get queueViewAllServing => 'كل من تجري خدمتهم';
+
+  @override
+  String get queueSessionEnded => 'هذه الجلسة مغلقة.';
+
+  @override
+  String queueCalledMessage(String number) {
+    return 'تم نداء $number.';
+  }
+
+  @override
+  String queueWaitedValue(int minutes) {
+    return 'انتظر $minutes دقيقة';
+  }
+
+  @override
+  String queuePositionValue(int position) {
+    return 'رقم $position في الدور';
+  }
+
+  @override
+  String get queueGuest => 'ضيف';
+
+  @override
+  String get queueCustomer => 'عميل';
+
+  @override
+  String queueServedBy(String name) {
+    return 'يخدمه $name';
+  }
+
+  @override
+  String get queueServedByYou => 'تخدمه أنت';
+
+  @override
+  String get queueActionCall => 'نداء الآن';
+
+  @override
+  String get queueActionStart => 'بدء الخدمة';
+
+  @override
+  String get queueActionComplete => 'إنهاء';
+
+  @override
+  String get queueActionSkip => 'تخطي';
+
+  @override
+  String get queueActionNoShow => 'لم يحضر';
+
+  @override
+  String get queueActionRecall => 'إعادة إلى الدور';
+
+  @override
+  String get queueActionDone => 'تم.';
+
+  @override
+  String get queueSkipConfirmTitle => 'تخطي هذا العميل؟';
+
+  @override
+  String get queueSkipConfirmMessage => 'ستُزال تذكرته من الدور.';
+
+  @override
+  String queueNoShowAvailableAt(String time) {
+    return 'يمكن تسجيل الغياب بدءًا من $time';
+  }
+
+  @override
+  String get queueWaitingTitle => 'العملاء المنتظرون';
+
+  @override
+  String get queueServingTitle => 'قيد الخدمة';
+
+  @override
+  String queueTicketTitle(String number) {
+    return 'التذكرة $number';
+  }
+
+  @override
+  String get queueTicketCustomer => 'العميل';
+
+  @override
+  String get queueTicketPhone => 'الهاتف';
+
+  @override
+  String get queueTicketPosition => 'الترتيب';
+
+  @override
+  String get queueTicketJoined => 'وقت الانضمام';
+
+  @override
+  String get queueTicketStatus => 'الحالة';
+
+  @override
+  String get queueTicketHistory => 'السجل';
+
+  @override
+  String get queueEventJoined => 'انضم';
+
+  @override
+  String get queueEventCalled => 'تم النداء';
+
+  @override
+  String get queueEventServiceStarted => 'بدأت الخدمة';
+
+  @override
+  String get queueEventServiceCompleted => 'اكتملت الخدمة';
+
+  @override
+  String get queueEventCancelled => 'أُلغيت';
+
+  @override
+  String get queueEventSkipped => 'تم التخطي';
+
+  @override
+  String get queueEventNoShow => 'سُجّل غائبًا';
+
+  @override
+  String get queueEventExpired => 'انتهت بنهاية اليوم';
+
+  @override
+  String get queueEventRecalled => 'أُعيد إلى الدور';
+
+  @override
+  String get queueStaffMessage =>
+      'يمكن لمالكي الفرع ومديريه تشغيل هذا الدور دائمًا. عيّن الموظفين الذين يخدمون العملاء هنا.';
+
+  @override
+  String get queueStaffEmpty => 'لم يتم تعيين موظفين بعد.';
+
+  @override
+  String get queueStaffAssign => 'تعيين';
+
+  @override
+  String get queueStaffAssigned => 'تم التعيين في الدور.';
+
+  @override
+  String get queueStaffRemoved => 'تمت الإزالة من الدور.';
+
+  @override
+  String get queueStaffAvailable => 'أعضاء الفريق';
+
+  @override
+  String get queueStaffNoneAvailable => 'تم تعيين كل من يمكن تعيينه.';
+
+  @override
+  String get queueStaffAssignedTitle => 'المعيَّنون';
+
+  @override
+  String get queueHistoryEmpty => 'لا توجد جلسات بعد.';
+
+  @override
+  String queueHistoryItem(String date, int number) {
+    return '$date · الجلسة $number';
+  }
+
+  @override
+  String queueHistoryTickets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تذكرة',
+      many: '$count تذكرة',
+      few: '$count تذاكر',
+      two: 'تذكرتان',
+      one: 'تذكرة واحدة',
+      zero: 'لا توجد تذاكر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get queueCloseReasonStaff => 'أغلقه الموظفون';
+
+  @override
+  String get queueCloseReasonDayEnded => 'أُغلق بنهاية اليوم';
+
+  @override
+  String get queueQrMessage =>
+      'يمسح العملاء هذا الرمز بكاميرا الهاتف للانضمام، دون الحاجة إلى التطبيق.';
+
+  @override
+  String get queueQrGuestsOff =>
+      'انضمام الضيوف متوقف لهذا الدور، لذا يعرض رمز QR حالته فقط. فعّله من إعدادات الدور.';
+
+  @override
+  String get queueLinkLabel => 'الرابط العام';
+
+  @override
+  String get queueRotate => 'استبدال الرابط ورمز QR';
+
+  @override
+  String get queueRotateConfirmTitle => 'استبدال الرابط؟';
+
+  @override
+  String get queueRotateConfirmMessage =>
+      'سيتوقف رمز QR والرابط الحاليان عن العمل فورًا. اطبع الرمز الجديد أو شاركه.';
+
+  @override
+  String get queueRotated => 'تم إنشاء رابط جديد. لم يعد الرابط القديم يعمل.';
+
+  @override
+  String queueQrSemantics(String name) {
+    return 'رمز QR للانضمام إلى $name';
+  }
 }

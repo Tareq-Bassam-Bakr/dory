@@ -55,6 +55,24 @@ abstract final class AppRoutes {
   static String team(String businessId) => '${business(businessId)}/team';
   static String teamInvite(String businessId) => '${team(businessId)}/invite';
 
+  // Queue management, inside the queues tab.
+  static String queueCreate(String businessId) =>
+      '$businessQueues/business/$businessId/new';
+  static String queue(String queueId) => '$businessQueues/q/$queueId';
+  static String queueEdit(String queueId) => '${queue(queueId)}/edit';
+  static String queueOpen(String queueId) => '${queue(queueId)}/open';
+  static String queueStaff(String queueId) => '${queue(queueId)}/staff';
+  static String queueSessions(String queueId) => '${queue(queueId)}/sessions';
+  static String queueQr(String queueId) => '${queue(queueId)}/qr';
+  static String queueSession(String sessionId) =>
+      '$businessQueues/s/$sessionId';
+  static String queueSessionWaiting(String sessionId) =>
+      '${queueSession(sessionId)}/waiting';
+  static String queueSessionServing(String sessionId) =>
+      '${queueSession(sessionId)}/serving';
+  static String queueTicket(String sessionId, String ticketId) =>
+      '${queueSession(sessionId)}/t/$ticketId';
+
   // Invitations (deep link target: dory://app/invitations/<token>).
   static const String invitations = '/invitations';
   static String invitation(String token) => '$invitations/$token';

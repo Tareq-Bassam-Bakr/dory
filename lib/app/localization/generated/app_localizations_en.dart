@@ -946,4 +946,534 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get joinInvitationOpen => 'Open';
+
+  @override
+  String get queueTicketStatusWaiting => 'Waiting';
+
+  @override
+  String get queueTicketStatusCalled => 'Called';
+
+  @override
+  String get queueTicketStatusServing => 'Being served';
+
+  @override
+  String get queueTicketStatusCompleted => 'Completed';
+
+  @override
+  String get queueTicketStatusCancelled => 'Cancelled';
+
+  @override
+  String get queueTicketStatusSkipped => 'Skipped';
+
+  @override
+  String get queueTicketStatusNoShow => 'No-show';
+
+  @override
+  String get queueTicketStatusExpired => 'Expired';
+
+  @override
+  String get queueSessionStatusOpen => 'Open';
+
+  @override
+  String get queueSessionStatusPaused => 'Paused';
+
+  @override
+  String get queueSessionStatusClosed => 'Closed';
+
+  @override
+  String get queueErrorSessionAlreadyActive => 'This queue is already open.';
+
+  @override
+  String get queueErrorHasActiveSession =>
+      'Close the queue before deleting it.';
+
+  @override
+  String get queueErrorNoWaiting => 'Nobody is waiting.';
+
+  @override
+  String get queueErrorStaffBusy =>
+      'Finish your current customer before calling the next one.';
+
+  @override
+  String get queueErrorOtherStaff =>
+      'Another staff member is handling this ticket.';
+
+  @override
+  String get queueErrorGracePeriod =>
+      'The customer still has time to arrive. Try again shortly.';
+
+  @override
+  String get queueErrorTicketChanged =>
+      'Someone else just changed this ticket. The screen was refreshed.';
+
+  @override
+  String get queueErrorInvalidTransition =>
+      'This action is no longer possible for this ticket.';
+
+  @override
+  String get queueErrorQueueClosed => 'This queue is closed.';
+
+  @override
+  String get queueErrorQueueInactive =>
+      'This queue is inactive. Activate it in its settings first.';
+
+  @override
+  String get queueErrorNoActiveSession => 'This queue is not open.';
+
+  @override
+  String get queueErrorSessionNotPaused => 'This queue is not paused.';
+
+  @override
+  String get queueCreate => 'New queue';
+
+  @override
+  String get queuesNoBusiness =>
+      'Create a business first, then set up a queue for each service.';
+
+  @override
+  String queueTileSubtitle(String branch, String prefix) {
+    return '$branch branch · $prefix';
+  }
+
+  @override
+  String get queueBranchLabel => 'Branch';
+
+  @override
+  String get queueServiceLabel => 'Service';
+
+  @override
+  String get queueServiceHelper => 'Each service has its own queue.';
+
+  @override
+  String get queueNoBranches => 'Add a branch to this business first.';
+
+  @override
+  String get queueNoServices =>
+      'This branch has no services without a queue. Add a service first.';
+
+  @override
+  String get queueNameLabel => 'Queue name';
+
+  @override
+  String get queuePrefixLabel => 'Ticket prefix';
+
+  @override
+  String queuePrefixHelper(String example) {
+    return '1 to 6 capital letters or digits, starting with a letter. Tickets look like $example.';
+  }
+
+  @override
+  String get queueCapacityLabel => 'Maximum waiting customers';
+
+  @override
+  String get queueCapacityHelper => 'Leave empty for no limit.';
+
+  @override
+  String get queueDurationLabel => 'Minutes per customer';
+
+  @override
+  String get queueDurationHelper =>
+      'Used for wait estimates until there is enough history. Leave empty to use the service duration.';
+
+  @override
+  String get queueGraceLabel => 'Time to arrive after being called (seconds)';
+
+  @override
+  String get queueGraceHelper =>
+      'After this time a called customer can be marked as no-show.';
+
+  @override
+  String get queueGuestJoinLabel =>
+      'Guests can join with the QR code, without an account';
+
+  @override
+  String get queueGuestNameLabel => 'Ask guests for their name';
+
+  @override
+  String get queueGuestPhoneLabel => 'Require a phone number from guests';
+
+  @override
+  String get queueActiveLabel => 'Queue is active';
+
+  @override
+  String get queueValidationName => 'Enter a name of 2 to 150 characters.';
+
+  @override
+  String get queueValidationPrefix =>
+      'Use 1 to 6 capital letters or digits, starting with a letter.';
+
+  @override
+  String queueValidationNumber(int min, int max) {
+    return 'Enter a whole number from $min to $max.';
+  }
+
+  @override
+  String get queueValidationService => 'Choose a service.';
+
+  @override
+  String get queueCreated => 'Queue created.';
+
+  @override
+  String get queueEditTitle => 'Queue settings';
+
+  @override
+  String get queueDelete => 'Delete queue';
+
+  @override
+  String get queueDeleteConfirmTitle => 'Delete this queue?';
+
+  @override
+  String get queueDeleteConfirmMessage =>
+      'Its history is kept, but nobody can join it anymore and its QR code stops working.';
+
+  @override
+  String get queueDeleted => 'Queue deleted.';
+
+  @override
+  String get queueSessionNone =>
+      'The queue is closed. Open it to start accepting customers.';
+
+  @override
+  String queueSessionOpenSince(String time, int number) {
+    return 'Open since $time · session $number';
+  }
+
+  @override
+  String get queueSessionPausedNotice =>
+      'Paused: new customers cannot join, but you can keep serving those waiting.';
+
+  @override
+  String get queueOpen => 'Open queue';
+
+  @override
+  String get queuePause => 'Pause';
+
+  @override
+  String get queueResume => 'Resume';
+
+  @override
+  String get queueClose => 'Close queue';
+
+  @override
+  String get queueCloseConfirmTitle => 'Close the queue?';
+
+  @override
+  String get queueCloseConfirmMessage =>
+      'Everyone still waiting is cancelled. Customers already called or being served are kept so you can finish with them.';
+
+  @override
+  String get queueOpened => 'The queue is open.';
+
+  @override
+  String get queuePausedMessage => 'The queue is paused.';
+
+  @override
+  String get queueResumed => 'The queue is open again.';
+
+  @override
+  String get queueClosedMessage => 'The queue is closed.';
+
+  @override
+  String get queueOpenDashboard => 'Live dashboard';
+
+  @override
+  String get queueStaffTitle => 'Staff';
+
+  @override
+  String get queueHistoryTitle => 'Session history';
+
+  @override
+  String get queueQrTitle => 'QR code & link';
+
+  @override
+  String queueCapacityValue(int count) {
+    return '$count waiting at most';
+  }
+
+  @override
+  String get queueCapacityNone => 'No limit';
+
+  @override
+  String get queueGuestsAllowed => 'Guests can join with the QR code';
+
+  @override
+  String get queueGuestsNotAllowed => 'Only signed-in customers can join';
+
+  @override
+  String queueGraceValue(int seconds) {
+    return '$seconds s to arrive';
+  }
+
+  @override
+  String get queueOpenTitle => 'Open the queue';
+
+  @override
+  String queueOpenMessage(String example) {
+    return 'Opening starts a session for today. Ticket numbers start at $example each day (midnight in the branch\'s time zone) and are never reused.';
+  }
+
+  @override
+  String get queueOpenGuestsNote =>
+      'Customers can join from the app and, if allowed, with the QR code.';
+
+  @override
+  String get queueDashboardTitle => 'Live queue';
+
+  @override
+  String queueAutoRefreshNote(int seconds) {
+    return 'Updates automatically every $seconds seconds.';
+  }
+
+  @override
+  String get queueCountWaiting => 'Waiting';
+
+  @override
+  String get queueCountInService => 'Being served';
+
+  @override
+  String get queueCountDone => 'Completed';
+
+  @override
+  String get queueCountMissed => 'Missed or skipped';
+
+  @override
+  String get queueEstimateLabel => 'Wait for a new customer';
+
+  @override
+  String queueEstimateValue(int minutes) {
+    return '~$minutes min';
+  }
+
+  @override
+  String get queueEstimateBasisHistory =>
+      'Estimate based on recent service times.';
+
+  @override
+  String get queueEstimateBasisConfigured =>
+      'Estimate based on the configured duration.';
+
+  @override
+  String get queueCallNext => 'Call next customer';
+
+  @override
+  String get queueYourCustomer => 'Your customer';
+
+  @override
+  String get queueNextUp => 'Next in line';
+
+  @override
+  String get queueInServiceTitle => 'Being served now';
+
+  @override
+  String get queueNobodyWaiting => 'Nobody is waiting.';
+
+  @override
+  String get queueNobodyServed => 'Nobody is being served right now.';
+
+  @override
+  String get queueViewAllWaiting => 'All waiting customers';
+
+  @override
+  String get queueViewAllServing => 'All customers being served';
+
+  @override
+  String get queueSessionEnded => 'This session is closed.';
+
+  @override
+  String queueCalledMessage(String number) {
+    return 'Called $number.';
+  }
+
+  @override
+  String queueWaitedValue(int minutes) {
+    return 'Waited $minutes min';
+  }
+
+  @override
+  String queuePositionValue(int position) {
+    return '#$position in line';
+  }
+
+  @override
+  String get queueGuest => 'Guest';
+
+  @override
+  String get queueCustomer => 'Customer';
+
+  @override
+  String queueServedBy(String name) {
+    return 'Served by $name';
+  }
+
+  @override
+  String get queueServedByYou => 'Served by you';
+
+  @override
+  String get queueActionCall => 'Call now';
+
+  @override
+  String get queueActionStart => 'Start service';
+
+  @override
+  String get queueActionComplete => 'Complete';
+
+  @override
+  String get queueActionSkip => 'Skip';
+
+  @override
+  String get queueActionNoShow => 'No-show';
+
+  @override
+  String get queueActionRecall => 'Back to the line';
+
+  @override
+  String get queueActionDone => 'Done.';
+
+  @override
+  String get queueSkipConfirmTitle => 'Skip this customer?';
+
+  @override
+  String get queueSkipConfirmMessage => 'Their ticket is taken off the line.';
+
+  @override
+  String queueNoShowAvailableAt(String time) {
+    return 'No-show possible from $time';
+  }
+
+  @override
+  String get queueWaitingTitle => 'Waiting customers';
+
+  @override
+  String get queueServingTitle => 'Being served';
+
+  @override
+  String queueTicketTitle(String number) {
+    return 'Ticket $number';
+  }
+
+  @override
+  String get queueTicketCustomer => 'Customer';
+
+  @override
+  String get queueTicketPhone => 'Phone';
+
+  @override
+  String get queueTicketPosition => 'Position';
+
+  @override
+  String get queueTicketJoined => 'Joined';
+
+  @override
+  String get queueTicketStatus => 'Status';
+
+  @override
+  String get queueTicketHistory => 'History';
+
+  @override
+  String get queueEventJoined => 'Joined';
+
+  @override
+  String get queueEventCalled => 'Called';
+
+  @override
+  String get queueEventServiceStarted => 'Service started';
+
+  @override
+  String get queueEventServiceCompleted => 'Service completed';
+
+  @override
+  String get queueEventCancelled => 'Cancelled';
+
+  @override
+  String get queueEventSkipped => 'Skipped';
+
+  @override
+  String get queueEventNoShow => 'Marked as no-show';
+
+  @override
+  String get queueEventExpired => 'Expired at the end of the day';
+
+  @override
+  String get queueEventRecalled => 'Returned to the line';
+
+  @override
+  String get queueStaffMessage =>
+      'Owners and managers of the branch can always operate this queue. Assign the employees who serve customers here.';
+
+  @override
+  String get queueStaffEmpty => 'No employees assigned yet.';
+
+  @override
+  String get queueStaffAssign => 'Assign';
+
+  @override
+  String get queueStaffAssigned => 'Assigned to the queue.';
+
+  @override
+  String get queueStaffRemoved => 'Removed from the queue.';
+
+  @override
+  String get queueStaffAvailable => 'Team members';
+
+  @override
+  String get queueStaffNoneAvailable =>
+      'Everyone who can be assigned already is.';
+
+  @override
+  String get queueStaffAssignedTitle => 'Assigned';
+
+  @override
+  String get queueHistoryEmpty => 'No sessions yet.';
+
+  @override
+  String queueHistoryItem(String date, int number) {
+    return '$date · session $number';
+  }
+
+  @override
+  String queueHistoryTickets(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tickets',
+      one: '1 ticket',
+      zero: 'No tickets',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get queueCloseReasonStaff => 'Closed by staff';
+
+  @override
+  String get queueCloseReasonDayEnded => 'Closed at the end of the day';
+
+  @override
+  String get queueQrMessage =>
+      'Customers scan this code with their phone camera to join. No app needed.';
+
+  @override
+  String get queueQrGuestsOff =>
+      'Guest joining is turned off for this queue, so the QR code only shows its status. Turn it on in the queue settings.';
+
+  @override
+  String get queueLinkLabel => 'Public link';
+
+  @override
+  String get queueRotate => 'Replace link and QR code';
+
+  @override
+  String get queueRotateConfirmTitle => 'Replace the link?';
+
+  @override
+  String get queueRotateConfirmMessage =>
+      'The current QR code and link stop working immediately. Print or share the new one.';
+
+  @override
+  String get queueRotated => 'New link created. The old one no longer works.';
+
+  @override
+  String queueQrSemantics(String name) {
+    return 'QR code to join $name';
+  }
 }

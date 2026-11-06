@@ -70,6 +70,7 @@ class QueueConfigurationTest extends TestCase
             ->assertJsonPath('data.name', 'Consultation queue')
             ->assertJsonPath('data.ticket_prefix', 'MED')
             ->assertJsonPath('data.status', 'active')
+            ->assertJsonPath('data.business.id', $this->business->public_id)
             ->assertJsonPath('data.branch.id', $this->mazzeh->public_id)
             ->assertJsonPath('data.service.id', $this->consultation->public_id)
             ->assertJsonPath('data.capacity', null)

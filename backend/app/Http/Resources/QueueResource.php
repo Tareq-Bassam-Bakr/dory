@@ -29,6 +29,7 @@ class QueueResource extends JsonResource
         return [
             'id' => $queue->public_id,
             'name' => $queue->name,
+            'business' => ['id' => $queue->branch->business->public_id, 'name' => $queue->branch->business->name],
             'branch' => ['id' => $queue->branch->public_id, 'name' => $queue->branch->name],
             'service' => $queue->service === null ? null : [
                 'id' => $queue->service->public_id,

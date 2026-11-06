@@ -1777,6 +1777,930 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Open'**
   String get joinInvitationOpen;
+
+  /// Ticket status.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get queueTicketStatusWaiting;
+
+  /// Ticket status.
+  ///
+  /// In en, this message translates to:
+  /// **'Called'**
+  String get queueTicketStatusCalled;
+
+  /// Ticket status.
+  ///
+  /// In en, this message translates to:
+  /// **'Being served'**
+  String get queueTicketStatusServing;
+
+  /// Ticket status.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get queueTicketStatusCompleted;
+
+  /// Ticket status.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get queueTicketStatusCancelled;
+
+  /// Ticket status.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get queueTicketStatusSkipped;
+
+  /// Ticket status: the called customer did not come.
+  ///
+  /// In en, this message translates to:
+  /// **'No-show'**
+  String get queueTicketStatusNoShow;
+
+  /// Ticket status: closed at the end of the day.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get queueTicketStatusExpired;
+
+  /// Queue session status.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get queueSessionStatusOpen;
+
+  /// Queue session status.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get queueSessionStatusPaused;
+
+  /// Queue session status, or no session.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get queueSessionStatusClosed;
+
+  /// Error code session_already_active.
+  ///
+  /// In en, this message translates to:
+  /// **'This queue is already open.'**
+  String get queueErrorSessionAlreadyActive;
+
+  /// Error code queue_has_active_session.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the queue before deleting it.'**
+  String get queueErrorHasActiveSession;
+
+  /// Error code no_waiting_tickets.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody is waiting.'**
+  String get queueErrorNoWaiting;
+
+  /// Error code staff_busy.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish your current customer before calling the next one.'**
+  String get queueErrorStaffBusy;
+
+  /// Error code ticket_handled_by_other_staff.
+  ///
+  /// In en, this message translates to:
+  /// **'Another staff member is handling this ticket.'**
+  String get queueErrorOtherStaff;
+
+  /// Error code grace_period_active.
+  ///
+  /// In en, this message translates to:
+  /// **'The customer still has time to arrive. Try again shortly.'**
+  String get queueErrorGracePeriod;
+
+  /// Error code ticket_state_changed.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone else just changed this ticket. The screen was refreshed.'**
+  String get queueErrorTicketChanged;
+
+  /// Error code invalid_ticket_transition.
+  ///
+  /// In en, this message translates to:
+  /// **'This action is no longer possible for this ticket.'**
+  String get queueErrorInvalidTransition;
+
+  /// Error code queue_closed.
+  ///
+  /// In en, this message translates to:
+  /// **'This queue is closed.'**
+  String get queueErrorQueueClosed;
+
+  /// Error code queue_inactive.
+  ///
+  /// In en, this message translates to:
+  /// **'This queue is inactive. Activate it in its settings first.'**
+  String get queueErrorQueueInactive;
+
+  /// Error codes no_active_session, session_not_open.
+  ///
+  /// In en, this message translates to:
+  /// **'This queue is not open.'**
+  String get queueErrorNoActiveSession;
+
+  /// Error code session_not_paused.
+  ///
+  /// In en, this message translates to:
+  /// **'This queue is not paused.'**
+  String get queueErrorSessionNotPaused;
+
+  /// Button and title: create a queue.
+  ///
+  /// In en, this message translates to:
+  /// **'New queue'**
+  String get queueCreate;
+
+  /// Queues tab without any business.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a business first, then set up a queue for each service.'**
+  String get queuesNoBusiness;
+
+  /// Queue list subtitle: branch and ticket prefix.
+  ///
+  /// In en, this message translates to:
+  /// **'{branch} branch · {prefix}'**
+  String queueTileSubtitle(String branch, String prefix);
+
+  /// Queue form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get queueBranchLabel;
+
+  /// Queue form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get queueServiceLabel;
+
+  /// Queue form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Each service has its own queue.'**
+  String get queueServiceHelper;
+
+  /// Queue form: no branches.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a branch to this business first.'**
+  String get queueNoBranches;
+
+  /// Queue form: no services available.
+  ///
+  /// In en, this message translates to:
+  /// **'This branch has no services without a queue. Add a service first.'**
+  String get queueNoServices;
+
+  /// Queue form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue name'**
+  String get queueNameLabel;
+
+  /// Queue form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket prefix'**
+  String get queuePrefixLabel;
+
+  /// Queue form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'1 to 6 capital letters or digits, starting with a letter. Tickets look like {example}.'**
+  String queuePrefixHelper(String example);
+
+  /// Queue form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum waiting customers'**
+  String get queueCapacityLabel;
+
+  /// Queue form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave empty for no limit.'**
+  String get queueCapacityHelper;
+
+  /// Queue form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Minutes per customer'**
+  String get queueDurationLabel;
+
+  /// Queue form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'Used for wait estimates until there is enough history. Leave empty to use the service duration.'**
+  String get queueDurationHelper;
+
+  /// Queue form field.
+  ///
+  /// In en, this message translates to:
+  /// **'Time to arrive after being called (seconds)'**
+  String get queueGraceLabel;
+
+  /// Queue form helper.
+  ///
+  /// In en, this message translates to:
+  /// **'After this time a called customer can be marked as no-show.'**
+  String get queueGraceHelper;
+
+  /// Queue form switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests can join with the QR code, without an account'**
+  String get queueGuestJoinLabel;
+
+  /// Queue form switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask guests for their name'**
+  String get queueGuestNameLabel;
+
+  /// Queue form switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Require a phone number from guests'**
+  String get queueGuestPhoneLabel;
+
+  /// Queue form switch.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue is active'**
+  String get queueActiveLabel;
+
+  /// Validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a name of 2 to 150 characters.'**
+  String get queueValidationName;
+
+  /// Validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use 1 to 6 capital letters or digits, starting with a letter.'**
+  String get queueValidationPrefix;
+
+  /// Validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a whole number from {min} to {max}.'**
+  String queueValidationNumber(int min, int max);
+
+  /// Validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a service.'**
+  String get queueValidationService;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue created.'**
+  String get queueCreated;
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue settings'**
+  String get queueEditTitle;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete queue'**
+  String get queueDelete;
+
+  /// Dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete this queue?'**
+  String get queueDeleteConfirmTitle;
+
+  /// Dialog message.
+  ///
+  /// In en, this message translates to:
+  /// **'Its history is kept, but nobody can join it anymore and its QR code stops working.'**
+  String get queueDeleteConfirmMessage;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue deleted.'**
+  String get queueDeleted;
+
+  /// Queue details: no session.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is closed. Open it to start accepting customers.'**
+  String get queueSessionNone;
+
+  /// Queue details.
+  ///
+  /// In en, this message translates to:
+  /// **'Open since {time} · session {number}'**
+  String queueSessionOpenSince(String time, int number);
+
+  /// Queue details notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Paused: new customers cannot join, but you can keep serving those waiting.'**
+  String get queueSessionPausedNotice;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Open queue'**
+  String get queueOpen;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get queuePause;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get queueResume;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Close queue'**
+  String get queueClose;
+
+  /// Dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Close the queue?'**
+  String get queueCloseConfirmTitle;
+
+  /// Dialog message.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone still waiting is cancelled. Customers already called or being served are kept so you can finish with them.'**
+  String get queueCloseConfirmMessage;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is open.'**
+  String get queueOpened;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is paused.'**
+  String get queuePausedMessage;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is open again.'**
+  String get queueResumed;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'The queue is closed.'**
+  String get queueClosedMessage;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Live dashboard'**
+  String get queueOpenDashboard;
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get queueStaffTitle;
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Session history'**
+  String get queueHistoryTitle;
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code & link'**
+  String get queueQrTitle;
+
+  /// Queue details value.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} waiting at most'**
+  String queueCapacityValue(int count);
+
+  /// Queue details value.
+  ///
+  /// In en, this message translates to:
+  /// **'No limit'**
+  String get queueCapacityNone;
+
+  /// Queue details value.
+  ///
+  /// In en, this message translates to:
+  /// **'Guests can join with the QR code'**
+  String get queueGuestsAllowed;
+
+  /// Queue details value.
+  ///
+  /// In en, this message translates to:
+  /// **'Only signed-in customers can join'**
+  String get queueGuestsNotAllowed;
+
+  /// Queue details value.
+  ///
+  /// In en, this message translates to:
+  /// **'{seconds} s to arrive'**
+  String queueGraceValue(int seconds);
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the queue'**
+  String get queueOpenTitle;
+
+  /// Open queue explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening starts a session for today. Ticket numbers start at {example} each day (midnight in the branch\'s time zone) and are never reused.'**
+  String queueOpenMessage(String example);
+
+  /// Open queue explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers can join from the app and, if allowed, with the QR code.'**
+  String get queueOpenGuestsNote;
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Live queue'**
+  String get queueDashboardTitle;
+
+  /// Polling notice.
+  ///
+  /// In en, this message translates to:
+  /// **'Updates automatically every {seconds} seconds.'**
+  String queueAutoRefreshNote(int seconds);
+
+  /// Dashboard metric.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get queueCountWaiting;
+
+  /// Dashboard metric.
+  ///
+  /// In en, this message translates to:
+  /// **'Being served'**
+  String get queueCountInService;
+
+  /// Dashboard metric.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get queueCountDone;
+
+  /// Dashboard metric.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed or skipped'**
+  String get queueCountMissed;
+
+  /// Dashboard metric.
+  ///
+  /// In en, this message translates to:
+  /// **'Wait for a new customer'**
+  String get queueEstimateLabel;
+
+  /// Approximate minutes.
+  ///
+  /// In en, this message translates to:
+  /// **'~{minutes} min'**
+  String queueEstimateValue(int minutes);
+
+  /// Estimate explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate based on recent service times.'**
+  String get queueEstimateBasisHistory;
+
+  /// Estimate explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimate based on the configured duration.'**
+  String get queueEstimateBasisConfigured;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Call next customer'**
+  String get queueCallNext;
+
+  /// Dashboard section.
+  ///
+  /// In en, this message translates to:
+  /// **'Your customer'**
+  String get queueYourCustomer;
+
+  /// Dashboard section.
+  ///
+  /// In en, this message translates to:
+  /// **'Next in line'**
+  String get queueNextUp;
+
+  /// Dashboard section.
+  ///
+  /// In en, this message translates to:
+  /// **'Being served now'**
+  String get queueInServiceTitle;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody is waiting.'**
+  String get queueNobodyWaiting;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'Nobody is being served right now.'**
+  String get queueNobodyServed;
+
+  /// Link.
+  ///
+  /// In en, this message translates to:
+  /// **'All waiting customers'**
+  String get queueViewAllWaiting;
+
+  /// Link.
+  ///
+  /// In en, this message translates to:
+  /// **'All customers being served'**
+  String get queueViewAllServing;
+
+  /// Dashboard notice.
+  ///
+  /// In en, this message translates to:
+  /// **'This session is closed.'**
+  String get queueSessionEnded;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Called {number}.'**
+  String queueCalledMessage(String number);
+
+  /// Ticket tile.
+  ///
+  /// In en, this message translates to:
+  /// **'Waited {minutes} min'**
+  String queueWaitedValue(int minutes);
+
+  /// Ticket tile.
+  ///
+  /// In en, this message translates to:
+  /// **'#{position} in line'**
+  String queuePositionValue(int position);
+
+  /// Customer without an account.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get queueGuest;
+
+  /// Customer without a name.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get queueCustomer;
+
+  /// Ticket tile.
+  ///
+  /// In en, this message translates to:
+  /// **'Served by {name}'**
+  String queueServedBy(String name);
+
+  /// Ticket tile.
+  ///
+  /// In en, this message translates to:
+  /// **'Served by you'**
+  String get queueServedByYou;
+
+  /// Ticket action.
+  ///
+  /// In en, this message translates to:
+  /// **'Call now'**
+  String get queueActionCall;
+
+  /// Ticket action.
+  ///
+  /// In en, this message translates to:
+  /// **'Start service'**
+  String get queueActionStart;
+
+  /// Ticket action.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get queueActionComplete;
+
+  /// Ticket action.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get queueActionSkip;
+
+  /// Ticket action.
+  ///
+  /// In en, this message translates to:
+  /// **'No-show'**
+  String get queueActionNoShow;
+
+  /// Ticket action: return a called ticket to its place.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to the line'**
+  String get queueActionRecall;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Done.'**
+  String get queueActionDone;
+
+  /// Dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip this customer?'**
+  String get queueSkipConfirmTitle;
+
+  /// Dialog message.
+  ///
+  /// In en, this message translates to:
+  /// **'Their ticket is taken off the line.'**
+  String get queueSkipConfirmMessage;
+
+  /// Ticket hint.
+  ///
+  /// In en, this message translates to:
+  /// **'No-show possible from {time}'**
+  String queueNoShowAvailableAt(String time);
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting customers'**
+  String get queueWaitingTitle;
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Being served'**
+  String get queueServingTitle;
+
+  /// Title.
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket {number}'**
+  String queueTicketTitle(String number);
+
+  /// Ticket detail row.
+  ///
+  /// In en, this message translates to:
+  /// **'Customer'**
+  String get queueTicketCustomer;
+
+  /// Ticket detail row.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get queueTicketPhone;
+
+  /// Ticket detail row.
+  ///
+  /// In en, this message translates to:
+  /// **'Position'**
+  String get queueTicketPosition;
+
+  /// Ticket detail row.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get queueTicketJoined;
+
+  /// Ticket detail row.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get queueTicketStatus;
+
+  /// Ticket detail section.
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get queueTicketHistory;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get queueEventJoined;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Called'**
+  String get queueEventCalled;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Service started'**
+  String get queueEventServiceStarted;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Service completed'**
+  String get queueEventServiceCompleted;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get queueEventCancelled;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped'**
+  String get queueEventSkipped;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as no-show'**
+  String get queueEventNoShow;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired at the end of the day'**
+  String get queueEventExpired;
+
+  /// Ticket event.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned to the line'**
+  String get queueEventRecalled;
+
+  /// Staff screen explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Owners and managers of the branch can always operate this queue. Assign the employees who serve customers here.'**
+  String get queueStaffMessage;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No employees assigned yet.'**
+  String get queueStaffEmpty;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get queueStaffAssign;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned to the queue.'**
+  String get queueStaffAssigned;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed from the queue.'**
+  String get queueStaffRemoved;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Team members'**
+  String get queueStaffAvailable;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone who can be assigned already is.'**
+  String get queueStaffNoneAvailable;
+
+  /// Section title.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned'**
+  String get queueStaffAssignedTitle;
+
+  /// Empty state.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions yet.'**
+  String get queueHistoryEmpty;
+
+  /// History row.
+  ///
+  /// In en, this message translates to:
+  /// **'{date} · session {number}'**
+  String queueHistoryItem(String date, int number);
+
+  /// History row.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No tickets} =1{1 ticket} other{{count} tickets}}'**
+  String queueHistoryTickets(int count);
+
+  /// Close reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed by staff'**
+  String get queueCloseReasonStaff;
+
+  /// Close reason.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed at the end of the day'**
+  String get queueCloseReasonDayEnded;
+
+  /// QR screen explanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Customers scan this code with their phone camera to join. No app needed.'**
+  String get queueQrMessage;
+
+  /// QR screen warning.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest joining is turned off for this queue, so the QR code only shows its status. Turn it on in the queue settings.'**
+  String get queueQrGuestsOff;
+
+  /// QR screen label.
+  ///
+  /// In en, this message translates to:
+  /// **'Public link'**
+  String get queueLinkLabel;
+
+  /// Button.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace link and QR code'**
+  String get queueRotate;
+
+  /// Dialog title.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace the link?'**
+  String get queueRotateConfirmTitle;
+
+  /// Dialog message.
+  ///
+  /// In en, this message translates to:
+  /// **'The current QR code and link stop working immediately. Print or share the new one.'**
+  String get queueRotateConfirmMessage;
+
+  /// Snackbar.
+  ///
+  /// In en, this message translates to:
+  /// **'New link created. The old one no longer works.'**
+  String get queueRotated;
+
+  /// Accessibility label.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code to join {name}'**
+  String queueQrSemantics(String name);
 }
 
 class _AppLocalizationsDelegate

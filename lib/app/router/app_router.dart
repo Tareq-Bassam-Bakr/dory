@@ -19,6 +19,14 @@ import 'package:dory_app/features/businesses/presentation/pages/edit_business_pa
 import 'package:dory_app/features/home/presentation/pages/customer_home_page.dart';
 import 'package:dory_app/features/profile/presentation/pages/account_page.dart';
 import 'package:dory_app/features/queues/presentation/pages/business_queues_page.dart';
+import 'package:dory_app/features/queues/presentation/pages/queue_dashboard_page.dart';
+import 'package:dory_app/features/queues/presentation/pages/queue_details_page.dart';
+import 'package:dory_app/features/queues/presentation/pages/queue_form_page.dart';
+import 'package:dory_app/features/queues/presentation/pages/queue_qr_page.dart';
+import 'package:dory_app/features/queues/presentation/pages/queue_sessions_page.dart';
+import 'package:dory_app/features/queues/presentation/pages/queue_staff_page.dart';
+import 'package:dory_app/features/queues/presentation/pages/session_tickets_page.dart';
+import 'package:dory_app/features/queues/presentation/pages/ticket_details_page.dart';
 import 'package:dory_app/features/services/presentation/pages/service_form_page.dart';
 import 'package:dory_app/features/services/presentation/pages/services_list_page.dart';
 import 'package:dory_app/features/team/presentation/pages/invitation_details_page.dart';
@@ -142,7 +150,15 @@ List<RouteBase> _buildRoutes() => <RouteBase>[
           ),
         ],
       ),
-      _branch(AppRoutes.businessQueues, (_) => const BusinessQueuesPage()),
+      StatefulShellBranch(
+        routes: <RouteBase>[
+          GoRoute(
+            path: AppRoutes.businessQueues,
+            builder: (context, state) => const BusinessQueuesPage(),
+            routes: _queueRoutes(),
+          ),
+        ],
+      ),
       _branch(
         AppRoutes.businessAccount,
         (_) => const AccountPage(workspace: AppWorkspace.business),
@@ -232,6 +248,71 @@ List<RouteBase> _businessManagementRoutes() {
                   InviteMemberPage(businessId: business(state)),
             ),
           ],
+        ),
+      ],
+    ),
+  ];
+}
+
+/// Queue screens, nested under the queues tab: /business/queues/...
+List<RouteBase> _queueRoutes() {
+  String queue(GoRouterState state) => state.pathParameters['queueId']!;
+  String session(GoRouterState state) => state.pathParameters['sessionId']!;
+
+  return <RouteBase>[
+    GoRoute(
+      path: 'business/:businessId/new',
+      builder: (context, state) =>
+          CreateQueuePage(businessId: state.pathParameters['businessId']!),
+    ),
+    GoRoute(
+      path: 'q/:queueId',
+      builder: (context, state) => QueueDetailsPage(queueId: queue(state)),
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'edit',
+          builder: (context, state) => EditQueuePage(queueId: queue(state)),
+        ),
+        GoRoute(
+          path: 'open',
+          builder: (context, state) =>
+              OpenQueueSessionPage(queueId: queue(state)),
+        ),
+        GoRoute(
+          path: 'staff',
+          builder: (context, state) => QueueStaffPage(queueId: queue(state)),
+        ),
+        GoRoute(
+          path: 'sessions',
+          builder: (context, state) => QueueSessionsPage(queueId: queue(state)),
+        ),
+        GoRoute(
+          path: 'qr',
+          builder: (context, state) => QueueQrPage(queueId: queue(state)),
+        ),
+      ],
+    ),
+    GoRoute(
+      path: 's/:sessionId',
+      builder: (context, state) =>
+          QueueDashboardPage(sessionId: session(state)),
+      routes: <RouteBase>[
+        GoRoute(
+          path: 'waiting',
+          builder: (context, state) =>
+              WaitingTicketsPage(sessionId: session(state)),
+        ),
+        GoRoute(
+          path: 'serving',
+          builder: (context, state) =>
+              ServingTicketsPage(sessionId: session(state)),
+        ),
+        GoRoute(
+          path: 't/:ticketId',
+          builder: (context, state) => TicketDetailsPage(
+            sessionId: session(state),
+            ticketId: state.pathParameters['ticketId']!,
+          ),
         ),
       ],
     ),

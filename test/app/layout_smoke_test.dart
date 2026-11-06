@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../features/queues/queue_fixtures.dart';
 import '../helpers/api_fixtures.dart';
 import '../helpers/fake_auth_repository.dart';
 import '../helpers/fake_http_adapter.dart';
@@ -43,14 +44,136 @@ void main() {
     AppRoutes.team(businessId),
     AppRoutes.teamInvite(businessId),
     AppRoutes.invitation(token),
+    AppRoutes.queueCreate(businessId),
+    AppRoutes.queue(queueId),
+    AppRoutes.queueEdit(queueId),
+    AppRoutes.queueOpen(queueId),
+    AppRoutes.queueStaff(queueId),
+    AppRoutes.queueSessions(queueId),
+    AppRoutes.queueQr(queueId),
+    AppRoutes.queueSession(sessionId),
+    AppRoutes.queueSessionWaiting(sessionId),
+    AppRoutes.queueSessionServing(sessionId),
+    AppRoutes.queueTicket(sessionId, ticketId),
   ];
   const Map<String, Size> windows = <String, Size>{
     'small phone': Size(360, 640),
     'tablet': Size(1024, 768),
   };
 
+  // Long Arabic names on purpose: they must still fit small phones.
+  final Map<String, Object?> called = staffTicketJson(
+    status: 'called',
+    position: null,
+    guestName: 'عبد الرحمن الحلبي',
+    servedBy: 'لينا حداد',
+    servedByMe: true,
+    noShowAllowedAt: '2026-11-06T06:17:00+00:00',
+  );
+
   FakeHttpAdapter api() => FakeHttpAdapter()
     ..reply('GET', '/business-categories', FakeResponse.ok(categoriesJson()))
+    ..reply(
+      'GET',
+      '/businesses/$businessId/queues',
+      FakeResponse.ok(<Object?>[
+        queueJson(session: queueSessionJson()),
+        queueJson(
+          id: '01jqueuetwoxxxxxxxxxxxxxxx',
+          name: 'استشارات طب الأسرة والأطفال',
+          prefix: 'FAMILY',
+        ),
+      ]),
+    )
+    ..reply(
+      'GET',
+      '/businesses/01jsecondxxxxxxxxxxxxxxxxx/queues',
+      FakeResponse.ok(<Object?>[]),
+    )
+    ..reply(
+      'GET',
+      '/queues/$queueId',
+      FakeResponse.ok(queueJson(session: queueSessionJson(status: 'paused'))),
+    )
+    ..reply(
+      'GET',
+      '/queues/$queueId/sessions',
+      FakeResponse.ok(<Object?>[
+        queueSessionJson(status: 'paused', tickets: 12),
+        queueSessionJson(
+          id: '01jsessionoldxxxxxxxxxxxxx',
+          status: 'closed',
+          tickets: 48,
+          closeReason: 'day_ended',
+        ),
+      ]),
+    )
+    ..reply(
+      'GET',
+      '/queues/$queueId/public-link',
+      FakeResponse.ok(<String, Object?>{
+        'url': 'https://dory.example/join/${'Q' * 40}',
+        'qr_payload': 'https://dory.example/join/${'Q' * 40}',
+        'rotated_at': '2026-11-06T06:00:00+00:00',
+        'allow_guest_join': false,
+      }),
+    )
+    ..reply(
+      'GET',
+      '/queues/$queueId/staff',
+      FakeResponse.ok(<Object?>[
+        <String, Object?>{
+          'id': '01jassignmentxxxxxxxxxxxxx',
+          'member': <String, Object?>{
+            'id': '01jmembertwoxxxxxxxxxxxxxx',
+            'name': 'عمر الخطيب',
+            'email': 'omar@dory.test',
+            'role': 'employee',
+          },
+          'assigned_at': '2026-11-06T06:00:00+00:00',
+          'assigned_by': 'لينا حداد',
+          'unassigned_at': null,
+          'active': true,
+        },
+      ]),
+    )
+    ..reply(
+      'GET',
+      '/queue-sessions/$sessionId/dashboard',
+      FakeResponse.ok(
+        dashboardJson(
+          called: 1,
+          status: 'paused',
+          inService: <Map<String, Object?>>[called],
+          mine: called,
+        ),
+      ),
+    )
+    ..reply(
+      'GET',
+      '/queue-sessions/$sessionId/tickets',
+      FakeResponse.ok(<Object?>[called, staffTicketJson()]),
+    )
+    ..reply(
+      'GET',
+      '/tickets/$ticketId',
+      FakeResponse.ok(
+        staffTicketJson(
+          guestName: 'عبد الرحمن الحلبي',
+          phone: '+963944123456',
+          events: <Map<String, Object?>>[
+            <String, Object?>{
+              'type': 'joined',
+              'from': null,
+              'to': 'waiting',
+              'actor': null,
+              'reason': null,
+              'at': '2026-11-06T06:10:00+00:00',
+            },
+          ],
+        ),
+      ),
+    )
     ..reply(
       'GET',
       '/businesses/manage',

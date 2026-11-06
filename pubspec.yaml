@@ -34,7 +34,7 @@ dependencies:
   intl: ^0.20.2
   dio: ^5.11.1
   flutter_secure_storage: ^11.2.0
-
+  qr: ^4.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
