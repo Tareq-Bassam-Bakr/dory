@@ -1,0 +1,113 @@
+# Backend test suite on SQLite and on a real MySQL 8.4 server
+# (docs/MYSQL_84_COMPATIBILITY.md). The MySQL job also runs the
+# multi-process concurrency tests, which are skipped on SQLite.
+#
+# The MySQL container is created for this job only and thrown away after
+# it; its root account has no password because nothing else can reach it.
+name: Backend tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-tests.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sqlite:
+    name: PHP 8.4 · SQLite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, intl, bcmath, pdo_sqlite, pdo_mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
+
+      - name: Code style
+        run: vendor/bin/pint --test
+
+      - name: Tests
+        run: php artisan test
+
+  mysql84:
+    name: PHP 8.4 · MySQL 8.4
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: dory_db_testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=30
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: dory_db_testing
+      DB_USERNAME: root
+      DB_PASSWORD: ''
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, intl, bcmath, pdo_sqlite, pdo_mysql
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate --ansi
+
+      - name: Show the database server version
+        run: php -r '$pdo = new PDO("mysql:host=127.0.0.1;port=3306", "root", ""); echo "Server: ", $pdo->query("SELECT VERSION()")->fetchColumn(), PHP_EOL;'
+
+      - name: Migrations (fresh, then rollback, then fresh again)
+        run: |
+          php artisan migrate:fresh --force
+          php artisan migrate:rollback --force
+          php artisan migrate --force
+
+      - name: Tests (including multi-process concurrency tests)
+        run: php artisan test
