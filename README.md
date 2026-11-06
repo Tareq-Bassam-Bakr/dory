@@ -13,12 +13,17 @@ This repository contains both parts of the product:
 | Mobile app | repository root (`lib/`, `android/`, `ios/`, …) | Flutter 3.44, Riverpod 3, GoRouter 18 |
 | API | [`backend/`](backend) | Laravel 13, PHP 8.4, MySQL/MariaDB, Sanctum |
 
-> **Status: Phase 03 complete.** The app signs users in with email and
-> password against the Laravel API, keeps the session securely across
-> restarts, and lets businesses onboard and manage their profile, branches,
-> services and team (with invitations). Categories come from the database.
-> Tenant isolation is enforced by the API and covered by tests. **There is no
-> queue functionality yet** (later phase).
+> **Status: Phase 04 complete.** The queue engine works: each service of a
+> branch has a queue with daily ticket numbers (`BAR-001`), sessions that
+> open, pause and close, FIFO call-next, start/complete/skip/no-show/recall,
+> staff assignments, wait estimates, and a public link + QR code that lets
+> guests join from any phone without an account (web page in English and
+> Arabic). The business team runs it from 12 queue screens in the app.
+> Numbering and calling are safe under real concurrency (tested with
+> parallel processes on MariaDB). **Not yet:** real-time push (screens
+> poll), the customer-side ticket experience in the app, discovery and maps.
+> MySQL 8.4 has a CI workflow but has **not** been run yet; see
+> [docs/MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md).
 
 ## Required software
 
@@ -129,6 +134,17 @@ Run the same tests on MariaDB (`dory_db_testing`):
 D:\php84\php.exe D:\composer\composer.phar test:mariadb
 ```
 
+Run the multi-process concurrency tests alone (MariaDB/MySQL only; they
+are skipped on SQLite):
+
+```powershell
+$env:DB_CONNECTION='mariadb'; $env:DB_DATABASE='dory_db_testing'; D:\php84\php.exe artisan test tests/Feature/Concurrency
+```
+
+Guests join a queue at `http://127.0.0.1:8000/join/<token>` (the link and QR
+code are on each queue's **QR code & link** screen). CI runs the suite on
+SQLite and MySQL 8.4: [.github/workflows/backend-tests.yml](.github/workflows/backend-tests.yml).
+
 Check code style:
 
 ```powershell
@@ -168,3 +184,20 @@ D:\php84\php.exe D:\composer\composer.phar lint
 | [MEMBERSHIP_AND_INVITATIONS.md](docs/MEMBERSHIP_AND_INVITATIONS.md) | Roles, ownership protection, invitations and delivery |
 | [FLUTTER_API_INTEGRATION.md](docs/FLUTTER_API_INTEGRATION.md) | API client, secure session, guards, running against the API |
 | [PHASE_03_REPORT.md](docs/PHASE_03_REPORT.md) | What Phase 03 delivered, test results, open items |
+
+**Queue engine (Phase 04)**
+
+| Document | What it covers |
+|---|---|
+| [QUEUE_ENGINE_ARCHITECTURE.md](docs/QUEUE_ENGINE_ARCHITECTURE.md) | Concepts, layers, real-time and priority readiness |
+| [QUEUE_DATABASE_SCHEMA.md](docs/QUEUE_DATABASE_SCHEMA.md) | Queue tables, keys and invariants |
+| [QUEUE_LIFECYCLE.md](docs/QUEUE_LIFECYCLE.md) | Configuration, sessions, closing policy, day roll-over |
+| [TICKET_STATE_MACHINE.md](docs/TICKET_STATE_MACHINE.md) | Ticket states, transitions and who may trigger them |
+| [TICKET_NUMBERING.md](docs/TICKET_NUMBERING.md) | `PREFIX-001`, daily reset, atomic allocation |
+| [GUEST_JOINING.md](docs/GUEST_JOINING.md) | Public link, QR code, guest web page, access tokens |
+| [QUEUE_SECURITY.md](docs/QUEUE_SECURITY.md) | Permissions, secrets, privacy, rate limits |
+| [CONCURRENCY_STRATEGY.md](docs/CONCURRENCY_STRATEGY.md) | Locks, unique indexes, multi-process tests |
+| [WAIT_TIME_ESTIMATION.md](docs/WAIT_TIME_ESTIMATION.md) | The estimate formula and its limits |
+| [QUEUE_API_REFERENCE.md](docs/QUEUE_API_REFERENCE.md) | Every queue endpoint and error code |
+| [MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md) | Database test status, including MySQL 8.4 |
+| [PHASE_04_REPORT.md](docs/PHASE_04_REPORT.md) | What Phase 04 delivered, test results, open items |
