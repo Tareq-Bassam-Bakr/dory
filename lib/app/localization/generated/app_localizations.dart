@@ -296,12 +296,6 @@ abstract class AppLocalizations {
   /// **'No nearby businesses yet'**
   String get homeNearbyEmptyTitle;
 
-  /// Empty state message when there are no nearby businesses to show.
-  ///
-  /// In en, this message translates to:
-  /// **'Businesses near you will appear here once location-based discovery is available.'**
-  String get homeNearbyEmptyMessage;
-
   /// Title of the customer tickets screen.
   ///
   /// In en, this message translates to:
@@ -314,12 +308,6 @@ abstract class AppLocalizations {
   /// **'No active tickets'**
   String get ticketsEmptyTitle;
 
-  /// Empty state message on the tickets screen.
-  ///
-  /// In en, this message translates to:
-  /// **'When you join a queue, your digital ticket and live position will appear here.'**
-  String get ticketsEmptyMessage;
-
   /// Title of the account screen.
   ///
   /// In en, this message translates to:
@@ -331,12 +319,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are browsing as a guest'**
   String get accountGuestTitle;
-
-  /// Account screen message when the user is not signed in.
-  ///
-  /// In en, this message translates to:
-  /// **'Log in to join queues and get notified when your turn is near.'**
-  String get accountGuestMessage;
 
   /// Account screen section title for app preferences.
   ///
@@ -2701,6 +2683,924 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'QR code to join {name}'**
   String queueQrSemantics(String name);
+
+  /// Home, nearby section: location known but nothing found
+  ///
+  /// In en, this message translates to:
+  /// **'No businesses were found in this area. Try a larger radius or another city.'**
+  String get homeNearbyEmptyMessage;
+
+  /// Tickets screen when the list is empty
+  ///
+  /// In en, this message translates to:
+  /// **'When you join a queue, your digital ticket and your place in line will appear here.'**
+  String get ticketsEmptyMessage;
+
+  /// Account screen for signed-out visitors
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to keep your tickets and saved businesses on your account. You can also join queues without one.'**
+  String get accountGuestMessage;
+
+  /// Customer bottom navigation tab
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get navExplore;
+
+  /// Customer bottom navigation tab
+  ///
+  /// In en, this message translates to:
+  /// **'My tickets'**
+  String get navMyTickets;
+
+  /// Customer bottom navigation tab
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get navFavorites;
+
+  /// Customer bottom navigation tab
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get navProfile;
+
+  /// Home greeting for signed-in customers
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String homeGreeting(String name);
+
+  /// Tooltip of the notifications button
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get homeNotifications;
+
+  /// Tooltip of the button switching to the business workspace
+  ///
+  /// In en, this message translates to:
+  /// **'Open my business'**
+  String get homeOpenBusinessWorkspace;
+
+  /// Home section title
+  ///
+  /// In en, this message translates to:
+  /// **'Queues accepting tickets'**
+  String get homeAvailableQueuesTitle;
+
+  /// Home section title. Lists real businesses; not paid placement
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses on DORY'**
+  String get homeFeaturedTitle;
+
+  /// Link to the full list
+  ///
+  /// In en, this message translates to:
+  /// **'See all'**
+  String get homeSeeAll;
+
+  /// Home, no public businesses exist
+  ///
+  /// In en, this message translates to:
+  /// **'No businesses yet'**
+  String get homeFeaturedEmptyTitle;
+
+  /// Home, no public businesses exist
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses will appear here as they join DORY.'**
+  String get homeFeaturedEmptyMessage;
+
+  /// Shown when no location is known
+  ///
+  /// In en, this message translates to:
+  /// **'Set your location'**
+  String get homeNoLocationTitle;
+
+  /// Shown when no location is known
+  ///
+  /// In en, this message translates to:
+  /// **'Share your location or choose a city to see what is near you. Everything else works without it.'**
+  String get homeNoLocationMessage;
+
+  /// Home, no queue accepts tickets
+  ///
+  /// In en, this message translates to:
+  /// **'No queues open right now'**
+  String get homeNoQueuesTitle;
+
+  /// Home, no queue accepts tickets
+  ///
+  /// In en, this message translates to:
+  /// **'Queues appear here while businesses are taking tickets.'**
+  String get homeNoQueuesMessage;
+
+  /// Estimated wait of zero
+  ///
+  /// In en, this message translates to:
+  /// **'No wait right now'**
+  String get discoveryNoWait;
+
+  /// Approximate waiting time
+  ///
+  /// In en, this message translates to:
+  /// **'About {minutes} min'**
+  String discoveryWaitMinutes(int minutes);
+
+  /// A distance in kilometres
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} km'**
+  String discoveryDistanceKm(String distance);
+
+  /// A distance in metres
+  ///
+  /// In en, this message translates to:
+  /// **'{distance} m'**
+  String discoveryDistanceMeters(int distance);
+
+  /// Number of branches
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No branches} =1{1 branch} other{{count} branches}}'**
+  String discoveryBranchCount(int count);
+
+  /// Screen reader label of a rating
+  ///
+  /// In en, this message translates to:
+  /// **'Rated {rating} out of 5 from {count} ratings'**
+  String discoveryRatingSemantics(String rating, int count);
+
+  /// A queue with an open session
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get queueStateOpen;
+
+  /// A queue that reached its capacity
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get queueStateFull;
+
+  /// A paused queue
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get queueStatePaused;
+
+  /// A queue without a session
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get queueStateClosed;
+
+  /// A disabled queue
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get queueStateUnavailable;
+
+  /// Explore screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Explore'**
+  String get exploreTitle;
+
+  /// Tooltip of the map button
+  ///
+  /// In en, this message translates to:
+  /// **'Show map'**
+  String get exploreOpenMap;
+
+  /// Tooltip of the clear button in the search field
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get exploreClearSearch;
+
+  /// Label above recent searches
+  ///
+  /// In en, this message translates to:
+  /// **'Recent searches'**
+  String get exploreRecentSearches;
+
+  /// Clears recent searches
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get exploreClearRecent;
+
+  /// Filters button and sheet title
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get exploreFilters;
+
+  /// Filters button with active filters
+  ///
+  /// In en, this message translates to:
+  /// **'Filters ({count})'**
+  String exploreFiltersCount(int count);
+
+  /// Filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Nearby'**
+  String get exploreFilterNearby;
+
+  /// Filter option
+  ///
+  /// In en, this message translates to:
+  /// **'Queue open now'**
+  String get exploreFilterOpen;
+
+  /// Filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Accepting tickets'**
+  String get exploreFilterAccepting;
+
+  /// Filter section title
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated wait up to'**
+  String get exploreMaxWait;
+
+  /// Filter section title
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get exploreMinRating;
+
+  /// Minimum rating choice
+  ///
+  /// In en, this message translates to:
+  /// **'{rating} and up'**
+  String exploreRatingAtLeast(String rating);
+
+  /// Filter section title
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get exploreSort;
+
+  /// Sort option
+  ///
+  /// In en, this message translates to:
+  /// **'Relevance'**
+  String get exploreSortRelevance;
+
+  /// Sort option
+  ///
+  /// In en, this message translates to:
+  /// **'Nearest'**
+  String get exploreSortNearest;
+
+  /// Sort option
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest wait'**
+  String get exploreSortWait;
+
+  /// Sort option
+  ///
+  /// In en, this message translates to:
+  /// **'Best rated'**
+  String get exploreSortRating;
+
+  /// Clears all filters
+  ///
+  /// In en, this message translates to:
+  /// **'Reset filters'**
+  String get exploreResetFilters;
+
+  /// Search found nothing
+  ///
+  /// In en, this message translates to:
+  /// **'No results'**
+  String get exploreEmptyTitle;
+
+  /// Search found nothing
+  ///
+  /// In en, this message translates to:
+  /// **'Try different words or fewer filters.'**
+  String get exploreEmptyMessage;
+
+  /// Section title on a business page
+  ///
+  /// In en, this message translates to:
+  /// **'Branches'**
+  String get businessDetailsBranches;
+
+  /// Section title on a branch page
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a service'**
+  String get branchDetailsServices;
+
+  /// A branch without active services
+  ///
+  /// In en, this message translates to:
+  /// **'This branch has no services available right now.'**
+  String get branchDetailsNoServices;
+
+  /// A service without a queue
+  ///
+  /// In en, this message translates to:
+  /// **'No queue for this service'**
+  String get branchDetailsNoQueue;
+
+  /// Location chip and buttons
+  ///
+  /// In en, this message translates to:
+  /// **'Set location'**
+  String get locationChoose;
+
+  /// Location chip while using the device location
+  ///
+  /// In en, this message translates to:
+  /// **'Near me'**
+  String get locationNearMe;
+
+  /// Location sheet title
+  ///
+  /// In en, this message translates to:
+  /// **'Your location'**
+  String get locationSheetTitle;
+
+  /// Explains why location is useful, shown before the system prompt
+  ///
+  /// In en, this message translates to:
+  /// **'DORY uses your location only while you use the app, to show nearby businesses. It is not stored or tracked. You can choose a city instead.'**
+  String get locationWhy;
+
+  /// Button that asks for location access
+  ///
+  /// In en, this message translates to:
+  /// **'Use my location'**
+  String get locationUseDevice;
+
+  /// Location permission denied
+  ///
+  /// In en, this message translates to:
+  /// **'Location access was not allowed. You can choose a city below.'**
+  String get locationDenied;
+
+  /// Location permission permanently denied
+  ///
+  /// In en, this message translates to:
+  /// **'Location access is turned off for DORY. Allow it in settings, or choose a city below.'**
+  String get locationPermanentlyDenied;
+
+  /// Device location is off
+  ///
+  /// In en, this message translates to:
+  /// **'Location is turned off on this device. Turn it on, or choose a city below.'**
+  String get locationServiceDisabled;
+
+  /// No position could be read
+  ///
+  /// In en, this message translates to:
+  /// **'Your location could not be found. Try again, or choose a city below.'**
+  String get locationUnavailable;
+
+  /// Opens system settings
+  ///
+  /// In en, this message translates to:
+  /// **'Open settings'**
+  String get locationOpenSettings;
+
+  /// Label above the radius choices
+  ///
+  /// In en, this message translates to:
+  /// **'Search radius'**
+  String get locationRadiusLabel;
+
+  /// Manual location section title
+  ///
+  /// In en, this message translates to:
+  /// **'Or choose a city'**
+  String get locationChooseCity;
+
+  /// City search field
+  ///
+  /// In en, this message translates to:
+  /// **'Search cities'**
+  String get locationSearchCity;
+
+  /// City search found nothing
+  ///
+  /// In en, this message translates to:
+  /// **'No cities found.'**
+  String get locationNoCities;
+
+  /// Removes the chosen location
+  ///
+  /// In en, this message translates to:
+  /// **'Clear location'**
+  String get locationClear;
+
+  /// Map screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Map'**
+  String get mapTitle;
+
+  /// Tooltip of the button leaving the map
+  ///
+  /// In en, this message translates to:
+  /// **'Show list'**
+  String get mapShowList;
+
+  /// Tooltip of the recenter button
+  ///
+  /// In en, this message translates to:
+  /// **'Back to my area'**
+  String get mapRecenter;
+
+  /// Screen reader label of the customer marker
+  ///
+  /// In en, this message translates to:
+  /// **'Your location'**
+  String get mapYourLocation;
+
+  /// Map shows nothing
+  ///
+  /// In en, this message translates to:
+  /// **'No branches found in this area.'**
+  String get mapNoBranches;
+
+  /// No tile provider configured
+  ///
+  /// In en, this message translates to:
+  /// **'Map not available'**
+  String get mapUnavailableTitle;
+
+  /// No tile provider configured
+  ///
+  /// In en, this message translates to:
+  /// **'You can still browse businesses in the list.'**
+  String get mapUnavailableMessage;
+
+  /// Join screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Join the queue'**
+  String get joinTitle;
+
+  /// Join button for signed-in customers
+  ///
+  /// In en, this message translates to:
+  /// **'Get a ticket'**
+  String get joinAction;
+
+  /// Guest form title
+  ///
+  /// In en, this message translates to:
+  /// **'Continue as a guest'**
+  String get joinAsGuestTitle;
+
+  /// Join button for guests
+  ///
+  /// In en, this message translates to:
+  /// **'Get a ticket as a guest'**
+  String get joinAsGuestAction;
+
+  /// Guest form field
+  ///
+  /// In en, this message translates to:
+  /// **'Your name'**
+  String get joinGuestName;
+
+  /// Validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your name'**
+  String get joinGuestNameRequired;
+
+  /// Guest form field
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number'**
+  String get joinGuestPhone;
+
+  /// Validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your phone number'**
+  String get joinGuestPhoneRequired;
+
+  /// Consent for the guest phone number
+  ///
+  /// In en, this message translates to:
+  /// **'I agree that this business can use my number to reach me about this ticket.'**
+  String get joinGuestConsent;
+
+  /// Queue allows guests
+  ///
+  /// In en, this message translates to:
+  /// **'Guests can join'**
+  String get joinGuestsAllowed;
+
+  /// Queue does not allow guests
+  ///
+  /// In en, this message translates to:
+  /// **'An account is required'**
+  String get joinAccountRequired;
+
+  /// Guest cannot join this queue
+  ///
+  /// In en, this message translates to:
+  /// **'This queue needs an account. Sign in to join.'**
+  String get joinGuestsNotAllowed;
+
+  /// Encourages creating an account
+  ///
+  /// In en, this message translates to:
+  /// **'With an account, your tickets stay with you on any device.'**
+  String get joinAccountBenefit;
+
+  /// People waiting in a queue
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nobody waiting} =1{1 person waiting} other{{count} people waiting}}'**
+  String joinPeopleWaiting(int count);
+
+  /// Remaining capacity of a queue
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No places left} =1{1 place left} other{{count} places left}}'**
+  String joinPlacesLeft(int count);
+
+  /// Confirmation after joining
+  ///
+  /// In en, this message translates to:
+  /// **'You are in the queue. Your ticket is {number}.'**
+  String joinConfirmed(String number);
+
+  /// Duplicate join refused
+  ///
+  /// In en, this message translates to:
+  /// **'You already have an active ticket in this queue.'**
+  String get joinAlreadyInQueue;
+
+  /// Why a customer cannot join
+  ///
+  /// In en, this message translates to:
+  /// **'This queue is full right now. Please try again later.'**
+  String get joinBlockedFull;
+
+  /// Why a customer cannot join
+  ///
+  /// In en, this message translates to:
+  /// **'This queue is paused and not taking new customers right now.'**
+  String get joinBlockedPaused;
+
+  /// Why a customer cannot join
+  ///
+  /// In en, this message translates to:
+  /// **'This queue is closed right now.'**
+  String get joinBlockedClosed;
+
+  /// Why a customer cannot join
+  ///
+  /// In en, this message translates to:
+  /// **'This branch is not taking customers right now.'**
+  String get joinBlockedBranchInactive;
+
+  /// Why a customer cannot join
+  ///
+  /// In en, this message translates to:
+  /// **'This business is not taking customers right now.'**
+  String get joinBlockedBusinessUnavailable;
+
+  /// Why a customer cannot join
+  ///
+  /// In en, this message translates to:
+  /// **'This service is not available right now.'**
+  String get joinBlockedServiceUnavailable;
+
+  /// Ticket screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Your ticket'**
+  String get ticketTitle;
+
+  /// Screen reader label of the ticket number
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket number {number}'**
+  String ticketNumberSemantics(String number);
+
+  /// Ticket state headline
+  ///
+  /// In en, this message translates to:
+  /// **'You are in the queue'**
+  String get ticketHeadlineWaiting;
+
+  /// Ticket state headline
+  ///
+  /// In en, this message translates to:
+  /// **'It is your turn. Please go to the counter'**
+  String get ticketHeadlineCalled;
+
+  /// Ticket state headline
+  ///
+  /// In en, this message translates to:
+  /// **'You are being served'**
+  String get ticketHeadlineServing;
+
+  /// Ticket state headline
+  ///
+  /// In en, this message translates to:
+  /// **'Service completed'**
+  String get ticketHeadlineCompleted;
+
+  /// Ticket state headline
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket was cancelled'**
+  String get ticketHeadlineCancelled;
+
+  /// Ticket state headline
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket was skipped'**
+  String get ticketHeadlineSkipped;
+
+  /// Ticket state headline
+  ///
+  /// In en, this message translates to:
+  /// **'You were not at the counter when called'**
+  String get ticketHeadlineNoShow;
+
+  /// Ticket state headline
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket expired'**
+  String get ticketHeadlineExpired;
+
+  /// Position in the queue
+  ///
+  /// In en, this message translates to:
+  /// **'Your position: {position}'**
+  String ticketPosition(int position);
+
+  /// Customers ahead of the ticket
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Nobody ahead of you} =1{1 person ahead of you} other{{count} people ahead of you}}'**
+  String ticketPeopleAhead(int count);
+
+  /// End of the grace period
+  ///
+  /// In en, this message translates to:
+  /// **'Please arrive by {time}'**
+  String ticketArriveBy(String time);
+
+  /// Ticket numbers being served
+  ///
+  /// In en, this message translates to:
+  /// **'Now serving: {numbers}'**
+  String ticketNowServing(String numbers);
+
+  /// Label on the ticket screen
+  ///
+  /// In en, this message translates to:
+  /// **'Now serving'**
+  String get ticketServingLabel;
+
+  /// Label on the ticket screen
+  ///
+  /// In en, this message translates to:
+  /// **'Branch'**
+  String get ticketBranch;
+
+  /// Label on the ticket screen
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get ticketAddress;
+
+  /// Label on the ticket screen
+  ///
+  /// In en, this message translates to:
+  /// **'Service'**
+  String get ticketService;
+
+  /// Label on the ticket screen
+  ///
+  /// In en, this message translates to:
+  /// **'Joined at'**
+  String get ticketJoinedAt;
+
+  /// Label on the ticket screen
+  ///
+  /// In en, this message translates to:
+  /// **'Session'**
+  String get ticketSession;
+
+  /// Says the screen polls and is not real-time
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket updates about every {seconds} seconds while it is open. Updates are not instant.'**
+  String ticketPollingNote(int seconds);
+
+  /// Cancels a ticket
+  ///
+  /// In en, this message translates to:
+  /// **'Leave the queue'**
+  String get ticketCancelAction;
+
+  /// Cancel dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Leave the queue?'**
+  String get ticketCancelConfirmTitle;
+
+  /// Cancel dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket {number} will be cancelled and you will lose your place.'**
+  String ticketCancelConfirmMessage(String number);
+
+  /// After cancelling
+  ///
+  /// In en, this message translates to:
+  /// **'Your ticket was cancelled.'**
+  String get ticketCancelled;
+
+  /// Cancel refused
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket can no longer be cancelled.'**
+  String get ticketCancelNotAllowed;
+
+  /// Removes a guest ticket from the device
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from this device'**
+  String get ticketForget;
+
+  /// A guest ticket's access is gone
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket can no longer be opened here'**
+  String get ticketCredentialsMissingTitle;
+
+  /// A guest ticket's access is gone
+  ///
+  /// In en, this message translates to:
+  /// **'Its access on this device was lost or replaced. Your place in the queue is not affected. Please ask the business for help.'**
+  String get ticketCredentialsMissingMessage;
+
+  /// Rating prompt
+  ///
+  /// In en, this message translates to:
+  /// **'How was your visit?'**
+  String get ticketRatePrompt;
+
+  /// Label above a given rating
+  ///
+  /// In en, this message translates to:
+  /// **'Your rating'**
+  String get ticketRated;
+
+  /// Tooltip of a rating star
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 star} other{{count} stars}}'**
+  String ticketRateStars(int count);
+
+  /// After rating
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for your rating.'**
+  String get ticketRatingThanks;
+
+  /// Rating refused
+  ///
+  /// In en, this message translates to:
+  /// **'You already rated this ticket.'**
+  String get ticketAlreadyRated;
+
+  /// Rating refused
+  ///
+  /// In en, this message translates to:
+  /// **'This ticket cannot be rated.'**
+  String get ticketNotRateable;
+
+  /// Ticket list filter
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get ticketFilterActive;
+
+  /// Ticket list filter
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get ticketFilterHistory;
+
+  /// Button in empty states
+  ///
+  /// In en, this message translates to:
+  /// **'Explore businesses'**
+  String get ticketsFindQueue;
+
+  /// Section with guest tickets
+  ///
+  /// In en, this message translates to:
+  /// **'On this device'**
+  String get ticketsOnThisDevice;
+
+  /// Guest tickets are not account tickets
+  ///
+  /// In en, this message translates to:
+  /// **'These tickets were taken as a guest. They stay on this device and are not linked to your account.'**
+  String get ticketsGuestNotLinked;
+
+  /// Encourages an account on the ticket list
+  ///
+  /// In en, this message translates to:
+  /// **'Tickets are saved on this device. Sign in to keep them with your account.'**
+  String get ticketsGuestPrompt;
+
+  /// Favorites screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favoritesTitle;
+
+  /// Tooltip of the favorite button
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get favoriteAdd;
+
+  /// Tooltip of the favorite button
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from saved'**
+  String get favoriteRemove;
+
+  /// Favorites screen when empty
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing saved yet'**
+  String get favoritesEmptyTitle;
+
+  /// Favorites screen when empty
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the heart on a business to find it here quickly.'**
+  String get favoritesEmptyMessage;
+
+  /// Signed-out favorites are device-local
+  ///
+  /// In en, this message translates to:
+  /// **'These are saved on this device only. Sign in to keep your favorites on your account.'**
+  String get favoritesLocalNotice;
+
+  /// Account section title
+  ///
+  /// In en, this message translates to:
+  /// **'My activity'**
+  String get accountActivitySection;
+
+  /// Account row
+  ///
+  /// In en, this message translates to:
+  /// **'Ticket history'**
+  String get accountTicketHistory;
+
+  /// Account row
+  ///
+  /// In en, this message translates to:
+  /// **'Saved businesses'**
+  String get accountSavedBusinesses;
+
+  /// Profile edit screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit profile'**
+  String get profileEditTitle;
+
+  /// Profile field
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get profileName;
+
+  /// Profile field
+  ///
+  /// In en, this message translates to:
+  /// **'Phone number (optional)'**
+  String get profilePhoneOptional;
 }
 
 class _AppLocalizationsDelegate

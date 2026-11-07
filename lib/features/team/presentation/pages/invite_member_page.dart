@@ -181,7 +181,9 @@ class _InviteMemberPageState extends ConsumerState<InviteMemberPage> {
               ],
             ),
           ),
-          if (_branchesMissing && !_allBranches && _branchIds.isEmpty) ...<Widget>[
+          if (_branchesMissing &&
+              !_allBranches &&
+              _branchIds.isEmpty) ...<Widget>[
             const SizedBox(height: AppSpacing.md),
             DoryNotice(
               message: l10n.inviteSelectBranches,

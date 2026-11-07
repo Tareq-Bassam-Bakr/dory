@@ -16,8 +16,15 @@ import 'package:dory_app/features/businesses/presentation/pages/business_onboard
 import 'package:dory_app/features/businesses/presentation/pages/business_overview_page.dart';
 import 'package:dory_app/features/businesses/presentation/pages/create_business_page.dart';
 import 'package:dory_app/features/businesses/presentation/pages/edit_business_page.dart';
+import 'package:dory_app/features/discovery/presentation/pages/branch_details_page.dart'
+    as customer;
+import 'package:dory_app/features/discovery/presentation/pages/business_details_page.dart';
+import 'package:dory_app/features/discovery/presentation/pages/explore_page.dart';
+import 'package:dory_app/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:dory_app/features/home/presentation/pages/customer_home_page.dart';
+import 'package:dory_app/features/maps/presentation/pages/discovery_map_page.dart';
 import 'package:dory_app/features/profile/presentation/pages/account_page.dart';
+import 'package:dory_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:dory_app/features/queues/presentation/pages/business_queues_page.dart';
 import 'package:dory_app/features/queues/presentation/pages/queue_dashboard_page.dart';
 import 'package:dory_app/features/queues/presentation/pages/queue_details_page.dart';
@@ -32,6 +39,9 @@ import 'package:dory_app/features/services/presentation/pages/services_list_page
 import 'package:dory_app/features/team/presentation/pages/invitation_details_page.dart';
 import 'package:dory_app/features/team/presentation/pages/invite_member_page.dart';
 import 'package:dory_app/features/team/presentation/pages/team_members_page.dart';
+import 'package:dory_app/features/tickets/domain/entities/customer_ticket.dart';
+import 'package:dory_app/features/tickets/presentation/pages/customer_ticket_page.dart';
+import 'package:dory_app/features/tickets/presentation/pages/queue_join_page.dart';
 import 'package:dory_app/features/tickets/presentation/pages/tickets_page.dart';
 import 'package:dory_app/shared/enums/app_workspace.dart';
 import 'package:flutter/foundation.dart';
@@ -106,13 +116,16 @@ List<RouteBase> _buildRoutes() => <RouteBase>[
     ),
     branches: <StatefulShellBranch>[
       _branch(AppRoutes.customerHome, (_) => const CustomerHomePage()),
+      _branch(AppRoutes.customerExplore, (_) => const ExplorePage()),
       _branch(AppRoutes.customerTickets, (_) => const TicketsPage()),
+      _branch(AppRoutes.customerFavorites, (_) => const FavoritesPage()),
       _branch(
         AppRoutes.customerAccount,
         (_) => const AccountPage(workspace: AppWorkspace.customer),
       ),
     ],
   ),
+  ..._customerDetailRoutes(),
   GoRoute(
     path: AppRoutes.businessRoot,
     redirect: (_, _) => AppRoutes.workspaceHome(AppWorkspace.business),
@@ -164,6 +177,43 @@ List<RouteBase> _buildRoutes() => <RouteBase>[
         (_) => const AccountPage(workspace: AppWorkspace.business),
       ),
     ],
+  ),
+];
+
+/// Public customer screens. Nothing here needs an account: visitors can
+/// browse, join as a guest and follow their ticket.
+List<RouteBase> _customerDetailRoutes() => <RouteBase>[
+  GoRoute(
+    path: AppRoutes.customerMap,
+    builder: (context, state) => const DiscoveryMapPage(),
+  ),
+  GoRoute(
+    path: AppRoutes.customerProfileEdit,
+    builder: (context, state) => const EditProfilePage(),
+  ),
+  GoRoute(
+    path: '${AppRoutes.customerRoot}/business/:slug',
+    builder: (context, state) =>
+        BusinessDetailsPage(slug: state.pathParameters['slug']!),
+  ),
+  GoRoute(
+    path: '${AppRoutes.customerRoot}/branch/:branchId',
+    builder: (context, state) =>
+        customer.BranchDetailsPage(branchId: state.pathParameters['branchId']!),
+  ),
+  GoRoute(
+    path: '${AppRoutes.customerRoot}/queue/:queueId',
+    builder: (context, state) =>
+        QueueJoinPage(queueId: state.pathParameters['queueId']!),
+  ),
+  GoRoute(
+    path: '${AppRoutes.customerRoot}/ticket/:ticketId',
+    builder: (context, state) => CustomerTicketPage(
+      ticket: TicketRef(
+        state.pathParameters['ticketId']!,
+        isGuest: state.uri.queryParameters['guest'] == '1',
+      ),
+    ),
   ),
 ];
 
@@ -335,14 +385,24 @@ final List<ShellDestination> _customerDestinations = <ShellDestination>[
     label: (l10n) => l10n.navHome,
   ),
   ShellDestination(
+    icon: Icons.explore_outlined,
+    selectedIcon: Icons.explore_rounded,
+    label: (l10n) => l10n.navExplore,
+  ),
+  ShellDestination(
     icon: Icons.confirmation_number_outlined,
     selectedIcon: Icons.confirmation_number_rounded,
-    label: (l10n) => l10n.navTickets,
+    label: (l10n) => l10n.navMyTickets,
+  ),
+  ShellDestination(
+    icon: Icons.favorite_outline_rounded,
+    selectedIcon: Icons.favorite_rounded,
+    label: (l10n) => l10n.navFavorites,
   ),
   ShellDestination(
     icon: Icons.person_outline_rounded,
     selectedIcon: Icons.person_rounded,
-    label: (l10n) => l10n.navAccount,
+    label: (l10n) => l10n.navProfile,
   ),
 ];
 

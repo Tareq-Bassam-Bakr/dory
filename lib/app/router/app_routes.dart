@@ -20,8 +20,21 @@ abstract final class AppRoutes {
   // Customer workspace.
   static const String customerRoot = '/customer';
   static const String customerHome = '$customerRoot/home';
+  static const String customerExplore = '$customerRoot/explore';
   static const String customerTickets = '$customerRoot/tickets';
+  static const String customerFavorites = '$customerRoot/favorites';
   static const String customerAccount = '$customerRoot/account';
+
+  // Customer details, full screen above the tabs. Open them with
+  // `context.push`, so back returns to whichever tab they came from.
+  static const String customerMap = '$customerRoot/map';
+  static const String customerProfileEdit = '$customerRoot/profile/edit';
+  static String customerBusiness(String slug) => '$customerRoot/business/$slug';
+  static String customerBranch(String branchId) =>
+      '$customerRoot/branch/$branchId';
+  static String customerQueue(String queueId) => '$customerRoot/queue/$queueId';
+  static String customerTicket(String ticketId, {bool guest = false}) =>
+      '$customerRoot/ticket/$ticketId${guest ? '?guest=1' : ''}';
 
   // Business workspace. Requires a signed-in user.
   static const String businessRoot = '/business';

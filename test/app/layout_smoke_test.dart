@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../features/customer/customer_fixtures.dart';
 import '../features/queues/queue_fixtures.dart';
 import '../helpers/api_fixtures.dart';
 import '../helpers/fake_auth_repository.dart';
@@ -25,8 +26,15 @@ void main() {
     AppRoutes.login,
     AppRoutes.register,
     AppRoutes.customerHome,
+    AppRoutes.customerExplore,
     AppRoutes.customerTickets,
+    AppRoutes.customerFavorites,
     AppRoutes.customerAccount,
+    AppRoutes.customerMap,
+    AppRoutes.customerBusiness(publicSlug),
+    AppRoutes.customerBranch(publicBranchId),
+    AppRoutes.customerQueue(publicQueueId),
+    AppRoutes.customerTicket(customerTicketId),
     AppRoutes.businessDashboard,
     AppRoutes.businessQueues,
     AppRoutes.businessAccount,
@@ -71,8 +79,35 @@ void main() {
     noShowAllowedAt: '2026-11-06T06:17:00+00:00',
   );
 
-  FakeHttpAdapter api() => FakeHttpAdapter()
+  // Long names on purpose, for the customer screens too.
+  const String longName = 'مركز الشفاء الطبي للعائلة والأطفال والطب العام';
+
+  FakeHttpAdapter api() => customerApi()
     ..reply('GET', '/business-categories', FakeResponse.ok(categoriesJson()))
+    ..reply(
+      'GET',
+      '/discovery/businesses',
+      paged(<Map<String, Object?>>[
+        publicBusinessJson(
+          name: longName,
+          distance: 12.4,
+          rating: <String, Object?>{'average': 4.6, 'count': 120},
+        ),
+        publicBusinessJson(id: 'second', accepting: 0, wait: null),
+      ]),
+    )
+    ..reply(
+      'GET',
+      '/discovery/nearby',
+      paged(<Map<String, Object?>>[
+        publicBranchJson(businessName: longName, distance: 0.4),
+      ]),
+    )
+    ..reply(
+      'GET',
+      '/tickets/$customerTicketId/position',
+      FakeResponse.ok(customerTicketJson()),
+    )
     ..reply(
       'GET',
       '/businesses/$businessId/queues',
@@ -254,6 +289,9 @@ void main() {
           final ProviderContainer container = createTestContainer(
             storage: InMemoryKeyValueStorage(<String, String>{
               StorageKeys.languageCode: languageCode,
+              // Customer screens render their located state.
+              StorageKeys.chosenCity:
+                  '{"city":"دمشق","country":"SY","latitude":33.5,"longitude":36.3}',
             }),
             // The business workspace is only shown to signed-in users.
             authRepository: AppRoutes.requiresAuthentication(location)

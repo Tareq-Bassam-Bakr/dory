@@ -40,6 +40,9 @@ class FakeResponse {
 
 typedef FakeHandler = FakeResponse Function(RequestOptions request);
 
+/// A request's decoded query parameters or JSON body.
+typedef RequestSent = Map<String, dynamic>;
+
 /// In-memory HTTP transport for Dio: routes "METHOD /path" (the path after
 /// /api/v1) to handlers and records every request, so tests can drive the
 /// real API client, interceptors and repositories without a server.
@@ -62,6 +65,12 @@ class FakeHttpAdapter implements HttpClientAdapter {
     for (final RequestOptions request in requests)
       if (request.method == method.toUpperCase() && _pathOf(request) == path)
         request,
+  ];
+
+  /// The query parameters of every GET to [path], in order.
+  List<RequestSent> queries(String path) => <RequestSent>[
+    for (final RequestOptions request in sent('GET', path))
+      request.queryParameters,
   ];
 
   static String _pathOf(RequestOptions request) {

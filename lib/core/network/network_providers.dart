@@ -8,6 +8,11 @@ import 'package:dory_app/core/network/auth_token_interceptor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// For providers that load from the API. Riverpod would otherwise retry
+/// every failure in the background, including a 404 or a refused request.
+/// Screens show the failure with a retry button instead.
+Duration? noAutomaticRetry(int attempt, Object error) => null;
+
 /// The API base URL. Overridden in tests.
 final Provider<String> apiBaseUrlProvider = Provider<String>(
   (ref) => ApiConfig.baseUrl,

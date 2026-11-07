@@ -3,6 +3,19 @@ import 'package:dory_app/core/network/api_envelope.dart';
 import 'package:dory_app/core/network/api_exception.dart';
 import 'package:dory_app/core/network/json.dart';
 
+/// Lets a caller abandon a request that is no longer needed, such as a
+/// search the customer has already replaced with a newer one. Cancelled
+/// requests fail with [ApiErrorKind.cancelled].
+class ApiCancellation {
+  final CancelToken _token = CancelToken();
+
+  void cancel() {
+    if (!_token.isCancelled) {
+      _token.cancel();
+    }
+  }
+}
+
 /// Thin wrapper around [Dio] for the DORY API.
 ///
 /// Every call returns the parsed success envelope or throws an
@@ -13,8 +26,20 @@ class ApiClient {
 
   final Dio _dio;
 
-  Future<ApiEnvelope> get(String path, {Map<String, Object?>? query}) {
-    return _send(() => _dio.get<Object?>(path, queryParameters: query));
+  Future<ApiEnvelope> get(
+    String path, {
+    Map<String, Object?>? query,
+    Map<String, String>? headers,
+    ApiCancellation? cancellation,
+  }) {
+    return _send(
+      () => _dio.get<Object?>(
+        path,
+        queryParameters: query,
+        options: headers == null ? null : Options(headers: headers),
+        cancelToken: cancellation?._token,
+      ),
+    );
   }
 
   Future<ApiEnvelope> post(

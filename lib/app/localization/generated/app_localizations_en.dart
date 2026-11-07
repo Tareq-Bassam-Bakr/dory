@@ -112,28 +112,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeNearbyEmptyTitle => 'No nearby businesses yet';
 
   @override
-  String get homeNearbyEmptyMessage =>
-      'Businesses near you will appear here once location-based discovery is available.';
-
-  @override
   String get ticketsTitle => 'My tickets';
 
   @override
   String get ticketsEmptyTitle => 'No active tickets';
 
   @override
-  String get ticketsEmptyMessage =>
-      'When you join a queue, your digital ticket and live position will appear here.';
-
-  @override
   String get accountTitle => 'Account';
 
   @override
   String get accountGuestTitle => 'You are browsing as a guest';
-
-  @override
-  String get accountGuestMessage =>
-      'Log in to join queues and get notified when your turn is near.';
 
   @override
   String get accountPreferencesSection => 'Preferences';
@@ -1476,4 +1464,565 @@ class AppLocalizationsEn extends AppLocalizations {
   String queueQrSemantics(String name) {
     return 'QR code to join $name';
   }
+
+  @override
+  String get homeNearbyEmptyMessage =>
+      'No businesses were found in this area. Try a larger radius or another city.';
+
+  @override
+  String get ticketsEmptyMessage =>
+      'When you join a queue, your digital ticket and your place in line will appear here.';
+
+  @override
+  String get accountGuestMessage =>
+      'Sign in to keep your tickets and saved businesses on your account. You can also join queues without one.';
+
+  @override
+  String get navExplore => 'Explore';
+
+  @override
+  String get navMyTickets => 'My tickets';
+
+  @override
+  String get navFavorites => 'Favorites';
+
+  @override
+  String get navProfile => 'Profile';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get homeNotifications => 'Notifications';
+
+  @override
+  String get homeOpenBusinessWorkspace => 'Open my business';
+
+  @override
+  String get homeAvailableQueuesTitle => 'Queues accepting tickets';
+
+  @override
+  String get homeFeaturedTitle => 'Businesses on DORY';
+
+  @override
+  String get homeSeeAll => 'See all';
+
+  @override
+  String get homeFeaturedEmptyTitle => 'No businesses yet';
+
+  @override
+  String get homeFeaturedEmptyMessage =>
+      'Businesses will appear here as they join DORY.';
+
+  @override
+  String get homeNoLocationTitle => 'Set your location';
+
+  @override
+  String get homeNoLocationMessage =>
+      'Share your location or choose a city to see what is near you. Everything else works without it.';
+
+  @override
+  String get homeNoQueuesTitle => 'No queues open right now';
+
+  @override
+  String get homeNoQueuesMessage =>
+      'Queues appear here while businesses are taking tickets.';
+
+  @override
+  String get discoveryNoWait => 'No wait right now';
+
+  @override
+  String discoveryWaitMinutes(int minutes) {
+    return 'About $minutes min';
+  }
+
+  @override
+  String discoveryDistanceKm(String distance) {
+    return '$distance km';
+  }
+
+  @override
+  String discoveryDistanceMeters(int distance) {
+    return '$distance m';
+  }
+
+  @override
+  String discoveryBranchCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count branches',
+      one: '1 branch',
+      zero: 'No branches',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String discoveryRatingSemantics(String rating, int count) {
+    return 'Rated $rating out of 5 from $count ratings';
+  }
+
+  @override
+  String get queueStateOpen => 'Open';
+
+  @override
+  String get queueStateFull => 'Full';
+
+  @override
+  String get queueStatePaused => 'Paused';
+
+  @override
+  String get queueStateClosed => 'Closed';
+
+  @override
+  String get queueStateUnavailable => 'Unavailable';
+
+  @override
+  String get exploreTitle => 'Explore';
+
+  @override
+  String get exploreOpenMap => 'Show map';
+
+  @override
+  String get exploreClearSearch => 'Clear search';
+
+  @override
+  String get exploreRecentSearches => 'Recent searches';
+
+  @override
+  String get exploreClearRecent => 'Clear';
+
+  @override
+  String get exploreFilters => 'Filters';
+
+  @override
+  String exploreFiltersCount(int count) {
+    return 'Filters ($count)';
+  }
+
+  @override
+  String get exploreFilterNearby => 'Nearby';
+
+  @override
+  String get exploreFilterOpen => 'Queue open now';
+
+  @override
+  String get exploreFilterAccepting => 'Accepting tickets';
+
+  @override
+  String get exploreMaxWait => 'Estimated wait up to';
+
+  @override
+  String get exploreMinRating => 'Rating';
+
+  @override
+  String exploreRatingAtLeast(String rating) {
+    return '$rating and up';
+  }
+
+  @override
+  String get exploreSort => 'Sort by';
+
+  @override
+  String get exploreSortRelevance => 'Relevance';
+
+  @override
+  String get exploreSortNearest => 'Nearest';
+
+  @override
+  String get exploreSortWait => 'Lowest wait';
+
+  @override
+  String get exploreSortRating => 'Best rated';
+
+  @override
+  String get exploreResetFilters => 'Reset filters';
+
+  @override
+  String get exploreEmptyTitle => 'No results';
+
+  @override
+  String get exploreEmptyMessage => 'Try different words or fewer filters.';
+
+  @override
+  String get businessDetailsBranches => 'Branches';
+
+  @override
+  String get branchDetailsServices => 'Choose a service';
+
+  @override
+  String get branchDetailsNoServices =>
+      'This branch has no services available right now.';
+
+  @override
+  String get branchDetailsNoQueue => 'No queue for this service';
+
+  @override
+  String get locationChoose => 'Set location';
+
+  @override
+  String get locationNearMe => 'Near me';
+
+  @override
+  String get locationSheetTitle => 'Your location';
+
+  @override
+  String get locationWhy =>
+      'DORY uses your location only while you use the app, to show nearby businesses. It is not stored or tracked. You can choose a city instead.';
+
+  @override
+  String get locationUseDevice => 'Use my location';
+
+  @override
+  String get locationDenied =>
+      'Location access was not allowed. You can choose a city below.';
+
+  @override
+  String get locationPermanentlyDenied =>
+      'Location access is turned off for DORY. Allow it in settings, or choose a city below.';
+
+  @override
+  String get locationServiceDisabled =>
+      'Location is turned off on this device. Turn it on, or choose a city below.';
+
+  @override
+  String get locationUnavailable =>
+      'Your location could not be found. Try again, or choose a city below.';
+
+  @override
+  String get locationOpenSettings => 'Open settings';
+
+  @override
+  String get locationRadiusLabel => 'Search radius';
+
+  @override
+  String get locationChooseCity => 'Or choose a city';
+
+  @override
+  String get locationSearchCity => 'Search cities';
+
+  @override
+  String get locationNoCities => 'No cities found.';
+
+  @override
+  String get locationClear => 'Clear location';
+
+  @override
+  String get mapTitle => 'Map';
+
+  @override
+  String get mapShowList => 'Show list';
+
+  @override
+  String get mapRecenter => 'Back to my area';
+
+  @override
+  String get mapYourLocation => 'Your location';
+
+  @override
+  String get mapNoBranches => 'No branches found in this area.';
+
+  @override
+  String get mapUnavailableTitle => 'Map not available';
+
+  @override
+  String get mapUnavailableMessage =>
+      'You can still browse businesses in the list.';
+
+  @override
+  String get joinTitle => 'Join the queue';
+
+  @override
+  String get joinAction => 'Get a ticket';
+
+  @override
+  String get joinAsGuestTitle => 'Continue as a guest';
+
+  @override
+  String get joinAsGuestAction => 'Get a ticket as a guest';
+
+  @override
+  String get joinGuestName => 'Your name';
+
+  @override
+  String get joinGuestNameRequired => 'Enter your name';
+
+  @override
+  String get joinGuestPhone => 'Phone number';
+
+  @override
+  String get joinGuestPhoneRequired => 'Enter your phone number';
+
+  @override
+  String get joinGuestConsent =>
+      'I agree that this business can use my number to reach me about this ticket.';
+
+  @override
+  String get joinGuestsAllowed => 'Guests can join';
+
+  @override
+  String get joinAccountRequired => 'An account is required';
+
+  @override
+  String get joinGuestsNotAllowed =>
+      'This queue needs an account. Sign in to join.';
+
+  @override
+  String get joinAccountBenefit =>
+      'With an account, your tickets stay with you on any device.';
+
+  @override
+  String joinPeopleWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people waiting',
+      one: '1 person waiting',
+      zero: 'Nobody waiting',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String joinPlacesLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count places left',
+      one: '1 place left',
+      zero: 'No places left',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String joinConfirmed(String number) {
+    return 'You are in the queue. Your ticket is $number.';
+  }
+
+  @override
+  String get joinAlreadyInQueue =>
+      'You already have an active ticket in this queue.';
+
+  @override
+  String get joinBlockedFull =>
+      'This queue is full right now. Please try again later.';
+
+  @override
+  String get joinBlockedPaused =>
+      'This queue is paused and not taking new customers right now.';
+
+  @override
+  String get joinBlockedClosed => 'This queue is closed right now.';
+
+  @override
+  String get joinBlockedBranchInactive =>
+      'This branch is not taking customers right now.';
+
+  @override
+  String get joinBlockedBusinessUnavailable =>
+      'This business is not taking customers right now.';
+
+  @override
+  String get joinBlockedServiceUnavailable =>
+      'This service is not available right now.';
+
+  @override
+  String get ticketTitle => 'Your ticket';
+
+  @override
+  String ticketNumberSemantics(String number) {
+    return 'Ticket number $number';
+  }
+
+  @override
+  String get ticketHeadlineWaiting => 'You are in the queue';
+
+  @override
+  String get ticketHeadlineCalled =>
+      'It is your turn. Please go to the counter';
+
+  @override
+  String get ticketHeadlineServing => 'You are being served';
+
+  @override
+  String get ticketHeadlineCompleted => 'Service completed';
+
+  @override
+  String get ticketHeadlineCancelled => 'This ticket was cancelled';
+
+  @override
+  String get ticketHeadlineSkipped => 'This ticket was skipped';
+
+  @override
+  String get ticketHeadlineNoShow => 'You were not at the counter when called';
+
+  @override
+  String get ticketHeadlineExpired => 'This ticket expired';
+
+  @override
+  String ticketPosition(int position) {
+    return 'Your position: $position';
+  }
+
+  @override
+  String ticketPeopleAhead(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people ahead of you',
+      one: '1 person ahead of you',
+      zero: 'Nobody ahead of you',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ticketArriveBy(String time) {
+    return 'Please arrive by $time';
+  }
+
+  @override
+  String ticketNowServing(String numbers) {
+    return 'Now serving: $numbers';
+  }
+
+  @override
+  String get ticketServingLabel => 'Now serving';
+
+  @override
+  String get ticketBranch => 'Branch';
+
+  @override
+  String get ticketAddress => 'Address';
+
+  @override
+  String get ticketService => 'Service';
+
+  @override
+  String get ticketJoinedAt => 'Joined at';
+
+  @override
+  String get ticketSession => 'Session';
+
+  @override
+  String ticketPollingNote(int seconds) {
+    return 'This ticket updates about every $seconds seconds while it is open. Updates are not instant.';
+  }
+
+  @override
+  String get ticketCancelAction => 'Leave the queue';
+
+  @override
+  String get ticketCancelConfirmTitle => 'Leave the queue?';
+
+  @override
+  String ticketCancelConfirmMessage(String number) {
+    return 'Ticket $number will be cancelled and you will lose your place.';
+  }
+
+  @override
+  String get ticketCancelled => 'Your ticket was cancelled.';
+
+  @override
+  String get ticketCancelNotAllowed =>
+      'This ticket can no longer be cancelled.';
+
+  @override
+  String get ticketForget => 'Remove from this device';
+
+  @override
+  String get ticketCredentialsMissingTitle =>
+      'This ticket can no longer be opened here';
+
+  @override
+  String get ticketCredentialsMissingMessage =>
+      'Its access on this device was lost or replaced. Your place in the queue is not affected. Please ask the business for help.';
+
+  @override
+  String get ticketRatePrompt => 'How was your visit?';
+
+  @override
+  String get ticketRated => 'Your rating';
+
+  @override
+  String ticketRateStars(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count stars',
+      one: '1 star',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketRatingThanks => 'Thank you for your rating.';
+
+  @override
+  String get ticketAlreadyRated => 'You already rated this ticket.';
+
+  @override
+  String get ticketNotRateable => 'This ticket cannot be rated.';
+
+  @override
+  String get ticketFilterActive => 'Active';
+
+  @override
+  String get ticketFilterHistory => 'History';
+
+  @override
+  String get ticketsFindQueue => 'Explore businesses';
+
+  @override
+  String get ticketsOnThisDevice => 'On this device';
+
+  @override
+  String get ticketsGuestNotLinked =>
+      'These tickets were taken as a guest. They stay on this device and are not linked to your account.';
+
+  @override
+  String get ticketsGuestPrompt =>
+      'Tickets are saved on this device. Sign in to keep them with your account.';
+
+  @override
+  String get favoritesTitle => 'Favorites';
+
+  @override
+  String get favoriteAdd => 'Save';
+
+  @override
+  String get favoriteRemove => 'Remove from saved';
+
+  @override
+  String get favoritesEmptyTitle => 'Nothing saved yet';
+
+  @override
+  String get favoritesEmptyMessage =>
+      'Tap the heart on a business to find it here quickly.';
+
+  @override
+  String get favoritesLocalNotice =>
+      'These are saved on this device only. Sign in to keep your favorites on your account.';
+
+  @override
+  String get accountActivitySection => 'My activity';
+
+  @override
+  String get accountTicketHistory => 'Ticket history';
+
+  @override
+  String get accountSavedBusinesses => 'Saved businesses';
+
+  @override
+  String get profileEditTitle => 'Edit profile';
+
+  @override
+  String get profileName => 'Name';
+
+  @override
+  String get profilePhoneOptional => 'Phone number (optional)';
 }

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// Small, synchronous-read key/value store for non-sensitive preferences.
 ///
 /// Never store secrets (tokens, credentials) here. Sensitive values belong in
-/// secure storage, which is introduced together with authentication.
+/// `SecureStore`.
 abstract interface class KeyValueStorage {
   String? readString(String key);
 

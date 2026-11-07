@@ -156,12 +156,20 @@ void main() {
       await pumpAppAt(tester, AppRoutes.customerHome);
       expect(find.byType(NavigationBar), findsOneWidget);
 
-      await tester.tap(find.text('Tickets'));
+      await tester.tap(find.text('Explore').last);
+      await tester.pumpAndSettle();
+      expect(currentPath(), AppRoutes.customerExplore);
+
+      await tester.tap(find.text('My tickets').last);
       await tester.pumpAndSettle();
       expect(currentPath(), AppRoutes.customerTickets);
       expect(find.byType(TicketsPage), findsOneWidget);
 
-      await tester.tap(find.text('Account').last);
+      await tester.tap(find.text('Favorites').last);
+      await tester.pumpAndSettle();
+      expect(currentPath(), AppRoutes.customerFavorites);
+
+      await tester.tap(find.text('Profile').last);
       await tester.pumpAndSettle();
       expect(currentPath(), AppRoutes.customerAccount);
     });

@@ -48,6 +48,29 @@ class AccountPage extends ConsumerWidget {
             ),
             Unauthenticated() => const _GuestCard(),
           },
+          if (workspace == AppWorkspace.customer) ...<Widget>[
+            const SizedBox(height: AppSpacing.xl),
+            DorySectionHeader(title: l10n.accountActivitySection),
+            DoryCard(
+              padding: EdgeInsets.zero,
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    leading: const Icon(Icons.confirmation_number_outlined),
+                    title: Text(l10n.accountTicketHistory),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.go(AppRoutes.customerTickets),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.favorite_outline_rounded),
+                    title: Text(l10n.accountSavedBusinesses),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.go(AppRoutes.customerFavorites),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.xl),
           DorySectionHeader(title: l10n.accountPreferencesSection),
           DoryCard(
@@ -152,8 +175,19 @@ class _UserCardState extends ConsumerState<_UserCard> {
                       textDirection: TextDirection.ltr,
                       overflow: TextOverflow.ellipsis,
                     ),
+                    if (user.phone != null)
+                      Text(
+                        user.phone!,
+                        style: text.bodySmall,
+                        textDirection: TextDirection.ltr,
+                      ),
                   ],
                 ),
+              ),
+              IconButton(
+                tooltip: l10n.profileEditTitle,
+                icon: const Icon(Icons.edit_outlined),
+                onPressed: () => context.push(AppRoutes.customerProfileEdit),
               ),
             ],
           ),

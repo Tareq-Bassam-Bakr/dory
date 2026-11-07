@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Encrypted key/value store for secrets (session tokens).
+/// Encrypted key/value store for secrets (session and guest ticket tokens).
 ///
 /// Android: AES-GCM with a key held in the Android Keystore. iOS: the
 /// Keychain, readable after first unlock and never synced off the device.

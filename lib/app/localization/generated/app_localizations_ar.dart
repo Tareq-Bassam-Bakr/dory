@@ -109,28 +109,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeNearbyEmptyTitle => 'لا توجد أعمال قريبة بعد';
 
   @override
-  String get homeNearbyEmptyMessage =>
-      'ستظهر هنا الأعمال القريبة منك عند توفر الاكتشاف حسب الموقع.';
-
-  @override
   String get ticketsTitle => 'تذاكري';
 
   @override
   String get ticketsEmptyTitle => 'لا توجد تذاكر نشطة';
 
   @override
-  String get ticketsEmptyMessage =>
-      'عند انضمامك إلى طابور، ستظهر هنا تذكرتك الرقمية وموقعك المباشر في الدور.';
-
-  @override
   String get accountTitle => 'الحساب';
 
   @override
   String get accountGuestTitle => 'أنت تتصفح كضيف';
-
-  @override
-  String get accountGuestMessage =>
-      'سجّل الدخول للانضمام إلى الطوابير وتلقي تنبيه عند اقتراب دورك.';
 
   @override
   String get accountPreferencesSection => 'التفضيلات';
@@ -1453,4 +1441,573 @@ class AppLocalizationsAr extends AppLocalizations {
   String queueQrSemantics(String name) {
     return 'رمز QR للانضمام إلى $name';
   }
+
+  @override
+  String get homeNearbyEmptyMessage =>
+      'لم نجد أنشطة في هذه المنطقة. جرّب نطاقًا أوسع أو مدينة أخرى.';
+
+  @override
+  String get ticketsEmptyMessage =>
+      'عند انضمامك إلى دور، ستظهر هنا تذكرتك الرقمية وموقعك في الدور.';
+
+  @override
+  String get accountGuestMessage =>
+      'سجّل الدخول لحفظ تذاكرك والأنشطة المحفوظة في حسابك. ويمكنك أيضًا الانضمام إلى الأدوار دون حساب.';
+
+  @override
+  String get navExplore => 'استكشاف';
+
+  @override
+  String get navMyTickets => 'تذاكري';
+
+  @override
+  String get navFavorites => 'المفضلة';
+
+  @override
+  String get navProfile => 'حسابي';
+
+  @override
+  String homeGreeting(String name) {
+    return 'مرحبًا، $name';
+  }
+
+  @override
+  String get homeNotifications => 'الإشعارات';
+
+  @override
+  String get homeOpenBusinessWorkspace => 'فتح نشاطي';
+
+  @override
+  String get homeAvailableQueuesTitle => 'أدوار تستقبل التذاكر';
+
+  @override
+  String get homeFeaturedTitle => 'أنشطة على DORY';
+
+  @override
+  String get homeSeeAll => 'عرض الكل';
+
+  @override
+  String get homeFeaturedEmptyTitle => 'لا توجد أنشطة بعد';
+
+  @override
+  String get homeFeaturedEmptyMessage =>
+      'ستظهر الأنشطة هنا عند انضمامها إلى DORY.';
+
+  @override
+  String get homeNoLocationTitle => 'حدّد موقعك';
+
+  @override
+  String get homeNoLocationMessage =>
+      'شارك موقعك أو اختر مدينة لعرض ما هو قريب منك. وبقية التطبيق تعمل بدون ذلك.';
+
+  @override
+  String get homeNoQueuesTitle => 'لا توجد أدوار مفتوحة الآن';
+
+  @override
+  String get homeNoQueuesMessage =>
+      'تظهر الأدوار هنا عندما تستقبل الأنشطة التذاكر.';
+
+  @override
+  String get discoveryNoWait => 'لا يوجد انتظار الآن';
+
+  @override
+  String discoveryWaitMinutes(int minutes) {
+    return 'حوالي $minutes دقيقة';
+  }
+
+  @override
+  String discoveryDistanceKm(String distance) {
+    return '$distance كم';
+  }
+
+  @override
+  String discoveryDistanceMeters(int distance) {
+    return '$distance متر';
+  }
+
+  @override
+  String discoveryBranchCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count فرع',
+      many: '$count فرعًا',
+      few: '$count فروع',
+      two: 'فرعان',
+      one: 'فرع واحد',
+      zero: 'لا توجد فروع',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String discoveryRatingSemantics(String rating, int count) {
+    return 'التقييم $rating من 5 بناءً على $count تقييم';
+  }
+
+  @override
+  String get queueStateOpen => 'مفتوح';
+
+  @override
+  String get queueStateFull => 'ممتلئ';
+
+  @override
+  String get queueStatePaused => 'متوقف مؤقتًا';
+
+  @override
+  String get queueStateClosed => 'مغلق';
+
+  @override
+  String get queueStateUnavailable => 'غير متاح';
+
+  @override
+  String get exploreTitle => 'استكشاف';
+
+  @override
+  String get exploreOpenMap => 'عرض الخريطة';
+
+  @override
+  String get exploreClearSearch => 'مسح البحث';
+
+  @override
+  String get exploreRecentSearches => 'عمليات البحث الأخيرة';
+
+  @override
+  String get exploreClearRecent => 'مسح';
+
+  @override
+  String get exploreFilters => 'التصفية';
+
+  @override
+  String exploreFiltersCount(int count) {
+    return 'التصفية ($count)';
+  }
+
+  @override
+  String get exploreFilterNearby => 'بالقرب مني';
+
+  @override
+  String get exploreFilterOpen => 'الدور مفتوح الآن';
+
+  @override
+  String get exploreFilterAccepting => 'يستقبل التذاكر';
+
+  @override
+  String get exploreMaxWait => 'الانتظار المتوقع حتى';
+
+  @override
+  String get exploreMinRating => 'التقييم';
+
+  @override
+  String exploreRatingAtLeast(String rating) {
+    return '$rating فأكثر';
+  }
+
+  @override
+  String get exploreSort => 'الترتيب حسب';
+
+  @override
+  String get exploreSortRelevance => 'الأنسب';
+
+  @override
+  String get exploreSortNearest => 'الأقرب';
+
+  @override
+  String get exploreSortWait => 'أقل انتظار';
+
+  @override
+  String get exploreSortRating => 'الأعلى تقييمًا';
+
+  @override
+  String get exploreResetFilters => 'إعادة ضبط التصفية';
+
+  @override
+  String get exploreEmptyTitle => 'لا توجد نتائج';
+
+  @override
+  String get exploreEmptyMessage => 'جرّب كلمات أخرى أو خيارات تصفية أقل.';
+
+  @override
+  String get businessDetailsBranches => 'الفروع';
+
+  @override
+  String get branchDetailsServices => 'اختر خدمة';
+
+  @override
+  String get branchDetailsNoServices =>
+      'لا توجد خدمات متاحة في هذا الفرع الآن.';
+
+  @override
+  String get branchDetailsNoQueue => 'لا يوجد دور لهذه الخدمة';
+
+  @override
+  String get locationChoose => 'تحديد الموقع';
+
+  @override
+  String get locationNearMe => 'بالقرب مني';
+
+  @override
+  String get locationSheetTitle => 'موقعك';
+
+  @override
+  String get locationWhy =>
+      'يستخدم DORY موقعك فقط أثناء استخدامك للتطبيق لعرض الأنشطة القريبة، ولا يحفظه ولا يتتبعه. ويمكنك اختيار مدينة بدلًا من ذلك.';
+
+  @override
+  String get locationUseDevice => 'استخدام موقعي';
+
+  @override
+  String get locationDenied =>
+      'لم يُسمح بالوصول إلى الموقع. يمكنك اختيار مدينة أدناه.';
+
+  @override
+  String get locationPermanentlyDenied =>
+      'الوصول إلى الموقع معطّل لتطبيق DORY. اسمح به من الإعدادات أو اختر مدينة أدناه.';
+
+  @override
+  String get locationServiceDisabled =>
+      'الموقع معطّل على هذا الجهاز. فعّله أو اختر مدينة أدناه.';
+
+  @override
+  String get locationUnavailable =>
+      'تعذّر تحديد موقعك. حاول مرة أخرى أو اختر مدينة أدناه.';
+
+  @override
+  String get locationOpenSettings => 'فتح الإعدادات';
+
+  @override
+  String get locationRadiusLabel => 'نطاق البحث';
+
+  @override
+  String get locationChooseCity => 'أو اختر مدينة';
+
+  @override
+  String get locationSearchCity => 'ابحث عن مدينة';
+
+  @override
+  String get locationNoCities => 'لم يتم العثور على مدن.';
+
+  @override
+  String get locationClear => 'مسح الموقع';
+
+  @override
+  String get mapTitle => 'الخريطة';
+
+  @override
+  String get mapShowList => 'عرض القائمة';
+
+  @override
+  String get mapRecenter => 'العودة إلى منطقتي';
+
+  @override
+  String get mapYourLocation => 'موقعك';
+
+  @override
+  String get mapNoBranches => 'لا توجد فروع في هذه المنطقة.';
+
+  @override
+  String get mapUnavailableTitle => 'الخريطة غير متاحة';
+
+  @override
+  String get mapUnavailableMessage =>
+      'لا يزال بإمكانك تصفح الأنشطة في القائمة.';
+
+  @override
+  String get joinTitle => 'الانضمام إلى الدور';
+
+  @override
+  String get joinAction => 'احصل على تذكرة';
+
+  @override
+  String get joinAsGuestTitle => 'المتابعة كضيف';
+
+  @override
+  String get joinAsGuestAction => 'احصل على تذكرة كضيف';
+
+  @override
+  String get joinGuestName => 'اسمك';
+
+  @override
+  String get joinGuestNameRequired => 'أدخل اسمك';
+
+  @override
+  String get joinGuestPhone => 'رقم الهاتف';
+
+  @override
+  String get joinGuestPhoneRequired => 'أدخل رقم هاتفك';
+
+  @override
+  String get joinGuestConsent =>
+      'أوافق على أن يستخدم هذا النشاط رقمي للتواصل معي بشأن هذه التذكرة.';
+
+  @override
+  String get joinGuestsAllowed => 'يمكن للضيوف الانضمام';
+
+  @override
+  String get joinAccountRequired => 'يتطلب حسابًا';
+
+  @override
+  String get joinGuestsNotAllowed =>
+      'يتطلب هذا الدور حسابًا. سجّل الدخول للانضمام.';
+
+  @override
+  String get joinAccountBenefit => 'مع الحساب، تبقى تذاكرك معك على أي جهاز.';
+
+  @override
+  String joinPeopleWaiting(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخص في الانتظار',
+      many: '$count شخصًا في الانتظار',
+      few: '$count أشخاص في الانتظار',
+      two: 'شخصان في الانتظار',
+      one: 'شخص واحد في الانتظار',
+      zero: 'لا يوجد أحد في الانتظار',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String joinPlacesLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مكان متبقٍ',
+      many: '$count مكانًا متبقيًا',
+      few: '$count أماكن متبقية',
+      two: 'مكانان متبقيان',
+      one: 'مكان واحد متبقٍ',
+      zero: 'لا توجد أماكن متبقية',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String joinConfirmed(String number) {
+    return 'انضممت إلى الدور. رقم تذكرتك $number.';
+  }
+
+  @override
+  String get joinAlreadyInQueue => 'لديك بالفعل تذكرة نشطة في هذا الدور.';
+
+  @override
+  String get joinBlockedFull => 'هذا الدور ممتلئ الآن. يرجى المحاولة لاحقًا.';
+
+  @override
+  String get joinBlockedPaused =>
+      'هذا الدور متوقف مؤقتًا ولا يستقبل عملاء جددًا الآن.';
+
+  @override
+  String get joinBlockedClosed => 'هذا الدور مغلق الآن.';
+
+  @override
+  String get joinBlockedBranchInactive => 'هذا الفرع لا يستقبل عملاء الآن.';
+
+  @override
+  String get joinBlockedBusinessUnavailable =>
+      'هذا النشاط لا يستقبل عملاء الآن.';
+
+  @override
+  String get joinBlockedServiceUnavailable => 'هذه الخدمة غير متاحة الآن.';
+
+  @override
+  String get ticketTitle => 'تذكرتك';
+
+  @override
+  String ticketNumberSemantics(String number) {
+    return 'رقم التذكرة $number';
+  }
+
+  @override
+  String get ticketHeadlineWaiting => 'أنت في الدور';
+
+  @override
+  String get ticketHeadlineCalled => 'حان دورك. يرجى التوجه إلى المكتب';
+
+  @override
+  String get ticketHeadlineServing => 'تتم خدمتك الآن';
+
+  @override
+  String get ticketHeadlineCompleted => 'اكتملت الخدمة';
+
+  @override
+  String get ticketHeadlineCancelled => 'أُلغيت هذه التذكرة';
+
+  @override
+  String get ticketHeadlineSkipped => 'تم تخطي هذه التذكرة';
+
+  @override
+  String get ticketHeadlineNoShow => 'لم تكن عند المكتب عند مناداتك';
+
+  @override
+  String get ticketHeadlineExpired => 'انتهت صلاحية هذه التذكرة';
+
+  @override
+  String ticketPosition(int position) {
+    return 'موقعك: $position';
+  }
+
+  @override
+  String ticketPeopleAhead(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخص أمامك',
+      many: '$count شخصًا أمامك',
+      few: '$count أشخاص أمامك',
+      two: 'شخصان أمامك',
+      one: 'شخص واحد أمامك',
+      zero: 'لا أحد أمامك',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ticketArriveBy(String time) {
+    return 'يرجى الوصول قبل $time';
+  }
+
+  @override
+  String ticketNowServing(String numbers) {
+    return 'يُخدم الآن: $numbers';
+  }
+
+  @override
+  String get ticketServingLabel => 'يُخدم الآن';
+
+  @override
+  String get ticketBranch => 'الفرع';
+
+  @override
+  String get ticketAddress => 'العنوان';
+
+  @override
+  String get ticketService => 'الخدمة';
+
+  @override
+  String get ticketJoinedAt => 'وقت الانضمام';
+
+  @override
+  String get ticketSession => 'الجلسة';
+
+  @override
+  String ticketPollingNote(int seconds) {
+    return 'تتحدث هذه التذكرة كل $seconds ثانية تقريبًا ما دامت مفتوحة. التحديثات ليست فورية.';
+  }
+
+  @override
+  String get ticketCancelAction => 'مغادرة الدور';
+
+  @override
+  String get ticketCancelConfirmTitle => 'مغادرة الدور؟';
+
+  @override
+  String ticketCancelConfirmMessage(String number) {
+    return 'ستُلغى التذكرة $number وستفقد مكانك في الدور.';
+  }
+
+  @override
+  String get ticketCancelled => 'تم إلغاء تذكرتك.';
+
+  @override
+  String get ticketCancelNotAllowed => 'لم يعد بالإمكان إلغاء هذه التذكرة.';
+
+  @override
+  String get ticketForget => 'إزالة من هذا الجهاز';
+
+  @override
+  String get ticketCredentialsMissingTitle =>
+      'لم يعد بالإمكان فتح هذه التذكرة هنا';
+
+  @override
+  String get ticketCredentialsMissingMessage =>
+      'فُقد وصولها على هذا الجهاز أو تم استبداله. لا يتأثر مكانك في الدور. يرجى طلب المساعدة من النشاط.';
+
+  @override
+  String get ticketRatePrompt => 'كيف كانت زيارتك؟';
+
+  @override
+  String get ticketRated => 'تقييمك';
+
+  @override
+  String ticketRateStars(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count نجمة',
+      many: '$count نجمة',
+      few: '$count نجوم',
+      two: 'نجمتان',
+      one: 'نجمة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ticketRatingThanks => 'شكرًا على تقييمك.';
+
+  @override
+  String get ticketAlreadyRated => 'لقد قيّمت هذه التذكرة بالفعل.';
+
+  @override
+  String get ticketNotRateable => 'لا يمكن تقييم هذه التذكرة.';
+
+  @override
+  String get ticketFilterActive => 'النشطة';
+
+  @override
+  String get ticketFilterHistory => 'السجل';
+
+  @override
+  String get ticketsFindQueue => 'استكشاف الأنشطة';
+
+  @override
+  String get ticketsOnThisDevice => 'على هذا الجهاز';
+
+  @override
+  String get ticketsGuestNotLinked =>
+      'حُجزت هذه التذاكر كضيف. تبقى على هذا الجهاز ولا ترتبط بحسابك.';
+
+  @override
+  String get ticketsGuestPrompt =>
+      'تُحفظ التذاكر على هذا الجهاز. سجّل الدخول لتبقى في حسابك.';
+
+  @override
+  String get favoritesTitle => 'المفضلة';
+
+  @override
+  String get favoriteAdd => 'حفظ';
+
+  @override
+  String get favoriteRemove => 'إزالة من المحفوظات';
+
+  @override
+  String get favoritesEmptyTitle => 'لا توجد محفوظات بعد';
+
+  @override
+  String get favoritesEmptyMessage =>
+      'اضغط على القلب في أي نشاط لتجده هنا بسرعة.';
+
+  @override
+  String get favoritesLocalNotice =>
+      'هذه المحفوظات على هذا الجهاز فقط. سجّل الدخول لحفظ مفضلتك في حسابك.';
+
+  @override
+  String get accountActivitySection => 'نشاطي';
+
+  @override
+  String get accountTicketHistory => 'سجل التذاكر';
+
+  @override
+  String get accountSavedBusinesses => 'الأنشطة المحفوظة';
+
+  @override
+  String get profileEditTitle => 'تعديل الحساب';
+
+  @override
+  String get profileName => 'الاسم';
+
+  @override
+  String get profilePhoneOptional => 'رقم الهاتف (اختياري)';
 }

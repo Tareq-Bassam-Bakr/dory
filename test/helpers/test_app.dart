@@ -3,12 +3,14 @@ import 'package:dory_app/app/app.dart';
 import 'package:dory_app/app/localization/app_locales.dart';
 import 'package:dory_app/app/router/app_router.dart';
 import 'package:dory_app/app/theme/app_theme.dart';
+import 'package:dory_app/core/location/location_service.dart';
 import 'package:dory_app/core/network/network_providers.dart';
 import 'package:dory_app/core/storage/in_memory_key_value_storage.dart';
 import 'package:dory_app/core/storage/key_value_storage.dart';
 import 'package:dory_app/core/storage/secure_store.dart';
 import 'package:dory_app/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_providers.dart';
+import 'package:dory_app/features/maps/presentation/providers/map_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -17,6 +19,7 @@ import 'package:material_ui/material_ui.dart';
 
 import 'fake_auth_repository.dart';
 import 'fake_http_adapter.dart';
+import 'fake_location.dart';
 
 /// Base URL of the fake API in tests. Nothing listens there: every request
 /// goes through the injected [FakeHttpAdapter].
@@ -30,6 +33,7 @@ List<Override> testOverrides({
   AuthRepository? authRepository,
   HttpClientAdapter? http,
   SecureStore? secureStore,
+  LocationService? location,
 }) => <Override>[
   keyValueStorageProvider.overrideWithValue(
     storage ?? InMemoryKeyValueStorage(),
@@ -37,6 +41,8 @@ List<Override> testOverrides({
   secureStoreProvider.overrideWithValue(secureStore ?? InMemorySecureStore()),
   apiBaseUrlProvider.overrideWithValue(testApiBaseUrl),
   httpClientAdapterProvider.overrideWithValue(http ?? FakeHttpAdapter()),
+  locationServiceProvider.overrideWithValue(location ?? FakeLocationService()),
+  mapTileProviderProvider.overrideWithValue(OfflineTileProvider()),
   if (authRepository != null)
     authRepositoryProvider.overrideWithValue(authRepository)
   else
@@ -50,6 +56,8 @@ ProviderContainer createTestContainer({
   KeyValueStorage? storage,
   AuthRepository? authRepository,
   HttpClientAdapter? http,
+  SecureStore? secureStore,
+  LocationService? location,
   List<Override> overrides = const <Override>[],
 }) {
   return ProviderContainer.test(
@@ -58,6 +66,8 @@ ProviderContainer createTestContainer({
         storage: storage,
         authRepository: authRepository,
         http: http,
+        secureStore: secureStore,
+        location: location,
       ),
       ...overrides,
     ],
@@ -117,12 +127,18 @@ Future<GoRouter> pumpAppAt(
   String location, {
   AuthRepository? authRepository,
   HttpClientAdapter? http,
+  KeyValueStorage? storage,
+  SecureStore? secureStore,
+  LocationService? locationService,
   Size size = const Size(390, 900),
 }) async {
   setTestWindowSize(tester, size);
   final ProviderContainer container = createTestContainer(
     authRepository: authRepository ?? FakeAuthRepository.signedIn(owns: true),
     http: http,
+    storage: storage,
+    secureStore: secureStore,
+    location: locationService,
   );
   final GoRouter router = container.read(appRouterProvider);
   await pumpDoryApp(tester, container);
@@ -130,6 +146,27 @@ Future<GoRouter> pumpAppAt(
   router.go(location);
   await tester.pumpAndSettle();
   return router;
+}
+
+/// The location on top, including routes opened with `context.push`.
+String topLocation(GoRouter router) =>
+    router.routerDelegate.currentConfiguration.last.matchedLocation;
+
+/// Taps a chip in a horizontal list, scrolling it into view first.
+Future<void> tapChip(WidgetTester tester, String label) async {
+  await tester.dragUntilVisible(
+    find.text(label),
+    find
+        .byWidgetPredicate(
+          (widget) =>
+              widget is ListView && widget.scrollDirection == Axis.horizontal,
+        )
+        .first,
+    const Offset(-120, 0),
+  );
+  await tester.pumpAndSettle();
+  await tester.tap(find.text(label));
+  await tester.pumpAndSettle();
 }
 
 /// The path the router currently shows.
