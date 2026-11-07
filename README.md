@@ -3,7 +3,7 @@
 **Your Turn. Your Time.**
 
 DORY is a smart queue and appointment management platform. Customers discover
-nearby businesses, join virtual queues, and follow their turn live. Businesses
+nearby businesses, join virtual queues, and follow their turn. Businesses
 manage branches, services, queues, and staff from the same app.
 
 This repository contains both parts of the product:
@@ -13,18 +13,21 @@ This repository contains both parts of the product:
 | Mobile app | repository root (`lib/`, `android/`, `ios/`, …) | Flutter 3.44, Riverpod 3, GoRouter 18 |
 | API | [`backend/`](backend) | Laravel 13, PHP 8.4, MySQL/MariaDB, Sanctum |
 
-> **Status: Phase 04 complete.** The queue engine works: each service of a
-> branch has a queue with daily ticket numbers (`BAR-001`), sessions that
-> open, pause and close, FIFO call-next, start/complete/skip/no-show/recall,
-> staff assignments, wait estimates, and a public link + QR code that lets
-> guests join from any phone without an account (web page in English and
-> Arabic). The business team runs it from 12 queue screens in the app.
-> Numbering and calling are safe under real concurrency (tested with
-> parallel processes on MariaDB 10.4 and MySQL 8.4). **Not yet:** real-time
-> push (screens poll), the customer-side ticket experience in the app,
-> discovery and maps. MySQL 8.4 was verified on a local server; its CI job
-> does not run yet because GitHub Actions does not start for this
-> repository; see [docs/MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md).
+> **Status: Phase 05 complete.** Customers can browse without an account:
+> search and filter businesses on the server, find what is near them, use an
+> OpenStreetMap map, open business and branch pages, and see live queue
+> availability. They join a queue signed in or as a guest, follow a digital
+> ticket, leave the queue, keep a ticket history, save businesses and rate a
+> completed visit. Guest tickets survive an app restart, with their token held
+> only in secure storage. Businesses run their queues from the workspace built
+> in Phases 03 and 04, and owners switch between the two sides.
+>
+> **Not yet:** real-time updates and notifications (an open ticket polls about
+> every 15 seconds, and says so). Linking a guest ticket to an account does not
+> exist. A production map needs its own tile provider
+> ([docs/OSM_TILE_PROVIDER.md](docs/OSM_TILE_PROVIDER.md)). GitHub Actions does
+> not start for this repository, so MySQL 8.4 is verified on a local server only
+> ([docs/MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md)).
 
 ## Required software
 
@@ -205,3 +208,19 @@ D:\php84\php.exe D:\composer\composer.phar lint
 | [QUEUE_API_REFERENCE.md](docs/QUEUE_API_REFERENCE.md) | Every queue endpoint and error code |
 | [MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md) | Database test status, including MySQL 8.4 |
 | [PHASE_04_REPORT.md](docs/PHASE_04_REPORT.md) | What Phase 04 delivered, test results, open items |
+
+Customer experience (Phase 05):
+
+| Document | Contents |
+|---|---|
+| [CUSTOMER_EXPERIENCE.md](docs/CUSTOMER_EXPERIENCE.md) | Navigation, screens, what visitors and customers can do |
+| [BUSINESS_DISCOVERY.md](docs/BUSINESS_DISCOVERY.md) | What is public, live availability, efficiency |
+| [SEARCH_AND_FILTERS.md](docs/SEARCH_AND_FILTERS.md) | Search parameters, sorting, limits |
+| [MAPS_AND_LOCATION.md](docs/MAPS_AND_LOCATION.md) | Location rules, distance, the map |
+| [OSM_TILE_PROVIDER.md](docs/OSM_TILE_PROVIDER.md) | Tile usage rules and configuring a production provider |
+| [CUSTOMER_TICKET_EXPERIENCE.md](docs/CUSTOMER_TICKET_EXPERIENCE.md) | Joining, the digital ticket, polling, ratings |
+| [GUEST_TICKET_PERSISTENCE.md](docs/GUEST_TICKET_PERSISTENCE.md) | How guest tickets and tokens are stored |
+| [CUSTOMER_FAVORITES.md](docs/CUSTOMER_FAVORITES.md) | Saved businesses, on the server and on the device |
+| [CUSTOMER_API_REFERENCE.md](docs/CUSTOMER_API_REFERENCE.md) | Every customer endpoint and error code |
+| [CUSTOMER_SECURITY.md](docs/CUSTOMER_SECURITY.md) | Controls, their tests, and findings |
+| [PHASE_05_REPORT.md](docs/PHASE_05_REPORT.md) | What Phase 05 delivered, test results, open items |

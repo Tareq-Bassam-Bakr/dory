@@ -55,8 +55,23 @@ void main() {
     expect(location.requests, 1);
     expect(location.readings, 1);
     expect(state.isDevice, isTrue);
-    expect(state.area?.point, here);
+    expect(state.area?.point, const GeoPoint(33.514, 36.276));
     expect(state.area?.radiusKm, CustomerLocation.defaultRadiusKm);
+  });
+
+  test('a position is rounded to about 100 metres before it is used', () async {
+    final FakeLocationService location = FakeLocationService(
+      access: LocationAccess.granted,
+      position: const GeoPoint(33.51384567, 36.27654321),
+    );
+    final ProviderContainer subject = container(location);
+
+    await controller(subject).useDevice();
+
+    expect(
+      subject.read(customerLocationProvider).point,
+      const GeoPoint(33.514, 36.277),
+    );
   });
 
   test('access already granted does not prompt again', () async {

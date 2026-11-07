@@ -22,6 +22,6 @@ class DatabaseSeeder extends Seeder
             return;
         }
 
-        $this->call(DemoDataSeeder::class);
+        $this->call([DemoDataSeeder::class, CustomerDemoSeeder::class]);
     }
 }

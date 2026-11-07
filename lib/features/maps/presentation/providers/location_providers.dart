@@ -100,7 +100,8 @@ class CustomerLocationController extends Notifier<CustomerLocation> {
       return access;
     }
 
-    final GeoPoint? position = await service.currentPosition();
+    final GeoPoint? reading = await service.currentPosition();
+    final GeoPoint? position = reading == null ? null : _rounded(reading);
     state = position == null
         ? _copy(access: access)
         : CustomerLocation(
@@ -114,6 +115,13 @@ class CustomerLocationController extends Notifier<CustomerLocation> {
     }
     return access;
   }
+
+  /// About 100 metres: enough to sort by distance, and all the server gets.
+  /// Coordinates travel in query strings, so they may reach access logs.
+  static GeoPoint _rounded(GeoPoint point) => GeoPoint(
+    double.parse(point.latitude.toStringAsFixed(3)),
+    double.parse(point.longitude.toStringAsFixed(3)),
+  );
 
   /// Uses a city chosen by hand. Needs no permission at all.
   Future<void> chooseCity(DiscoveryCity city) async {

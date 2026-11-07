@@ -183,7 +183,7 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('queues/{publicQueueToken}/join', [PublicQueueController::class, 'join'])
             ->middleware('throttle:queue-join')->name('queues.join');
         // The same, for a queue found through discovery (26-character id).
-        Route::get('queues/{joinableQueue}', [PublicQueueController::class, 'show'])->name('queues.by-id.show');
+        Route::get('queues/{joinableQueue}', [PublicQueueController::class, 'showById'])->name('queues.by-id.show');
         Route::post('queues/{joinableQueue}/join', [PublicQueueController::class, 'joinById'])
             ->middleware('throttle:queue-join')->name('queues.by-id.join');
         Route::middleware('ticket.token')->group(function (): void {

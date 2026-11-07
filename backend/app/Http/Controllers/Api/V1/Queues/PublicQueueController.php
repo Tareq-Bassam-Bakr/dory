@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Queues;
 
 use App\Enums\JoinSource;
+use App\Exceptions\QueueException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Queues\GuestJoinRequest;
 use App\Http\Resources\CustomerTicketResource;
@@ -34,6 +35,20 @@ class PublicQueueController extends Controller
     public function show(Queue $publicQueueToken): JsonResponse
     {
         return ApiResponse::success(new PublicQueueResource($publicQueueToken->load('activeSession')));
+    }
+
+    /**
+     * A queue found through discovery. Unlike the link, whose holder was
+     * given it by the business, an id must not reveal a business that is not
+     * public: it is the same 404 as an unknown queue.
+     */
+    public function showById(Queue $joinableQueue): JsonResponse
+    {
+        if ($joinableQueue->unavailabilityReason() === 'business_unavailable') {
+            throw QueueException::notFound('queue');
+        }
+
+        return $this->show($joinableQueue);
     }
 
     /**

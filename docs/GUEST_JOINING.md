@@ -10,6 +10,11 @@ The token is 40 random characters. The database stores its SHA-256 hash (for
 lookups) and an APP_KEY-encrypted copy (so the link can be shown again). It
 identifies the queue only; it grants nothing else.
 
+Phase 05 adds a third way: a guest in the DORY app joins by the queue's public
+id, found through discovery, without ever seeing this token. The rules, the
+service and the ticket are the same. See
+[GUEST_TICKET_PERSISTENCE.md](GUEST_TICKET_PERSISTENCE.md).
+
 ## Two ways in
 
 1. **Web page** (any phone camera, no app): `/join/{token}` served by the

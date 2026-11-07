@@ -105,6 +105,14 @@ The model throws on update and delete. Indexes on `(ticket_id, created_at)`,
 `unassigned_by`, `unassigned_at`, `active_key` (unique,
 `"{queue}:{member}"` while assigned). Removing an assignment keeps the row.
 
+## Timestamps that must not move
+
+`joined_at`, `opened_at`, `assigned_at`, `queue_events.created_at` and
+`business_invitations.expires_at` have an explicit default. Without one, MariaDB
+adds `ON UPDATE CURRENT_TIMESTAMP` to the first NOT NULL `TIMESTAMP` of a table,
+which rewrote them on any update of the row. New NOT NULL timestamps need an
+explicit default too; `TimestampColumnsTest` fails if any column updates itself.
+
 ## Verified on
 
 SQLite (tests), MariaDB 10.4 and MySQL 8.4.13 (local: migrate, rollback of

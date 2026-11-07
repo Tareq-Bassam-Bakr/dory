@@ -44,3 +44,11 @@ click-through from distorting the average.
 
 These are acceptable for an MVP and are why the value is always presented as
 "about N minutes". `WaitTimeEstimationTest` covers each rule.
+
+## Many queues at once
+
+Lists call `WaitTimeEstimator::warm()` first. It loads the staff counts and the
+last completed tickets of every queue in two queries, using a window function,
+and `estimate()` then reads from memory. The result is identical to estimating
+one queue at a time, which `WaitTimeEstimationTest` checks, including history,
+outliers and staff working in parallel.

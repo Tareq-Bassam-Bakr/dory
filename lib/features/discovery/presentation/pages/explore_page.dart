@@ -171,6 +171,7 @@ class _ExplorePageState extends ConsumerState<ExplorePage> {
     return showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      useRootNavigator: true,
       useSafeArea: true,
       builder: (context) => const _FilterSheet(),
     );

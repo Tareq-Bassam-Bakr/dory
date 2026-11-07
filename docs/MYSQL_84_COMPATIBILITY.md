@@ -2,13 +2,13 @@
 
 Production targets MySQL 8.4 LTS; local development uses XAMPP's MariaDB 10.4.
 
-## Status (2026-11-07)
+## Status (2026-11-07, end of Phase 05)
 
 | Database | How | Result |
 |---|---|---|
-| SQLite (in memory) | `composer test` | ✅ 462 passed, 8 skipped (the multi-process concurrency tests, which need MySQL/MariaDB) |
-| MariaDB 10.4 (XAMPP) | `composer test:mariadb` | ✅ 470 passed, including all 8 concurrency tests and the full migration rollback test |
-| **MySQL 8.4.13 LTS** (local, see below) | `composer test:mysql` | ✅ **470 passed** (4413 assertions), including all 8 multi-process concurrency tests and the full migration rollback test |
+| SQLite (in memory) | `composer test` | ✅ 567 passed, 9 skipped (tests that need MySQL/MariaDB) |
+| MariaDB 10.4 (XAMPP) | `composer test:mariadb` | ✅ 576 passed, including all 8 concurrency tests and the full migration rollback test |
+| **MySQL 8.4.13 LTS** (local, see below) | `composer test:mysql` | ✅ **576 passed** (5115 assertions), including all 8 multi-process concurrency tests and the full migration rollback test |
 | MySQL 8.4 in GitHub Actions | `.github/workflows/backend-tests.yml`, job `mysql84` | ⚠️ not run: every run of this private repository still ends in `startup_failure` with zero jobs, which points to an account-level Actions setting (minutes, spending limit or verification), not to the workflow |
 
 Migrations on MySQL 8.4: `migrate:fresh` → `migrate:rollback --step=6` (the
@@ -48,6 +48,14 @@ foreign key (`businesses_created_by_foreign`, `ON DELETE SET NULL`).
 Nothing else needed a change: row locks, the counter upsert, the nullable
 unique "key" columns, idempotency and the eight concurrency races behaved
 exactly as on MariaDB.
+
+## A MariaDB difference found later
+
+MariaDB 10.4 has `explicit_defaults_for_timestamp` off, so it adds
+`ON UPDATE CURRENT_TIMESTAMP` to the first NOT NULL `TIMESTAMP` of a table.
+MySQL 8.4 has it on and never did this. Passing on one engine did not reveal the
+problem on the other: it was found in Phase 05, by looking at a real ticket. See
+[QUEUE_DATABASE_SCHEMA.md](QUEUE_DATABASE_SCHEMA.md#timestamps-that-must-not-move).
 
 ## The local test server
 

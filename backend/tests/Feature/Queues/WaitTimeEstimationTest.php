@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Services\Queues\HistoricalWaitTimeEstimator;
 use App\Services\Queues\WaitEstimate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Tests\Concerns\BuildsQueues;
 use Tests\Concerns\BuildsTenants;
 use Tests\TestCase;
@@ -116,5 +117,68 @@ class WaitTimeEstimationTest extends TestCase
     public function test_nobody_ahead_means_no_wait(): void
     {
         $this->assertSame(0, $this->estimator()->estimate($this->queue, 0)->seconds);
+    }
+
+    // ----- Many queues at once (discovery lists) --------------------------
+
+    public function test_warming_gives_exactly_the_same_estimates_as_one_by_one(): void
+    {
+        // Enough history, with an outlier, and staff working in parallel.
+        $this->completeTickets(5, 300);
+        $this->ticketIn($this->session, TicketStatus::Completed, [
+            'started_at' => now()->subDays(2),
+            'completed_at' => now(),
+        ]);
+        $business = $this->queue->branch->business;
+        $this->assignToQueue($this->queue, $this->memberOf($business, BusinessRole::Employee));
+        $this->assignToQueue($this->queue, $this->memberOf($business, BusinessRole::Employee));
+
+        // Too little history, and none at all.
+        $branch = $this->branchOf($business);
+        $little = $this->queueFor($this->serviceOf($branch), ['estimated_service_duration' => 12]);
+        $this->ticketIn($this->openSession($little, $this->owner), TicketStatus::Completed, [
+            'started_at' => now()->subMinutes(5),
+            'completed_at' => now(),
+        ]);
+        $none = $this->queueFor($this->serviceOf($branch), ['estimated_service_duration' => null]);
+
+        $queues = Queue::query()->whereKey([$this->queue->getKey(), $little->getKey(), $none->getKey()])->with('service')->get();
+        $warmed = $this->estimator();
+        $warmed->warm($queues);
+
+        foreach ($queues as $queue) {
+            $this->assertEquals($this->estimator()->estimate($queue, 7), $warmed->estimate($queue, 7));
+        }
+    }
+
+    public function test_warming_uses_only_the_most_recent_tickets_of_each_queue(): void
+    {
+        config(['dory.queues.wait_history_size' => 5]);
+        $this->completeTickets(5, 600);
+        $this->travel(2)->hours();
+        $this->completeTickets(5, 60);
+
+        $queues = Queue::query()->whereKey($this->queue->getKey())->with('service')->get();
+        $warmed = $this->estimator();
+        $warmed->warm($queues);
+
+        $this->assertSame(60, $warmed->estimate($queues->first(), 1)->secondsPerCustomer);
+    }
+
+    public function test_a_warmed_estimate_needs_no_further_queries(): void
+    {
+        $this->completeTickets(5, 300);
+        $queues = Queue::query()->whereKey($this->queue->getKey())->with('service')->get();
+        $warmed = $this->estimator();
+        $warmed->warm($queues);
+
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $warmed->estimate($queues->first(), 3);
+        $warmed->warm($queues);
+        $queries = count(DB::getQueryLog());
+        DB::disableQueryLog();
+
+        $this->assertSame(0, $queries);
     }
 }

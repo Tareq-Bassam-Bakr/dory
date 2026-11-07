@@ -178,11 +178,29 @@ class CustomerQueueAccessTest extends TestCase
     {
         $this->setStatus($this->{$parent}, 'inactive');
 
-        $this->getJson($this->publicUri())
+        $this->getJson('/api/v1/public/queues/'.$this->queue->public_token_encrypted)
             ->assertOk()
             ->assertJsonPath('data.status', 'inactive')
             ->assertJsonPath('data.unavailable_reason', $reason)
             ->assertJsonPath('data.accepting_joins', false);
+    }
+
+    public function test_a_queue_id_explains_an_inactive_branch_or_service(): void
+    {
+        $this->setStatus($this->branch, 'inactive');
+
+        $this->getJson($this->publicUri())
+            ->assertOk()
+            ->assertJsonPath('data.unavailable_reason', 'branch_inactive');
+    }
+
+    public function test_a_queue_id_reveals_nothing_about_a_business_that_is_not_public(): void
+    {
+        $this->setStatus($this->business, 'suspended');
+
+        $response = $this->assertApiError($this->getJson($this->publicUri()), 404, 'queue_not_found');
+
+        $this->assertStringNotContainsString('Shifa', $response->getContent());
     }
 
     public function test_nobody_can_join_a_deleted_service(): void

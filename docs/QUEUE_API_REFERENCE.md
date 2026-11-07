@@ -5,6 +5,11 @@ Base URL `/api/v1`. Responses use the standard envelope
 `{success: false, message, code, errors}`. Ids are public ULIDs. Lists are
 paginated (`?per_page=`, `meta.pagination`).
 
+Customer discovery, favorites, ratings and guest join by queue id are in
+[CUSTOMER_API_REFERENCE.md](CUSTOMER_API_REFERENCE.md). Since Phase 05, joining
+also fails with `business_unavailable`, `branch_inactive` or
+`service_unavailable`.
+
 Legend: 🔒 bearer token (Sanctum) · 👥 member of the business who reaches the
 branch · **M** manage · **O** operate (see [QUEUE_SECURITY.md](QUEUE_SECURITY.md)).
 
