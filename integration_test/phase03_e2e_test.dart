@@ -104,9 +104,15 @@ void main() {
       tester.element(find.byType(Scaffold).first),
     );
 
-    // 0. A session left by an earlier run: log out first.
+    // 0. A session left by an earlier run: log out first. The customer
+    //    shell calls the tab Profile, the business shell Account.
     if (signedIn.evaluate().isNotEmpty) {
-      await tapText(tester, l10n.navAccount);
+      await tapText(
+        tester,
+        find.byType(CustomerHomePage).evaluate().isNotEmpty
+            ? l10n.navProfile
+            : l10n.navAccount,
+      );
       await tapText(tester, l10n.accountLogout);
       await tester.tap(find.widgetWithText(FilledButton, l10n.accountLogout));
       await pumpUntil(tester, welcome);
@@ -123,7 +129,7 @@ void main() {
     await pumpUntil(tester, find.byType(CustomerHomePage));
 
     // 2. Open the business workspace: no businesses yet.
-    await tapText(tester, l10n.navAccount);
+    await tapText(tester, l10n.navProfile);
     await tapText(tester, l10n.accountSwitchToBusiness);
     await pumpUntil(tester, find.text(l10n.dashboardSetupAction));
     expect(find.byType(BusinessDashboardPage), findsOneWidget);

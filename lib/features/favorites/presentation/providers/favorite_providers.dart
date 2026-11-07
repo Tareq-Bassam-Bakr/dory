@@ -144,8 +144,15 @@ class FavoriteListState {
 class ServerFavorites extends Notifier<FavoriteListState> {
   FavoriteRepository get _repository => ref.read(favoriteRepositoryProvider);
 
+  /// Raised whenever the list starts over: an answer to an older load must
+  /// not add to the new list.
+  int _generation = 0;
+  bool _loading = false;
+
   @override
   FavoriteListState build() {
+    _generation++;
+    _loading = false;
     if (ref.watch(currentUserIdProvider) == null) {
       return const FavoriteListState(hasMore: false);
     }
@@ -154,15 +161,19 @@ class ServerFavorites extends Notifier<FavoriteListState> {
   }
 
   Future<void> reload() async {
+    _generation++;
+    _loading = false;
     state = const FavoriteListState();
     await loadMore();
   }
 
+  /// Loads the next page, once at a time.
   Future<void> loadMore() async {
-    final bool first = state.page == 0;
-    if ((!first && state.isLoading) || !state.hasMore) {
+    if (_loading || !state.hasMore) {
       return;
     }
+    final int generation = _generation;
+    _loading = true;
     state = FavoriteListState(
       items: state.items,
       page: state.page,
@@ -172,12 +183,20 @@ class ServerFavorites extends Notifier<FavoriteListState> {
       final PageResult<PublicBusiness> result = await _repository.favorites(
         page: state.page + 1,
       );
+      if (!ref.mounted || generation != _generation) {
+        return;
+      }
+      _loading = false;
       state = FavoriteListState(
         items: <PublicBusiness>[...state.items, ...result.items],
         page: result.pagination.currentPage,
         hasMore: result.pagination.hasMore,
       );
     } on AppFailure catch (failure) {
+      if (!ref.mounted || generation != _generation) {
+        return;
+      }
+      _loading = false;
       state = FavoriteListState(
         items: state.items,
         page: state.page,
@@ -196,6 +215,11 @@ class ServerFavorites extends Notifier<FavoriteListState> {
     } else {
       await _repository.remove(business.id);
       ref.read(favoriteChangesProvider.notifier).set(business.id, false);
+      if (_loading) {
+        // The page on its way may still hold this business.
+        await reload();
+        return saved;
+      }
       state = FavoriteListState(
         items: <PublicBusiness>[
           for (final PublicBusiness item in state.items)

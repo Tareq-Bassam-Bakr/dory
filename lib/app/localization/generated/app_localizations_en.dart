@@ -26,7 +26,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcomeBody =>
-      'Join queues remotely, follow your turn live, and arrive right on time.';
+      'Join queues remotely, check your place in line, and arrive right on time.';
 
   @override
   String get welcomeLogin => 'Log in';

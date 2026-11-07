@@ -116,8 +116,15 @@ class MyTickets extends Notifier<TicketListState> {
 
   final TicketFilter filter;
 
+  /// Raised whenever the list starts over: an answer to an older load must
+  /// not add to the new list.
+  int _generation = 0;
+  bool _loading = false;
+
   @override
   TicketListState build() {
+    _generation++;
+    _loading = false;
     final String? user = ref.watch(currentUserIdProvider);
     if (user == null) {
       return const TicketListState(hasMore: false);
@@ -127,31 +134,36 @@ class MyTickets extends Notifier<TicketListState> {
   }
 
   Future<void> reload() async {
+    _generation++;
+    _loading = false;
     state = const TicketListState();
     await loadMore();
   }
 
   /// Loads the next page, once at a time.
   Future<void> loadMore() async {
-    final bool first = state.page == 0;
-    if ((!first && state.isLoading) || !state.hasMore) {
+    if (_loading || !state.hasMore) {
       return;
     }
+    final int generation = _generation;
+    _loading = true;
     state = state.copyWith(isLoading: true);
     try {
       final PageResult<CustomerTicket> result = await ref
           .read(ticketRepositoryProvider)
           .myTickets(filter, page: state.page + 1);
-      if (!ref.mounted) {
+      if (!ref.mounted || generation != _generation) {
         return;
       }
+      _loading = false;
       state = TicketListState(
         items: <CustomerTicket>[...state.items, ...result.items],
         page: result.pagination.currentPage,
         hasMore: result.pagination.hasMore,
       );
     } on AppFailure catch (failure) {
-      if (ref.mounted) {
+      if (ref.mounted && generation == _generation) {
+        _loading = false;
         state = state.copyWith(isLoading: false, error: failure);
       }
     }

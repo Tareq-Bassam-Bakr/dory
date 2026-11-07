@@ -25,7 +25,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get welcomeBody =>
-      'انضم إلى الطوابير عن بُعد، وتابع دورك مباشرةً، واحضر في الوقت المناسب تمامًا.';
+      'انضم إلى الطوابير عن بُعد، واطّلع على موقعك في الدور، واحضر في الوقت المناسب تمامًا.';
 
   @override
   String get welcomeLogin => 'تسجيل الدخول';

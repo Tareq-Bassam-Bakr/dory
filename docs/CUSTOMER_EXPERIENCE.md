@@ -102,17 +102,25 @@ demos and never appear in production: `DemoDataTest` checks that.
 ## Testing on a device
 
 `integration_test/phase05_e2e_test.dart` walks the guest journey on a real
-device: browse, join, restart the app, leave the queue. It needs a running API
-and a public business with an open queue that allows guests, such as the demo
-one. It joins and cancels a real ticket, so never point it at production:
+device: browse, join, start the app again, leave the queue. It needs a running
+API and a public business with an open queue that allows guests, such as the
+demo one. It joins and cancels a real ticket, so never point it at production:
 
 ```powershell
 D:\php84\php.exe artisan serve
 adb reverse tcp:8000 tcp:8000
-flutter test integration_test/phase05_e2e_test.dart -d DEVICE_ID
+flutter test integration_test -d DEVICE_ID
 ```
 
-Keep the phone unlocked: it stalls if the screen locks during the build.
+- Keep the phone unlocked: it stalls if the screen locks during the build.
+- Check `adb reverse --list` before a run. The forwarding is lost if the USB
+  link drops, and the tests then time out waiting for the API.
+- The tests uninstall the app when they finish, with its data.
+- The second start happens inside the test's process. A real process restart
+  was checked by hand (`adb shell am force-stop com.dory.app`): the ticket and
+  its token came back.
+
+Results on a phone: [PHASE_05_REPORT.md](PHASE_05_REPORT.md#android-device).
 
 Related: [BUSINESS_DISCOVERY.md](BUSINESS_DISCOVERY.md),
 [CUSTOMER_TICKET_EXPERIENCE.md](CUSTOMER_TICKET_EXPERIENCE.md),

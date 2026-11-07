@@ -4,6 +4,7 @@ import 'package:dory_app/features/authentication/presentation/pages/welcome_page
 import 'package:dory_app/features/discovery/presentation/pages/explore_page.dart';
 import 'package:dory_app/features/home/presentation/pages/customer_home_page.dart';
 import 'package:dory_app/features/tickets/presentation/pages/customer_ticket_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -18,9 +19,13 @@ import 'package:material_ui/material_ui.dart';
 /// one (docs/CUSTOMER_EXPERIENCE.md, "Trying it locally"). Never point it at
 /// production data: it joins and cancels a real ticket.
 ///
-/// Browses as a guest, joins a queue, restarts the app to prove the ticket
-/// and its secure token survive, then leaves the queue. Labels come from the
-/// active localization, so it runs in any device language.
+/// Browses as a guest, joins a queue, starts the app again to prove the
+/// ticket and its secure token come back from device storage, then leaves the
+/// queue. Labels come from the active localization, so it runs in any device
+/// language.
+///
+/// The second start happens inside the same process, as a test must. Check a
+/// real process restart by hand: `adb shell am force-stop com.dory.app`.
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -50,8 +55,11 @@ void main() {
       AppLocalizations.of(tester.element(find.byType(page).first));
 
   Future<void> startApp(WidgetTester tester) async {
-    FlutterError.onError = FlutterError.presentError;
+    // bootstrap() installs the production error handlers. Putting the test
+    // framework's handler back keeps the real message of a failure.
+    final FlutterExceptionHandler? testErrorHandler = FlutterError.onError;
     await bootstrap();
+    FlutterError.onError = testErrorHandler;
     await tester.pump(const Duration(seconds: 2));
   }
 
@@ -92,15 +100,20 @@ void main() {
     await pumpUntil(tester, find.text(l10n.ticketCancelAction));
     expect(find.text(l10n.ticketHeadlineWaiting), findsOneWidget);
 
-    // A cold start: the ticket and its token come back from device storage.
+    // A new app: the ticket and its token come back from device storage.
     await tester.pumpWidget(const SizedBox.shrink());
     await startApp(tester);
     await pumpUntil(tester, find.byType(WelcomePage));
     await tap(tester, find.text(l10n.welcomeExploreAsGuest));
     await pumpUntil(tester, find.byType(CustomerHomePage));
     await tap(tester, find.text(l10n.navMyTickets));
-    await pumpUntil(tester, find.byType(Card));
-    await tap(tester, find.byType(Card));
+    // Guests also see a sign-in card here, so look for the ticket's status.
+    final Finder storedTicket = find.descendant(
+      of: find.byType(Card),
+      matching: find.text(l10n.queueTicketStatusWaiting),
+    );
+    await pumpUntil(tester, storedTicket);
+    await tap(tester, storedTicket);
     await pumpUntil(tester, find.text(l10n.ticketCancelAction));
 
     // Leave the queue.

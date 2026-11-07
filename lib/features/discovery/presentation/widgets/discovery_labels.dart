@@ -13,11 +13,18 @@ String distanceLabel(AppLocalizations l10n, double kilometres) => kilometres < 1
     : l10n.discoveryDistanceKm(kilometres.toStringAsFixed(1));
 
 /// "Damascus · 2.4 km" from whichever parts are known.
-String placeLine(AppLocalizations l10n, {String? city, double? distanceKm}) =>
-    <String>[
-      if (city != null && city.isNotEmpty) city,
-      if (distanceKm != null) distanceLabel(l10n, distanceKm),
-    ].join(' · ');
+///
+/// Each part is isolated for the text direction: a city in another script
+/// would otherwise separate the number from its unit.
+String placeLine(AppLocalizations l10n, {String? city, double? distanceKm}) {
+  final List<String> parts = <String>[
+    if (city != null && city.isNotEmpty) city,
+    if (distanceKm != null) distanceLabel(l10n, distanceKm),
+  ];
+  return parts.length < 2
+      ? parts.join()
+      : parts.map((part) => '\u2068$part\u2069').join(' · ');
+}
 
 /// The state of a queue as reported by the server.
 Widget queueStateChip(AppLocalizations l10n, QueueAvailability queue) {

@@ -131,7 +131,7 @@ abstract class AppLocalizations {
   /// Supporting text on the welcome screen.
   ///
   /// In en, this message translates to:
-  /// **'Join queues remotely, follow your turn live, and arrive right on time.'**
+  /// **'Join queues remotely, check your place in line, and arrive right on time.'**
   String get welcomeBody;
 
   /// Welcome screen button that opens the login screen.

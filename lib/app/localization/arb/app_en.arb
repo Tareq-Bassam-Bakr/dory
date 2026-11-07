@@ -13,7 +13,7 @@
 
   "welcomeHeadline": "Smart queues for every service",
   "@welcomeHeadline": { "description": "Main headline on the welcome screen." },
-  "welcomeBody": "Join queues remotely, follow your turn live, and arrive right on time.",
+  "welcomeBody": "Join queues remotely, check your place in line, and arrive right on time.",
   "@welcomeBody": { "description": "Supporting text on the welcome screen." },
   "welcomeLogin": "Log in",
   "@welcomeLogin": { "description": "Welcome screen button that opens the login screen." },

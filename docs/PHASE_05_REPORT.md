@@ -13,11 +13,11 @@ follow a digital ticket, leave the queue, keep a history, save businesses and
 rate a completed visit. Owners and staff keep their business workspace and
 switch between the two.
 
-**Not done:** the real Android device test. The phone was connected at the
-start of the phase, then disconnected and did not return. The app was verified
-in other ways, listed [below](#android-device), but it has **not** been run on
-a phone in this phase. Real-time updates remain out of scope; open tickets poll
-and say so.
+**Android device:** tested on a real phone (TECNO KM7, Android 15, Arabic) once
+it was connected again. The three on-device tests pass, and a walk through the
+real app found two bugs the test suites had missed, both fixed with tests
+([details](#android-device)). Real-time updates remain out of scope; open
+tickets poll and say so.
 
 ## Delivered, step by step
 
@@ -39,7 +39,7 @@ and say so.
 | O. Favorites and profile | Server favorites, device-local for visitors; phone, editing, activity links |
 | P. Reviews | The backend had none, so a minimal version was added: one rating per completed ticket, no text, no generated data |
 | Q. Security and tests | See [Security findings](#security-findings) and [Test results](#test-results) |
-| R. Android device | **Not performed**; see [Android device](#android-device) |
+| R. Android device | Done on a TECNO KM7 (Android 15, Arabic): three device tests pass, two bugs found and fixed; see [Android device](#android-device) |
 | S. Documentation and commits | 11 documents, README, commits pushed and verified |
 
 ## Customer screens
@@ -79,7 +79,9 @@ New packages: `flutter_map`, `latlong2`, `geolocator`, `url_launcher`.
 
 ## Test results
 
-All from the final run on 2026-11-07, on the development machine.
+All from 2026-11-07, on the development machine. The backend suites ran on the
+final backend code, which the phone fixes did not touch; the Flutter checks ran
+again after them.
 
 | Suite | Result |
 |---|---|
@@ -87,18 +89,23 @@ All from the final run on 2026-11-07, on the development machine.
 | Backend, MariaDB 10.4 (`composer test:mariadb`) | ✅ **576 passed** (5115 assertions), including all 8 concurrency tests |
 | Backend, SQLite (`composer test`) | ✅ **567 passed, 9 skipped** (4923 assertions). The 9 need MySQL or MariaDB |
 | Pint | ✅ passed |
-| Flutter (`flutter test`) | ✅ **499 passed** |
+| Flutter (`flutter test`) | ✅ **509 passed** |
+| On-device tests (`flutter test integration_test`, TECNO KM7) | ✅ **3 passed**: app launch, the Phase 03 journey, the Phase 05 guest journey |
 | Flutter analyzer | ✅ no issues |
 | `dart format` | ✅ no changes |
 | GitHub Actions | ⚠️ not run: it still does not start for this repository |
 
-Phase 05 added 106 backend tests (470 → 576) and 179 Flutter tests (320 → 499).
-No existing test was removed or weakened. Four existing test files changed:
+Phase 05 added 106 backend tests (470 → 576) and 189 Flutter tests (320 → 509).
+No existing test was removed or weakened. Six existing test files changed:
 
 - `RouteProtectionTest`: its explicit list of public routes gained the new ones.
 - `app_router_test.dart`: tab labels updated, and it now visits all five tabs.
 - `layout_smoke_test.dart`: extended to every customer screen.
 - Test helpers: new optional parameters.
+- `app_launch_test.dart` and `phase03_e2e_test.dart` (on-device): the customer
+  tabs are now called My tickets and Profile, so these tests looked for labels
+  that no longer exist. Nothing ran them until the phone was back. The labels
+  were updated; every check is unchanged.
 
 Every migration is rolled back and re-run in `MigrationRollbackTest` on each
 engine, including the four new ones.
@@ -110,7 +117,7 @@ engine, including the four new ones.
   discovery, Arabic search, nearby, guest join with the real token, a wrong
   token refused, retries, phone rules, a queue without guests, customer join,
   duplicate refused, history, cancellation and favorites. All passed.
-- **Real rendering.** Because the phone was unavailable, a temporary web build
+- **Real rendering.** Before the phone was back, a temporary web build
   ran in a real browser at phone size against the same API, with real
   OpenStreetMap tiles: home, location picker, map, marker preview, guest join,
   ticket, cancellation, a true page reload, and Arabic RTL. The `web/` folder
@@ -121,15 +128,62 @@ engine, including the four new ones.
 
 ## Android device
 
-**Not performed.** Phone `151923757C004111` was listed by `adb` at the start of
-the phase, then disappeared and did not return, even after restarting `adb`.
+Phone: TECNO KM7, Android 15, device language Arabic, debug build, connected by
+USB with `adb reverse` to a local API on the throwaway database
+`dory_db_testing`.
 
-`integration_test/phase05_e2e_test.dart` is written to walk the guest journey on
-a device, including a cold restart, but **it has never been run**, so it may
-need adjusting. These behaviours are therefore unverified on a real phone:
-secure storage on Android, the system location prompt, and map performance.
-`CustomerDemoSeeder` provides data for the test
-([steps](CUSTOMER_EXPERIENCE.md#testing-on-a-device)).
+**On-device tests** (`flutter test integration_test`): all three pass.
+
+| Test | What it does on the phone |
+|---|---|
+| `app_launch_test.dart` | Splash, welcome, guest shell |
+| `phase03_e2e_test.dart` | Registers, creates a business through onboarding, restarts, session restored |
+| `phase05_e2e_test.dart` | Guest browses, joins, the app starts again with the ticket and token read back from device storage, leaves the queue |
+
+The first Phase 05 run failed inside the test, not the app: it tapped the
+sign-in card above the ticket. Fixed, with the test's error handling corrected
+so a failure shows its real message.
+
+**Walk through the real app**, comparing values between screens:
+
+| Checked | Result |
+|---|---|
+| Location prompt | Appears only after "Use my location". Refusing it shows a clear message and the city list; picking a city works. Allowing it ("only this time", approximate) gives "Near me" and distances. No background location permission exists |
+| Map | Real OpenStreetMap tiles, markers, preview card, panning, recentring. The attribution is visible and opens the OpenStreetMap copyright page |
+| Guest ticket | Joined, then the app process was killed (`am force-stop`). After starting again, the ticket and its token came back, with the same number and join time |
+| Storage | Plain storage holds only the guest ticket list (no token field, no coordinates). The token is only in Android's encrypted storage |
+| Polling | Every 15 seconds on the ticket screen, none while the app is in the background, an immediate refresh on return, and none after the ticket finishes |
+| Staff actions | Called, serving and completed (done through the queue service on the server) each reached the phone at the next poll. The join time never changed |
+| Account | Sign-up, session kept across a process kill, favorites, a signed-in join, and a rating: four stars on the phone, `4` stored, the business average updated |
+| Arabic | Right-to-left layout throughout, including the stars |
+
+**Found and fixed:**
+
+1. **A saved business appeared twice in Favorites** (the server had one row).
+   The list's first load and the reload after saving both fetched page 1 and
+   both added their results. My Tickets had the same race on a refresh during
+   its first load. Only the latest load may now fill a list, and a page can no
+   longer be fetched twice at once. `paged_lists_test.dart` reproduces both
+   races and failed before the fix. Seen fixed on the phone.
+2. **Distances read in the wrong order** in Arabic with a Latin city name:
+   "1.1" was separated from "km" by "Damascus". The city and the distance are
+   now isolated for text direction (`discovery_labels_test.dart`). Seen fixed
+   on the phone.
+3. **The welcome screen promised to "follow your turn live"**, which the app
+   does not do. Reworded.
+
+**Not covered on the phone:** a release build (it needs a tile provider and an
+API address), behaviour without a network, and performance figures (a debug
+build says nothing about them).
+
+**Test environment notes.** A full run once failed because the USB link
+dropped for a moment and `adb reverse` was lost, so the app could not reach the
+API; another failed because the PHP development server took more than 30
+seconds to load framework files right after a Gradle build. Both were the
+machine, not the app: the same tests passed after restoring the forwarding and
+once the load was gone. During the walkthrough, three taps meant for the app
+reached the phone's launcher and Chrome after the app closed; they changed
+nothing, and input is now sent only while DORY is in front.
 
 ## Security findings
 
@@ -144,7 +198,7 @@ fixed during this phase:
 | Two taps in the same frame sent two join requests (no duplicate ticket: the key prevented it) | Low | Synchronous guard |
 | Precise coordinates in query strings could reach access logs | Low | Rounded to about 100 m in the app |
 | Riverpod retried failed requests in the background, including 404s | Low | Automatic retry off for API providers |
-| Strings promised notifications and "live" positions that do not exist | Low | Rewritten |
+| Strings promised notifications and "live" positions that do not exist (one more on the welcome screen, found on the phone) | Low | Rewritten |
 | `INTERNET` declared only in the debug manifest, so a release build could not reach the API | High for release | Added to the main manifest |
 
 Verified: no token in URLs, logs, SharedPreferences or screens; tickets and
@@ -163,7 +217,8 @@ server by accident. Attribution is always visible and tappable. Setup:
 
 ## Known limitations
 
-1. **Not tested on a phone** in this phase (see above).
+1. **Phone testing used a debug build** on one Android phone; no release build
+   and no iPhone (see above).
 2. **No real-time updates or notifications.** Open tickets poll about every 15
    seconds, only while on screen, so a customer not looking at the app can miss
    being called.
@@ -183,13 +238,22 @@ server by accident. Attribution is always visible and tappable. Setup:
     access logs should drop them for discovery routes.
 13. **MySQL 8.4 is verified locally only**, because GitHub Actions does not
     start.
+14. **Text written by a business in another script** follows the page
+    direction: in Arabic, an English description shows its final period on
+    the left.
+15. **The on-device tests need fresh test data** (a public queue that accepts
+    guests, as `CustomerDemoSeeder` provides) and an active `adb reverse`.
 
 ## Local changes outside the repository
 
 - The local development database `dory_db` gained the four new migrations
   (`php artisan migrate`). It still has no users or businesses.
-- `dory_db_testing` holds whatever the last test run left.
-- The local MySQL 8.4 test server is stopped.
+- `dory_db_testing` was emptied after the phone tests (fresh schema, no rows).
+- The local MySQL 8.4 test server is stopped; nothing listens on port 8000;
+  `adb reverse` was removed.
+- The phone has a fresh install of the final debug build, with no data and no
+  permission granted. Running the on-device tests uninstalls the app, which
+  removed the previous install and its data.
 
 ## Commits
 
@@ -202,13 +266,14 @@ force-push, no history rewrite. The repository remains private.
 |---|---|
 | `e80d5d2` | Public discovery, favorites and ratings API (C, D, E, P) |
 | `3533612` | Customer app: discovery, map, joining, tickets (F to O) |
-| *(this commit)* | Timestamp fix, security fixes, demo data, device test, documentation (Q, S) |
+| `e832a88` | Timestamp fix, security fixes, demo data, device test, documentation (Q, S) |
+| *(this commit)* | Phone testing (R): the two bugs it found fixed with tests, device tests updated, report |
 
 ## Remaining work
 
-1. Run the device test on a phone (`integration_test/phase05_e2e_test.dart`).
-2. Choose a production tile provider.
-3. Fix the GitHub Actions account issue, so MySQL 8.4 runs in CI.
+1. Choose a production tile provider.
+2. Fix the GitHub Actions account issue, so MySQL 8.4 runs in CI.
+3. Test a release build on a phone once a tile provider and API address exist.
 4. Phase 06 (real-time updates and notifications), when you approve it.
 
 ## Next

@@ -17,11 +17,12 @@ void main() {
   testWidgets('launches through splash to welcome and opens the guest shell', (
     tester,
   ) async {
-    // bootstrap() installs production error handlers; restore the test
-    // framework's handler before the test ends.
+    // bootstrap() installs production error handlers; putting the test
+    // framework's handler back keeps the real message of a failure.
     final FlutterExceptionHandler? testErrorHandler = FlutterError.onError;
 
     await bootstrap();
+    FlutterError.onError = testErrorHandler;
     await tester.pump();
     expect(find.byType(SplashPage), findsOneWidget);
 
@@ -41,8 +42,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(CustomerHomePage), findsOneWidget);
-    expect(find.text(l10n.navTickets), findsOneWidget);
-
-    FlutterError.onError = testErrorHandler;
+    expect(find.text(l10n.navMyTickets), findsOneWidget);
   });
 }

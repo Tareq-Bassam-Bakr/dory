@@ -74,10 +74,12 @@ flutter run -d <device-id>
 
 Debug builds call `http://127.0.0.1:8000/api/v1`; other targets use
 `--dart-define=DORY_API_BASE_URL=...` (required for release builds). The
-on-device end-to-end test needs the running API:
+on-device tests (app launch, the business journey, the customer journey) need
+the running API and, for the customer journey, a queue that accepts guests
+([docs/CUSTOMER_EXPERIENCE.md](docs/CUSTOMER_EXPERIENCE.md#testing-on-a-device)):
 
 ```bash
-flutter test integration_test/phase03_e2e_test.dart -d <device-id>
+flutter test integration_test -d <device-id>
 ```
 
 Details: [docs/FLUTTER_API_INTEGRATION.md](docs/FLUTTER_API_INTEGRATION.md).
