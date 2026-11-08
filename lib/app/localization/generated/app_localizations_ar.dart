@@ -2145,9 +2145,4 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get queueRealtimeLive => 'مباشر: تظهر التغييرات فورًا.';
-
-  @override
-  String queueRealtimePolling(int seconds) {
-    return 'يُحدَّث كل $seconds ثانية.';
-  }
 }

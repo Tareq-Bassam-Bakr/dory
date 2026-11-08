@@ -642,6 +642,5 @@
   "notificationOfferMessageInApp": "أثناء فتح DORY ينبّهك عند النداء عليك، حتى في الشاشات الأخرى.",
   "notificationOfferAllow": "سماح",
   "notificationOfferLater": "ليس الآن",
-  "queueRealtimeLive": "مباشر: تظهر التغييرات فورًا.",
-  "queueRealtimePolling": "يُحدَّث كل {seconds} ثانية."
+  "queueRealtimeLive": "مباشر: تظهر التغييرات فورًا."
 }

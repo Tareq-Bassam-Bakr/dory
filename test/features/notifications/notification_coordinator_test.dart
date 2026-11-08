@@ -1,4 +1,6 @@
 import 'package:dory_app/app/app.dart';
+import 'package:dory_app/app/localization/app_locales.dart';
+import 'package:dory_app/app/localization/language_controller.dart';
 import 'package:dory_app/app/router/app_router.dart';
 import 'package:dory_app/app/router/app_routes.dart';
 import 'package:dory_app/core/notifications/local_notifier.dart';
@@ -480,6 +482,38 @@ void main() {
       final Object? body = http.sent('POST', '/devices/register').last.data;
       expect(body, containsPair('token', 'second'));
       expect(body, containsPair('replaces', '01jdevicexxxxxxxxxxxxxxxxx'));
+    });
+
+    testWidgets('switching to Arabic registers the device in Arabic', (
+      tester,
+    ) async {
+      final FakeHttpAdapter http = api();
+      await pumpAppAt(
+        tester,
+        AppRoutes.customerHome,
+        authRepository: FakeAuthRepository.signedIn(),
+        http: http,
+        notifier: FakeLocalNotifier(current: NotificationPermission.granted),
+        push: FakePushMessaging(deviceToken: 'fcm-token-ABC'),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        http.sent('POST', '/devices/register').last.data,
+        containsPair('locale', 'en'),
+      );
+
+      final ProviderContainer container = ProviderScope.containerOf(
+        tester.element(find.byType(DoryApp)),
+      );
+      await container
+          .read(languageControllerProvider.notifier)
+          .select(AppLanguage.arabic);
+      await tester.pumpAndSettle();
+
+      expect(
+        http.sent('POST', '/devices/register').last.data,
+        containsPair('locale', 'ar'),
+      );
     });
 
     testWidgets('signing out removes this phone first', (tester) async {

@@ -59,7 +59,6 @@ class _SessionTicketsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AppLocalizations l10n = context.l10n;
     final ({String sessionId, String statuses}) key = sessionTicketsKey(
       sessionId,
       statuses,
@@ -80,10 +79,7 @@ class _SessionTicketsPage extends ConsumerWidget {
           data: (items) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              Text(
-                l10n.queueAutoRefreshNote(queueRefreshInterval.inSeconds),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
+              const RefreshModeNote(),
               const SizedBox(height: 12),
               if (items.isEmpty)
                 DoryCard(

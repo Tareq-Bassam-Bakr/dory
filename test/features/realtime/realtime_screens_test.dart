@@ -145,7 +145,7 @@ void main() {
         AutoRefresh(
           onTick: () => ticks.add(ticks.length),
           channels: const <String>[publicChannel],
-          child: const SizedBox.shrink(),
+          child: const RefreshModeNote(),
         ),
         settle: false,
         overrides: [
@@ -187,6 +187,33 @@ void main() {
       }
       await tester.pump(const Duration(milliseconds: 300));
       expect(ticks, hasLength(2), reason: 'A burst is one refresh.');
+      await unmount(tester);
+    });
+
+    testWidgets('the note tells staff whether the screen is live', (
+      tester,
+    ) async {
+      await pumpRefresh(tester);
+      await tester.pump();
+      expect(
+        find.text('Updates automatically every 15 seconds.'),
+        findsOneWidget,
+      );
+
+      server.current.establish();
+      await tester.pump();
+      server.current.confirm(publicChannel);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('Live: changes appear at once.'), findsOneWidget);
+
+      server.refuse = true;
+      server.current.drop();
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.text('Updates automatically every 15 seconds.'),
+        findsOneWidget,
+      );
       await unmount(tester);
     });
 

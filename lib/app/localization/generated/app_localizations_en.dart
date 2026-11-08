@@ -2160,9 +2160,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get queueRealtimeLive => 'Live: changes appear at once.';
-
-  @override
-  String queueRealtimePolling(int seconds) {
-    return 'Refreshed every $seconds seconds.';
-  }
 }

@@ -22,6 +22,8 @@ const Duration queueRefreshInterval = Duration(seconds: 15);
 /// queue changes (bursts collapse into one call) and after every
 /// (re)subscription, and the timer is off. Otherwise, and whenever the
 /// connection drops, [onTick] runs every [interval] as before.
+///
+/// [RefreshModeNote] below it tells staff which of the two is happening.
 class AutoRefresh extends ConsumerStatefulWidget {
   const AutoRefresh({
     super.key,
@@ -36,8 +38,20 @@ class AutoRefresh extends ConsumerStatefulWidget {
   final Duration interval;
   final List<String> channels;
 
+  /// Whether the nearest [AutoRefresh] receives live updates right now.
+  static bool isLive(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<_AutoRefreshScope>()
+          ?.notifier
+          ?.value ??
+      false;
+
   @override
   ConsumerState<AutoRefresh> createState() => _AutoRefreshState();
+}
+
+class _AutoRefreshScope extends InheritedNotifier<ValueNotifier<bool>> {
+  const _AutoRefreshScope({required super.notifier, required super.child});
 }
 
 class _AutoRefreshState extends ConsumerState<AutoRefresh> {
@@ -47,6 +61,7 @@ class _AutoRefreshState extends ConsumerState<AutoRefresh> {
   final List<RealtimeSubscription> _subscriptions = <RealtimeSubscription>[];
   final List<StreamSubscription<Object?>> _listeners =
       <StreamSubscription<Object?>>[];
+  final ValueNotifier<bool> _liveNote = ValueNotifier<bool>(false);
   bool _live = false;
 
   @override
@@ -94,6 +109,7 @@ class _AutoRefreshState extends ConsumerState<AutoRefresh> {
       return;
     }
     _live = live;
+    _liveNote.value = live;
     if (live) {
       _timer?.cancel();
       _timer = null;
@@ -129,6 +145,7 @@ class _AutoRefreshState extends ConsumerState<AutoRefresh> {
     _client = null;
     if (_live) {
       _live = false;
+      _liveNote.value = false;
       _startTimer();
     }
   }
@@ -139,11 +156,30 @@ class _AutoRefreshState extends ConsumerState<AutoRefresh> {
     _debounce?.cancel();
     _detach();
     _timer?.cancel();
+    _liveNote.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => widget.child;
+  Widget build(BuildContext context) =>
+      _AutoRefreshScope(notifier: _liveNote, child: widget.child);
+}
+
+/// "Live" while the screen gets real-time updates, else how often it
+/// reloads. Placed under an [AutoRefresh].
+class RefreshModeNote extends StatelessWidget {
+  const RefreshModeNote({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final AppLocalizations l10n = context.l10n;
+    return Text(
+      AutoRefresh.isLive(context)
+          ? l10n.queueRealtimeLive
+          : l10n.queueAutoRefreshNote(queueRefreshInterval.inSeconds),
+      style: Theme.of(context).textTheme.bodySmall,
+    );
+  }
 }
 
 /// Like AsyncValueView, but keeps showing the last data while a refresh is

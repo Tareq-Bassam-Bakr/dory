@@ -3841,12 +3841,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Live: changes appear at once.'**
   String get queueRealtimeLive;
-
-  /// Staff screens polling
-  ///
-  /// In en, this message translates to:
-  /// **'Refreshed every {seconds} seconds.'**
-  String queueRealtimePolling(int seconds);
 }
 
 class _AppLocalizationsDelegate

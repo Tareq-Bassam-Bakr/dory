@@ -96,12 +96,7 @@ class _QueueDashboardPageState extends ConsumerState<QueueDashboardPage> {
       children: <Widget>[
         Row(
           children: <Widget>[
-            Expanded(
-              child: Text(
-                l10n.queueAutoRefreshNote(queueRefreshInterval.inSeconds),
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-            ),
+            const Expanded(child: RefreshModeNote()),
             sessionStatusChip(l10n, value.session.status),
           ],
         ),

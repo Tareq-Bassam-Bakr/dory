@@ -1266,7 +1266,5 @@
   "notificationOfferLater": "Not now",
   "@notificationOfferLater": {"description": "Button"},
   "queueRealtimeLive": "Live: changes appear at once.",
-  "@queueRealtimeLive": {"description": "Staff screens with real-time connected"},
-  "queueRealtimePolling": "Refreshed every {seconds} seconds.",
-  "@queueRealtimePolling": {"description": "Staff screens polling", "placeholders": {"seconds": {"type": "int"}}}
+  "@queueRealtimeLive": {"description": "Staff screens with real-time connected"}
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
+import 'package:dory_app/app/localization/app_locales.dart';
 import 'package:dory_app/app/localization/language_controller.dart';
 import 'package:dory_app/app/router/app_router.dart';
 import 'package:dory_app/app/router/app_routes.dart';
@@ -412,6 +413,12 @@ final Provider<NotificationCoordinator> notificationCoordinatorProvider =
       );
       ref.listen<String?>(currentUserIdProvider, (previous, next) {
         if (next != null && next != previous) {
+          unawaited(coordinator.syncDevice());
+        }
+      });
+      // Push texts follow the device registration's language.
+      ref.listen<AppLanguage>(languageControllerProvider, (previous, next) {
+        if (previous != null && previous != next) {
           unawaited(coordinator.syncDevice());
         }
       });
