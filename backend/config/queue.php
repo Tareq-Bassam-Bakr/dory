@@ -40,8 +40,11 @@ return [
             'connection' => env('DB_QUEUE_CONNECTION'),
             'table' => env('DB_QUEUE_TABLE', 'jobs'),
             'queue' => env('DB_QUEUE', 'default'),
-            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 90),
-            'after_commit' => false,
+            // Longer than the worker's --timeout (90), or a slow job runs twice.
+            'retry_after' => (int) env('DB_QUEUE_RETRY_AFTER', 120),
+            // Jobs dispatched inside a transaction wait for its commit, and
+            // are dropped if it rolls back.
+            'after_commit' => true,
         ],
 
         'beanstalkd' => [

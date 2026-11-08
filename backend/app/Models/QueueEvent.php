@@ -49,6 +49,22 @@ class QueueEvent extends Model
     }
 
     /**
+     * @return BelongsTo<Queue, $this>
+     */
+    public function queue(): BelongsTo
+    {
+        return $this->belongsTo(Queue::class);
+    }
+
+    /**
+     * @return BelongsTo<QueueSession, $this>
+     */
+    public function session(): BelongsTo
+    {
+        return $this->belongsTo(QueueSession::class, 'queue_session_id');
+    }
+
+    /**
      * @return BelongsTo<QueueTicket, $this>
      */
     public function ticket(): BelongsTo

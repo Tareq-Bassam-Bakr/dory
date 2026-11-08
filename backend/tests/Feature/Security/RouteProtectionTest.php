@@ -35,6 +35,8 @@ class RouteProtectionTest extends TestCase
         'api.v1.public.queues.join',
         'api.v1.public.tickets.show',
         'api.v1.public.tickets.cancel',
+        'api.v1.public.tickets.devices.register',
+        'api.v1.public.tickets.devices.unregister',
         // The same guest access by queue id, for queues found in discovery.
         'api.v1.public.queues.by-id.show',
         'api.v1.public.queues.by-id.join',
@@ -56,6 +58,8 @@ class RouteProtectionTest extends TestCase
     private const TICKET_TOKEN_ROUTES = [
         'api.v1.public.tickets.show',
         'api.v1.public.tickets.cancel',
+        'api.v1.public.tickets.devices.register',
+        'api.v1.public.tickets.devices.unregister',
     ];
 
     /**

@@ -35,6 +35,8 @@ return [
         'queue_operations' => (int) env('RATE_LIMIT_QUEUE_OPERATIONS_PER_MINUTE', 120),
         // Public business discovery and search, per IP.
         'discovery' => (int) env('RATE_LIMIT_DISCOVERY_PER_MINUTE', 120),
+        // Push device registration, per user (or IP for guests).
+        'devices' => (int) env('RATE_LIMIT_DEVICES_PER_MINUTE', 20),
     ],
 
     /*
@@ -94,6 +96,43 @@ return [
         'max_per_page' => (int) env('DISCOVERY_MAX_PER_PAGE', 50),
         'wait_candidates' => (int) env('DISCOVERY_WAIT_CANDIDATES', 200),
         'min_ratings' => (int) env('DISCOVERY_MIN_RATINGS', 3),
+    ],
+
+    /*
+     * Real-time updates through Laravel Reverb (docs/REALTIME_ARCHITECTURE.md).
+     *
+     * - queue: queue name of broadcast jobs; the worker reads it first.
+     */
+    'realtime' => [
+        'queue' => env('REALTIME_QUEUE', 'realtime'),
+    ],
+
+    /*
+     * Notifications (docs/NOTIFICATION_EVENTS.md).
+     *
+     * - queue: queue name of notification and push jobs.
+     * - almost_turn_people_ahead: "almost your turn" is sent once, when this
+     *   many people or fewer are ahead of a waiting ticket.
+     * - per_page: notification center page size.
+     */
+    'notifications' => [
+        'queue' => env('NOTIFICATIONS_QUEUE', 'notifications'),
+        'almost_turn_people_ahead' => (int) env('NOTIFY_ALMOST_TURN_PEOPLE_AHEAD', 2),
+        'per_page' => 20,
+    ],
+
+    /*
+     * Push notifications through Firebase Cloud Messaging
+     * (docs/PUSH_NOTIFICATIONS.md, docs/FIREBASE_SETUP.md).
+     *
+     * - enabled: off until a Firebase project and a service account exist.
+     *   FIREBASE_CREDENTIALS must point to the service account JSON, kept
+     *   outside the repository. Nothing is sent while this is off.
+     * - android_channel_id: the app's notification channel.
+     */
+    'push' => [
+        'enabled' => (bool) env('FCM_ENABLED', false),
+        'android_channel_id' => env('FCM_ANDROID_CHANNEL_ID', 'dory_queue_updates'),
     ],
 
     /*

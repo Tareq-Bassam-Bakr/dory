@@ -77,6 +77,13 @@ class CustomerTicketResource extends JsonResource
             'can_review' => $ticket->status === TicketStatus::Completed && $ticket->user_id !== null && $review === null,
             'my_rating' => $review?->rating,
             'cancel_reason' => $ticket->cancel_reason,
+            // Where the app listens for changes (docs/BROADCAST_CHANNELS.md):
+            // the session's public signal, plus the private ticket channel
+            // for signed-in customers. The API stays the source of truth.
+            'realtime' => [
+                'public_channel' => 'queue-updates.'.$session->public_id,
+                'private_channel' => $ticket->user_id !== null ? 'private-tickets.'.$ticket->public_id : null,
+            ],
             'joined_at' => $ticket->joined_at->toIso8601String(),
             'called_at' => $ticket->called_at?->toIso8601String(),
             'started_at' => $ticket->started_at?->toIso8601String(),

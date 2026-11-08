@@ -10,9 +10,10 @@ use Illuminate\Foundation\Events\Dispatchable;
  * Something happened in a queue. Dispatched only after the database
  * transaction commits.
  *
- * Phase 04 has no listeners: this is the hook for Phase 06, where a
- * listener will broadcast it with Laravel Reverb (and queue notifications).
- * It carries public ids only, never personal data or tokens.
+ * QueueActivityRelay listens: it broadcasts the change through Laravel
+ * Reverb and queues the notifications (docs/REALTIME_ARCHITECTURE.md).
+ * It carries public ids, plus the internal id of the recorded history entry
+ * for the relay; it is never broadcast itself.
  */
 final class QueueActivity implements ShouldDispatchAfterCommit
 {
@@ -23,5 +24,6 @@ final class QueueActivity implements ShouldDispatchAfterCommit
         public readonly QueueEventType $type,
         public readonly ?string $sessionId = null,
         public readonly ?string $ticketId = null,
+        public readonly ?int $eventId = null,
     ) {}
 }

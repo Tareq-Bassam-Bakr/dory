@@ -138,6 +138,19 @@ return [
         'removed' => 'Business removed from your saved list',
     ],
 
+    'notifications' => [
+        'listed' => 'Notifications',
+        'read' => 'Notification marked as read',
+        'all_read' => 'All notifications marked as read',
+        'preferences' => 'Notification preferences',
+        'preferences_updated' => 'Notification preferences updated',
+        'device_registered' => 'Device registered for notifications',
+        'device_unregistered' => 'Device removed from notifications',
+        'device_not_found' => 'Device not found',
+        'notification_not_found' => 'Notification not found',
+        'ticket_finished' => 'This ticket is finished: no more notifications will be sent for it',
+    ],
+
     'health' => [
         'ok' => 'Service is healthy',
         'unhealthy' => 'Service is unhealthy',

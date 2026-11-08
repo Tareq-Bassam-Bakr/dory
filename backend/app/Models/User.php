@@ -109,6 +109,25 @@ class User extends Authenticatable
         return $this->belongsToMany(Business::class, 'customer_favorites');
     }
 
+    /**
+     * Devices that receive this user's push notifications.
+     *
+     * @return HasMany<PushDevice, $this>
+     */
+    public function pushDevices(): HasMany
+    {
+        return $this->hasMany(PushDevice::class);
+    }
+
+    /**
+     * Notifications broadcast in real time go to the user's own private
+     * channel, named by public id (docs/BROADCAST_CHANNELS.md).
+     */
+    public function receivesBroadcastNotificationsOn(): string
+    {
+        return 'users.'.$this->public_id;
+    }
+
     public function isActive(): bool
     {
         return $this->status->canAuthenticate();

@@ -7,7 +7,9 @@
     "license": "proprietary",
     "require": {
         "php": "^8.3",
+        "kreait/laravel-firebase": "^7.2",
         "laravel/framework": "^13.17",
+        "laravel/reverb": "^1.12",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0"
     },

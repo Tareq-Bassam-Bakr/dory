@@ -27,6 +27,12 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    // Private channel authorization for Reverb: POST /api/v1/broadcasting/auth
+    // with the Sanctum token (docs/BROADCAST_CHANNELS.md).
+    ->withBroadcasting(__DIR__.'/../routes/channels.php', [
+        'prefix' => 'api/v1',
+        'middleware' => ['api', 'auth:sanctum', 'active'],
+    ])
     ->withMiddleware(function (Middleware $middleware): void {
         // Every request (including 404s) gets a correlation id and security headers.
         $middleware->prepend(AssignRequestId::class);

@@ -4,12 +4,19 @@ namespace App\Providers;
 
 use App\Contracts\InvitationNotifier;
 use App\Contracts\WaitTimeEstimator;
+use App\Events\QueueActivity;
+use App\Exceptions\NotificationException;
+use App\Models\PushDevice;
 use App\Models\Queue;
 use App\Models\User;
+use App\Realtime\QueueActivityRelay;
 use App\Services\Business\CurrentBusinessContext;
 use App\Services\Business\TenantResolver;
 use App\Services\Discovery\PublicCatalogResolver;
 use App\Services\Invitations\MailInvitationNotifier;
+use App\Services\Push\DisabledPushSender;
+use App\Services\Push\FirebasePushSender;
+use App\Services\Push\PushSender;
 use App\Services\Queues\HistoricalWaitTimeEstimator;
 use App\Services\Queues\PublicQueueResolver;
 use Illuminate\Auth\Notifications\ResetPassword;
@@ -17,10 +24,12 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RouteInstance;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Kreait\Firebase\Contract\Messaging;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -39,6 +48,17 @@ class AppServiceProvider extends ServiceProvider
         // Wait-time estimates (docs/WAIT_TIME_ESTIMATION.md). Scoped: the
         // per-queue rate cache never outlives a request or job.
         $this->app->scoped(WaitTimeEstimator::class, HistoricalWaitTimeEstimator::class);
+
+        // Push notifications (docs/PUSH_NOTIFICATIONS.md): Firebase only when
+        // switched on and a credentials file exists. The Firebase SDK is not
+        // even built otherwise.
+        $this->app->singleton(PushSender::class, function ($app): PushSender {
+            $credentials = (string) config('firebase.projects.app.credentials');
+
+            return config('dory.push.enabled') && $credentials !== '' && is_readable($credentials)
+                ? new FirebasePushSender($app->make(Messaging::class), (string) config('dory.push.android_channel_id'))
+                : new DisabledPushSender;
+        });
     }
 
     /**
@@ -51,6 +71,10 @@ class AppServiceProvider extends ServiceProvider
         $this->configureRateLimiting();
         $this->configurePasswordResetLinks();
         $this->configureRouteBindings();
+
+        // Committed queue changes: broadcasts and notifications
+        // (docs/REALTIME_ARCHITECTURE.md).
+        Event::listen(QueueActivity::class, QueueActivityRelay::class);
     }
 
     /**
@@ -64,12 +88,14 @@ class AppServiceProvider extends ServiceProvider
         $publicIds = [
             'business', 'branch', 'service', 'member', 'invitation',
             'queue', 'queueSession', 'ticket', 'assignment', 'joinableQueue', 'myTicket', 'publicTicket',
-            'publicBranch', 'favoriteBusiness',
+            'publicBranch', 'favoriteBusiness', 'device',
         ];
         foreach ($publicIds as $parameter) {
             Route::pattern($parameter, '[0-9A-Za-z]{26}');
         }
         Route::pattern('invitationToken', '[A-Za-z0-9]{64}');
+        // Notification ids are UUIDs.
+        Route::pattern('notification', '[0-9a-fA-F-]{36}');
         Route::pattern('publicQueueToken', '[A-Za-z0-9]{40}');
         // A slug or a public id.
         Route::pattern('publicBusiness', '[A-Za-z0-9-]{1,160}');
@@ -106,6 +132,14 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('publicBusiness', fn (string $value) => $catalog()->business($value));
         Route::bind('publicBranch', fn (string $value) => $catalog()->branch($value));
         Route::bind('favoriteBusiness', fn (string $value) => $catalog()->favoriteTarget($value));
+
+        // The signed-in user's own push devices and notifications only.
+        Route::bind('device', fn (string $value) => PushDevice::query()
+            ->where('public_id', $value)
+            ->where('user_id', $user()?->getKey())
+            ->first() ?? throw NotificationException::deviceNotFound());
+        Route::bind('notification', fn (string $value) => $user()?->notifications()->whereKey($value)->first()
+            ?? throw NotificationException::notificationNotFound());
     }
 
     /**
@@ -193,6 +227,12 @@ class AppServiceProvider extends ServiceProvider
         // Public discovery and search, per IP.
         RateLimiter::for('discovery', function (Request $request) {
             return Limit::perMinute(config('dory.rate_limits.discovery'))->by('discovery:'.$request->ip());
+        });
+
+        // Push device registration, per user (or IP for guests).
+        RateLimiter::for('devices', function (Request $request) {
+            return Limit::perMinute(config('dory.rate_limits.devices'))
+                ->by('devices:'.($request->user()?->getAuthIdentifier() ?: $request->ip()));
         });
 
         // Staff actions on queues and tickets, per user.

@@ -15,8 +15,8 @@ use App\Models\User;
  * Writes the append-only queue history, in the caller's transaction, and
  * announces the change after the transaction commits (QueueActivity is a
  * ShouldDispatchAfterCommit event: nothing is announced for a change that
- * was rolled back). No listener broadcasts it yet; Laravel Reverb comes in
- * a later phase.
+ * was rolled back). QueueActivityRelay then broadcasts it and queues the
+ * notifications.
  */
 final class QueueEventRecorder
 {
@@ -45,7 +45,13 @@ final class QueueEventRecorder
         $event->created_at = now();
         $event->saveOrFail();
 
-        event(new QueueActivity($queue->public_id, $type, $session?->public_id, $ticket?->public_id));
+        event(new QueueActivity(
+            $queue->public_id,
+            $type,
+            $session?->public_id,
+            $ticket?->public_id,
+            $event->getKey(),
+        ));
 
         return $event;
     }

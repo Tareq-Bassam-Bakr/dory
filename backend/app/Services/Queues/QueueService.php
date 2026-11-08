@@ -2,6 +2,7 @@
 
 namespace App\Services\Queues;
 
+use App\Events\Realtime\StaffQueueUpdated;
 use App\Exceptions\QueueException;
 use App\Models\Branch;
 use App\Models\Queue;
@@ -52,7 +53,39 @@ final class QueueService
             throw ValidationException::withMessages(['ticket_prefix' => __('api.queue.prefix_taken')]);
         }
 
+        $this->announceSettings($queue);
+
         return $queue;
+    }
+
+    /**
+     * Staff dashboards learn about a changed queue at once
+     * (docs/BROADCAST_CHANNELS.md): capacity, status or other settings.
+     */
+    private function announceSettings(Queue $queue): void
+    {
+        $changes = $queue->getChanges();
+        unset($changes['updated_at']);
+        if ($changes === []) {
+            return;
+        }
+
+        $kind = match (true) {
+            array_key_exists('capacity', $changes) => 'capacity_changed',
+            array_key_exists('status', $changes) => 'queue_status_changed',
+            default => 'settings_changed',
+        };
+        $queue->loadMissing(['branch.business', 'activeSession']);
+
+        broadcast(new StaffQueueUpdated(
+            $kind,
+            $queue->branch->business->public_id,
+            $queue->public_id,
+            $queue->activeSession?->public_id,
+            null,
+            $queue->status->value,
+            now()->toIso8601String(),
+        ));
     }
 
     private function conflict(Branch $branch, Service $service, mixed $prefix): ValidationException

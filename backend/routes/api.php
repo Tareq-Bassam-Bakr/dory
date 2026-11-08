@@ -11,6 +11,10 @@ use App\Http\Controllers\Api\V1\Businesses\InvitationController;
 use App\Http\Controllers\Api\V1\Businesses\ServiceController;
 use App\Http\Controllers\Api\V1\Customers\FavoriteController;
 use App\Http\Controllers\Api\V1\Discovery\DiscoveryController;
+use App\Http\Controllers\Api\V1\Notifications\DeviceController;
+use App\Http\Controllers\Api\V1\Notifications\GuestDeviceController;
+use App\Http\Controllers\Api\V1\Notifications\NotificationController;
+use App\Http\Controllers\Api\V1\Notifications\NotificationPreferenceController;
 use App\Http\Controllers\Api\V1\Queues\CustomerTicketController;
 use App\Http\Controllers\Api\V1\Queues\PublicQueueController;
 use App\Http\Controllers\Api\V1\Queues\QueueController;
@@ -169,6 +173,19 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::post('me/favorites', [FavoriteController::class, 'store'])->name('me.favorites.store');
         Route::delete('me/favorites/{favoriteBusiness}', [FavoriteController::class, 'destroy'])->name('me.favorites.destroy');
 
+        // Notification center and preferences (docs/NOTIFICATION_CENTER.md).
+        Route::get('me/notifications', [NotificationController::class, 'index'])->name('me.notifications.index');
+        Route::post('me/notifications/read-all', [NotificationController::class, 'readAll'])->name('me.notifications.read-all');
+        Route::post('me/notifications/{notification}/read', [NotificationController::class, 'read'])->name('me.notifications.read');
+        Route::get('me/notification-preferences', [NotificationPreferenceController::class, 'show'])->name('me.notification-preferences.show');
+        Route::put('me/notification-preferences', [NotificationPreferenceController::class, 'update'])->name('me.notification-preferences.update');
+
+        // Push devices (docs/DEVICE_TOKEN_SECURITY.md).
+        Route::middleware('throttle:devices')->group(function (): void {
+            Route::post('devices/register', [DeviceController::class, 'register'])->name('devices.register');
+            Route::delete('devices/{device}/unregister', [DeviceController::class, 'unregister'])->name('devices.unregister');
+        });
+
         // Invitations, invitee side (the token is the secret)
         Route::middleware('throttle:invitation-token')->group(function (): void {
             Route::post('invitations/{invitationToken}/accept', [InvitationController::class, 'accept'])->name('invitations.accept');
@@ -189,6 +206,13 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
         Route::middleware('ticket.token')->group(function (): void {
             Route::get('tickets/{publicTicket}', [PublicQueueController::class, 'ticket'])->name('tickets.show');
             Route::post('tickets/{publicTicket}/cancel', [PublicQueueController::class, 'cancel'])->name('tickets.cancel');
+            // Push devices of a guest ticket: the ticket token proves ownership.
+            Route::middleware('throttle:devices')->group(function (): void {
+                Route::post('tickets/{publicTicket}/devices/register', [GuestDeviceController::class, 'register'])
+                    ->name('tickets.devices.register');
+                Route::delete('tickets/{publicTicket}/devices/unregister', [GuestDeviceController::class, 'unregister'])
+                    ->name('tickets.devices.unregister');
+            });
         });
     });
 
