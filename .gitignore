@@ -83,3 +83,7 @@ app.*.map.json
 /backend/vendor/
 /backend/.phpunit.cache/
 /backend/.phpunit.result.cache
+
+# Local development startup (start_dory.bat): run state, logs, local paths.
+/.dory/
+/scripts/dev/dory.local.psd1

@@ -43,13 +43,17 @@ allows it only while the ticket is waiting.
 Instructions from the business are not shown: the backend has no such field
 yet.
 
-## Position updates: polling, not real-time
+## Position updates: real-time first, polling as the fallback
 
-**There is no real-time push in this version.** An open ticket asks the server
-for its state on a timer, and the screen says updates are not instant.
-WebSockets and push notifications belong to a later phase.
+Since Phase 06, an open ticket listens on Reverb (`queue-updates.{session}`,
+plus `private-tickets.{ticket}` when signed in) and reads its state from the
+API when an event arrives ([REALTIME_ARCHITECTURE.md](REALTIME_ARCHITECTURE.md)).
+The screen says "Updates arrive as soon as the business acts." While there is
+no live connection, it polls as described below and says updates are not
+instant. Customers who are not looking at the screen are told by
+notifications ([NOTIFICATION_EVENTS.md](NOTIFICATION_EVENTS.md)).
 
-`TicketPoller` follows these rules:
+When not live, `TicketPoller` follows these rules:
 
 | Rule | Behaviour |
 |---|---|
@@ -61,8 +65,9 @@ WebSockets and push notifications belong to a later phase.
 | Finished ticket | Stops for good |
 | One ticket only | Lists never poll; they refresh on opening and on pull |
 
-These limits are the reason a customer can miss being called if they are not
-looking at the screen. That is a known limitation until notifications exist.
+Without Reverb and without push (Firebase is not configured yet), a customer
+who is not looking at the screen can still miss being called. Signed-in
+customers find the call in the notification center afterwards.
 
 ## Ticket center
 

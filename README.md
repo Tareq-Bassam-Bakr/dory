@@ -13,21 +13,23 @@ This repository contains both parts of the product:
 | Mobile app | repository root (`lib/`, `android/`, `ios/`, …) | Flutter 3.44, Riverpod 3, GoRouter 18 |
 | API | [`backend/`](backend) | Laravel 13, PHP 8.4, MySQL/MariaDB, Sanctum |
 
-> **Status: Phase 05 complete.** Customers can browse without an account:
-> search and filter businesses on the server, find what is near them, use an
-> OpenStreetMap map, open business and branch pages, and see live queue
-> availability. They join a queue signed in or as a guest, follow a digital
-> ticket, leave the queue, keep a ticket history, save businesses and rate a
-> completed visit. Guest tickets survive an app restart, with their token held
-> only in secure storage. Businesses run their queues from the workspace built
-> in Phases 03 and 04, and owners switch between the two sides.
+> **Status: Phase 06 complete.** Queue changes reach tickets and staff
+> screens at once through Laravel Reverb (self-hosted WebSockets), with the
+> 15-second polling kept as the fallback. Signed-in users have a notification
+> center with preferences; queue alerts (your turn, almost your turn,
+> skipped, paused, new customer, …) are stored, shown live while the app is
+> open, and prepared for push. One double-click starts everything locally:
+> `start_dory.bat` ([docs/LOCAL_DEVELOPMENT_STARTUP.md](docs/LOCAL_DEVELOPMENT_STARTUP.md)).
+> Phase 05 delivered discovery, guest and signed-in tickets, favorites and
+> ratings; Phases 03 and 04 the business workspace and queue engine.
 >
-> **Not yet:** real-time updates and notifications (an open ticket polls about
-> every 15 seconds, and says so). Linking a guest ticket to an account does not
-> exist. A production map needs its own tile provider
-> ([docs/OSM_TILE_PROVIDER.md](docs/OSM_TILE_PROVIDER.md)). GitHub Actions does
-> not start for this repository, so MySQL 8.4 is verified on a local server only
-> ([docs/MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md)).
+> **Not yet:** push notifications are implemented but **off**: no Firebase
+> project is configured, so nothing reaches a closed app
+> ([docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md)). iOS push is not set up.
+> Linking a guest ticket to an account does not exist. A production map needs
+> its own tile provider ([docs/OSM_TILE_PROVIDER.md](docs/OSM_TILE_PROVIDER.md)).
+> GitHub Actions does not start for this repository, so MySQL 8.4 is verified
+> on a local server only ([docs/MYSQL_84_COMPATIBILITY.md](docs/MYSQL_84_COMPATIBILITY.md)).
 
 ## Required software
 
@@ -38,7 +40,7 @@ This repository contains both parts of the product:
 | PHP | 8.3–8.5 (8.4.27 used) | API |
 | Composer | 2.x | API |
 | MySQL / MariaDB | MySQL 8.x (production) or MariaDB 10.3+ (local) | API |
-| Redis | optional locally, required in production | API |
+| Redis | not needed locally; needed to run several Reverb servers | API |
 
 ## Mobile app (Flutter)
 
@@ -60,7 +62,17 @@ flutter test
 
 Details: [docs/DEVELOPMENT_GUIDE.md](docs/DEVELOPMENT_GUIDE.md).
 
-### Run the app against the local API
+### Start everything with one double-click
+
+Double-click **`start_dory.bat`** in the repository root. It checks the
+tools, `backend/.env`, the database (and asks before running pending
+migrations), and the ports, then opens the windows DORY-API, DORY-REVERB,
+DORY-QUEUE and DORY-FLUTTER and runs the app on the connected phone.
+**`stop_dory.bat`** stops exactly those windows. XAMPP, MariaDB and other
+programs are never touched, and no database is ever reset or seeded. Details:
+[docs/LOCAL_DEVELOPMENT_STARTUP.md](docs/LOCAL_DEVELOPMENT_STARTUP.md).
+
+### Run the app against the local API by hand
 
 Start the API (see below), connect the phone by USB, then:
 
@@ -126,6 +138,17 @@ Run the API at `http://127.0.0.1:8000/api/v1`:
 
 ```powershell
 D:\php84\php.exe artisan serve
+```
+
+Real-time needs Reverb and a queue worker too (`start_dory.bat` starts all
+three; keys: [docs/REVERB_SETUP.md](docs/REVERB_SETUP.md#local-keys)):
+
+```powershell
+D:\php84\php.exe artisan reverb:start
+```
+
+```powershell
+D:\php84\php.exe artisan queue:work --queue=realtime,notifications,default
 ```
 
 Run the tests (SQLite in-memory, isolated):
@@ -226,3 +249,18 @@ Customer experience (Phase 05):
 | [CUSTOMER_API_REFERENCE.md](docs/CUSTOMER_API_REFERENCE.md) | Every customer endpoint and error code |
 | [CUSTOMER_SECURITY.md](docs/CUSTOMER_SECURITY.md) | Controls, their tests, and findings |
 | [PHASE_05_REPORT.md](docs/PHASE_05_REPORT.md) | What Phase 05 delivered, test results, open items |
+
+Real-time and notifications (Phase 06):
+
+| Document | Contents |
+|---|---|
+| [REALTIME_ARCHITECTURE.md](docs/REALTIME_ARCHITECTURE.md) | From a queue change to the screen; live and polling modes |
+| [REVERB_SETUP.md](docs/REVERB_SETUP.md) | Reverb configuration, local keys, running, production |
+| [BROADCAST_CHANNELS.md](docs/BROADCAST_CHANNELS.md) | Channels, who may join them, event payloads |
+| [NOTIFICATION_EVENTS.md](docs/NOTIFICATION_EVENTS.md) | Which queue changes notify whom, once |
+| [NOTIFICATION_CENTER.md](docs/NOTIFICATION_CENTER.md) | Stored notifications, preferences, the screens |
+| [PUSH_NOTIFICATIONS.md](docs/PUSH_NOTIFICATIONS.md) | FCM sending, payload, app states, current status |
+| [FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md) | Turning push on with your own Firebase project |
+| [DEVICE_TOKEN_SECURITY.md](docs/DEVICE_TOKEN_SECURITY.md) | How push tokens are stored, registered and revoked |
+| [LOCAL_DEVELOPMENT_STARTUP.md](docs/LOCAL_DEVELOPMENT_STARTUP.md) | `start_dory.bat` and `stop_dory.bat` |
+| [PHASE_06_REPORT.md](docs/PHASE_06_REPORT.md) | What Phase 06 delivered, test results, open items |
