@@ -58,6 +58,7 @@ class _TicketDetailsPageState extends ConsumerState<TicketDetailsPage> {
 
     return AutoRefresh(
       onTick: _refresh,
+      channels: <String>['private-queue-sessions.${widget.sessionId}'],
       child: DoryPageScaffold(
         title: ticket.value == null
             ? l10n.queueDashboardTitle

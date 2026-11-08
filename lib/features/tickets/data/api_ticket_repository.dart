@@ -57,8 +57,21 @@ class ApiTicketRepository implements TicketRepository {
       startedAt: json.dateTimeOrNull('started_at'),
       completedAt: json.dateTimeOrNull('completed_at'),
       endedAt: json.dateTimeOrNull('ended_at'),
+      realtimeChannels: _channels(json.objectOrNull('realtime')),
     );
   }
+
+  /// Only the two channel kinds a ticket can have; anything else is ignored.
+  static List<String> _channels(JsonMap? realtime) => <String>[
+    for (final String? channel in <String?>[
+      realtime?.stringOrNull('public_channel'),
+      realtime?.stringOrNull('private_channel'),
+    ])
+      if (channel != null &&
+          (channel.startsWith('queue-updates.') ||
+              channel.startsWith('private-tickets.')))
+        channel,
+  ];
 
   static Map<String, String> _guestHeaders(String accessToken) =>
       <String, String>{ticketTokenHeader: accessToken};

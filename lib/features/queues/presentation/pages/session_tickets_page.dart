@@ -71,6 +71,7 @@ class _SessionTicketsPage extends ConsumerWidget {
 
     return AutoRefresh(
       onTick: refresh,
+      channels: <String>['private-queue-sessions.$sessionId'],
       child: DoryPageScaffold(
         title: title,
         body: LiveValueView<List<StaffTicket>>(

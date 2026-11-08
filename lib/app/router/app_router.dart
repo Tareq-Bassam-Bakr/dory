@@ -23,6 +23,8 @@ import 'package:dory_app/features/discovery/presentation/pages/explore_page.dart
 import 'package:dory_app/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:dory_app/features/home/presentation/pages/customer_home_page.dart';
 import 'package:dory_app/features/maps/presentation/pages/discovery_map_page.dart';
+import 'package:dory_app/features/notifications/presentation/pages/notification_settings_page.dart';
+import 'package:dory_app/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:dory_app/features/profile/presentation/pages/account_page.dart';
 import 'package:dory_app/features/profile/presentation/pages/edit_profile_page.dart';
 import 'package:dory_app/features/queues/presentation/pages/business_queues_page.dart';
@@ -186,6 +188,16 @@ List<RouteBase> _customerDetailRoutes() => <RouteBase>[
   GoRoute(
     path: AppRoutes.customerMap,
     builder: (context, state) => const DiscoveryMapPage(),
+  ),
+  GoRoute(
+    path: AppRoutes.customerNotifications,
+    builder: (context, state) => const NotificationsPage(),
+    routes: <RouteBase>[
+      GoRoute(
+        path: 'settings',
+        builder: (context, state) => const NotificationSettingsPage(),
+      ),
+    ],
   ),
   GoRoute(
     path: AppRoutes.customerProfileEdit,

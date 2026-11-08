@@ -2010,4 +2010,144 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get profilePhoneOptional => 'رقم الهاتف (اختياري)';
+
+  @override
+  String get ticketLiveNote => 'تصلك التحديثات فور تنفيذ النشاط لأي إجراء.';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationsMarkAllRead => 'تعليم الكل كمقروء';
+
+  @override
+  String get notificationsFilterAll => 'الكل';
+
+  @override
+  String get notificationsFilterUnread => 'غير المقروءة';
+
+  @override
+  String get notificationsFilterRead => 'المقروءة';
+
+  @override
+  String get notificationsEmptyTitle => 'لا توجد إشعارات بعد';
+
+  @override
+  String get notificationsNoUnreadTitle => 'لا توجد إشعارات غير مقروءة';
+
+  @override
+  String get notificationsEmptyMessage =>
+      'تظهر هنا التحديثات الخاصة بتذاكرك وأدوارك.';
+
+  @override
+  String get notificationsSignInTitle => 'سجّل الدخول لرؤية الإشعارات';
+
+  @override
+  String get notificationsSignInMessage =>
+      'بصفتك ضيفًا، ترى التحديثات في تذكرتك نفسها.';
+
+  @override
+  String get notificationsUnreadLabel => 'غير مقروء';
+
+  @override
+  String notificationsBellUnread(int count) {
+    return 'الإشعارات، $count غير مقروءة';
+  }
+
+  @override
+  String get notificationSettingsTitle => 'إعدادات الإشعارات';
+
+  @override
+  String get notificationSettingsPhone => 'على هذا الهاتف';
+
+  @override
+  String get notificationSettingsWhat => 'ما الذي نُعلمك به';
+
+  @override
+  String get notificationSettingsPushReady =>
+      'تصل إشعارات الهاتف حتى عندما يكون DORY مغلقًا، إذا سمح Android بذلك.';
+
+  @override
+  String get notificationSettingsPushUnavailable =>
+      'لم تُفعَّل إشعارات الهاتف بعد. أثناء فتح DORY تصلك التحديثات فورًا.';
+
+  @override
+  String get notificationPermissionGranted =>
+      'الإشعارات مسموحة على هذا الهاتف.';
+
+  @override
+  String get notificationPermissionDenied =>
+      'لا يمكن لـ DORY عرض الإشعارات على هذا الهاتف.';
+
+  @override
+  String get notificationPermissionAllow => 'السماح بالإشعارات';
+
+  @override
+  String get notificationPermissionOpenSettings => 'فتح إعدادات الهاتف';
+
+  @override
+  String get notificationPrefTickets => 'تذاكري';
+
+  @override
+  String get notificationPrefTicketsHint =>
+      'عند النداء والخدمة والإكمال والإلغاء أو التخطي';
+
+  @override
+  String get notificationPrefAlmostTurn => 'اقتراب دوري';
+
+  @override
+  String get notificationPrefAlmostTurnHint =>
+      'مرة واحدة عندما يبقى أمامك عدد قليل';
+
+  @override
+  String get notificationPrefQueue => 'إيقاف الدور أو إغلاقه';
+
+  @override
+  String get notificationPrefQueueHint => 'للأدوار التي تنتظر فيها';
+
+  @override
+  String get notificationPrefStaffNew => 'عملاء جدد';
+
+  @override
+  String get notificationPrefStaffNewHint =>
+      'للموظفين: انضم أحدهم إلى دور تديره';
+
+  @override
+  String get notificationPrefStaffCancelled => 'إلغاءات العملاء';
+
+  @override
+  String get notificationPrefStaffCancelledHint =>
+      'للموظفين: غادر عميل دورًا تديره';
+
+  @override
+  String get notificationPrefPush => 'الإرسال إلى هواتفي';
+
+  @override
+  String get notificationPrefPushHint =>
+      'عند الإيقاف تبقى الإشعارات داخل التطبيق فقط';
+
+  @override
+  String get notificationOfferTitle => 'هل تريد تنبيهًا عندما يحين دورك؟';
+
+  @override
+  String get notificationOfferMessagePush =>
+      'يُعلمك DORY عند النداء عليك، حتى عندما يكون التطبيق في الخلفية.';
+
+  @override
+  String get notificationOfferMessageInApp =>
+      'أثناء فتح DORY ينبّهك عند النداء عليك، حتى في الشاشات الأخرى.';
+
+  @override
+  String get notificationOfferAllow => 'سماح';
+
+  @override
+  String get notificationOfferLater => 'ليس الآن';
+
+  @override
+  String get queueRealtimeLive => 'مباشر: تظهر التغييرات فورًا.';
+
+  @override
+  String queueRealtimePolling(int seconds) {
+    return 'يُحدَّث كل $seconds ثانية.';
+  }
 }

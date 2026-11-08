@@ -36,6 +36,11 @@ abstract final class AppRoutes {
   static String customerTicket(String ticketId, {bool guest = false}) =>
       '$customerRoot/ticket/$ticketId${guest ? '?guest=1' : ''}';
 
+  /// Notification center and settings, for customers and staff alike.
+  static const String customerNotifications = '$customerRoot/notifications';
+  static const String customerNotificationSettings =
+      '$customerNotifications/settings';
+
   // Business workspace. Requires a signed-in user.
   static const String businessRoot = '/business';
   static const String businessDashboard = '$businessRoot/dashboard';

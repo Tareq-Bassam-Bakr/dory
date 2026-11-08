@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:dory_app/app/localization/l10n.dart';
 import 'package:dory_app/app/theme/theme.dart';
 import 'package:dory_app/core/errors/app_failure.dart';
+import 'package:dory_app/core/realtime/pusher_client.dart';
+import 'package:dory_app/core/realtime/realtime_providers.dart';
 import 'package:dory_app/core/widgets/widgets.dart';
 import 'package:dory_app/features/queues/domain/entities/queue_entities.dart';
 import 'package:dory_app/features/queues/presentation/widgets/queue_labels.dart';
@@ -11,38 +13,131 @@ import 'package:dory_app/shared/components/failure_message.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// How often live queue screens reload (no real-time push in this phase).
+/// How often live queue screens reload when real-time is unavailable.
 const Duration queueRefreshInterval = Duration(seconds: 15);
 
-/// Calls [onTick] every [interval] while mounted. Used by the live screens
-/// to poll the server; real-time updates come in a later phase.
-class AutoRefresh extends StatefulWidget {
+/// Keeps a staff screen current (docs/REALTIME_ARCHITECTURE.md).
+///
+/// With [channels] and a live Reverb connection, [onTick] runs when the
+/// queue changes (bursts collapse into one call) and after every
+/// (re)subscription, and the timer is off. Otherwise, and whenever the
+/// connection drops, [onTick] runs every [interval] as before.
+class AutoRefresh extends ConsumerStatefulWidget {
   const AutoRefresh({
     super.key,
     required this.onTick,
     required this.child,
     this.interval = queueRefreshInterval,
+    this.channels = const <String>[],
   });
 
   final VoidCallback onTick;
   final Widget child;
   final Duration interval;
+  final List<String> channels;
 
   @override
-  State<AutoRefresh> createState() => _AutoRefreshState();
+  ConsumerState<AutoRefresh> createState() => _AutoRefreshState();
 }
 
-class _AutoRefreshState extends State<AutoRefresh> {
+class _AutoRefreshState extends ConsumerState<AutoRefresh> {
   Timer? _timer;
+  Timer? _debounce;
+  PusherClient? _client;
+  final List<RealtimeSubscription> _subscriptions = <RealtimeSubscription>[];
+  final List<StreamSubscription<Object?>> _listeners =
+      <StreamSubscription<Object?>>[];
+  bool _live = false;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(widget.interval, (_) => widget.onTick());
+    _startTimer();
+    ref.listenManual<PusherClient?>(
+      realtimeClientProvider,
+      (previous, next) => _attach(next),
+      fireImmediately: true,
+    );
+  }
+
+  void _attach(PusherClient? client) {
+    _detach();
+    _client = client;
+    if (client == null || widget.channels.isEmpty) {
+      return;
+    }
+    for (final String channel in widget.channels) {
+      final RealtimeSubscription subscription = client.subscribe(channel);
+      _subscriptions.add(subscription);
+      _listeners.add(
+        subscription.events.listen((event) {
+          if (event.kind == RealtimeEventKind.message) {
+            _changed();
+          } else {
+            _evaluate();
+          }
+        }),
+      );
+    }
+    _listeners.add(client.statusChanges.listen((_) => _evaluate()));
+    _evaluate();
+  }
+
+  void _evaluate() {
+    final PusherClient? client = _client;
+    final bool live =
+        client != null &&
+        client.isConnected &&
+        _subscriptions.isNotEmpty &&
+        _subscriptions.every((subscription) => subscription.isSubscribed);
+    if (live == _live) {
+      return;
+    }
+    _live = live;
+    if (live) {
+      _timer?.cancel();
+      _timer = null;
+      // Events missed while away are not replayed: read once.
+      _changed();
+    } else {
+      _startTimer();
+    }
+  }
+
+  void _changed() {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 250), () {
+      if (mounted) {
+        widget.onTick();
+      }
+    });
+  }
+
+  void _startTimer() {
+    _timer ??= Timer.periodic(widget.interval, (_) => widget.onTick());
+  }
+
+  void _detach() {
+    for (final StreamSubscription<Object?> listener in _listeners) {
+      unawaited(listener.cancel());
+    }
+    _listeners.clear();
+    for (final RealtimeSubscription subscription in _subscriptions) {
+      subscription.cancel();
+    }
+    _subscriptions.clear();
+    _client = null;
+    if (_live) {
+      _live = false;
+      _startTimer();
+    }
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
+    _debounce?.cancel();
+    _detach();
     _timer?.cancel();
     super.dispose();
   }

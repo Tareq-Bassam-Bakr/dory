@@ -5,11 +5,16 @@ import 'package:dory_app/app/router/app_routes.dart';
 import 'package:dory_app/app/theme/theme.dart';
 import 'package:dory_app/core/config/ticket_config.dart';
 import 'package:dory_app/core/errors/app_failure.dart';
+import 'package:dory_app/core/realtime/realtime_providers.dart';
 import 'package:dory_app/core/widgets/widgets.dart';
 import 'package:dory_app/features/discovery/presentation/widgets/discovery_labels.dart';
+import 'package:dory_app/features/notifications/presentation/providers/notification_coordinator.dart';
+import 'package:dory_app/features/notifications/presentation/providers/notification_providers.dart';
+import 'package:dory_app/features/notifications/presentation/widgets/notification_widgets.dart';
 import 'package:dory_app/features/queues/domain/entities/queue_entities.dart';
 import 'package:dory_app/features/queues/presentation/widgets/queue_labels.dart';
 import 'package:dory_app/features/tickets/domain/entities/customer_ticket.dart';
+import 'package:dory_app/features/tickets/presentation/providers/live_ticket_sync.dart';
 import 'package:dory_app/features/tickets/presentation/providers/ticket_poller.dart';
 import 'package:dory_app/features/tickets/presentation/providers/ticket_providers.dart';
 import 'package:dory_app/features/tickets/presentation/widgets/ticket_labels.dart';
@@ -21,10 +26,11 @@ import 'package:material_ui/material_ui.dart';
 
 /// The digital ticket.
 ///
-/// While this screen is really on screen it refreshes on a timer: it stops
-/// when the app goes to the background, when another screen covers it, when
-/// its tab is hidden, and for good once the ticket is finished. There is no
-/// real-time push yet, and the screen says so.
+/// Updates come through Reverb when it is connected; otherwise, and while it
+/// reconnects, the screen polls as before (LiveTicketSync). Either way it
+/// reads the ticket from the API, only while it is really on screen (not in
+/// the background, under another screen or in a hidden tab), and stops for
+/// good once the ticket is finished. The screen says which mode it is in.
 class CustomerTicketPage extends ConsumerStatefulWidget {
   const CustomerTicketPage({super.key, required this.ticket});
 
@@ -36,19 +42,52 @@ class CustomerTicketPage extends ConsumerStatefulWidget {
 
 class _CustomerTicketPageState extends ConsumerState<CustomerTicketPage>
     with WidgetsBindingObserver {
-  late final TicketPoller _poller = TicketPoller(
-    refresh: () =>
-        ref.read(ticketDetailsProvider(widget.ticket).notifier).poll(),
+  late final LiveTicketSync _sync = LiveTicketSync(
+    poller: TicketPoller(
+      refresh: () =>
+          ref.read(ticketDetailsProvider(widget.ticket).notifier).poll(),
+    ),
   );
 
   bool _appVisible = true;
-  bool _started = false;
   bool _cancelling = false;
+  List<String> _channels = const <String>[];
+  late final VisibleTicket _visibleTicket;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _visibleTicket = ref.read(visibleTicketProvider);
+    ref.listenManual(
+      ticketDetailsProvider(widget.ticket),
+      (previous, next) => _onTicket(next.value),
+      fireImmediately: true,
+    );
+    // A new account (sign in or out) means a new connection.
+    ref.listenManual(
+      realtimeClientProvider,
+      (previous, next) => _sync.attach(next, _channels),
+    );
+  }
+
+  void _onTicket(CustomerTicket? ticket) {
+    if (ticket == null) {
+      return;
+    }
+    if (ticket.isFinished) {
+      // Nothing more can change: stop listening and asking.
+      _sync.finish();
+      return;
+    }
+    _channels = ticket.realtimeChannels;
+    _sync.attach(ref.read(realtimeClientProvider), _channels);
+    // A guest ticket kept on this device gets push alerts when allowed.
+    if (widget.ticket.isGuest) {
+      unawaited(
+        ref.read(deviceRegistrationProvider).syncGuestTicket(ticket.id),
+      );
+    }
   }
 
   @override
@@ -66,23 +105,23 @@ class _CustomerTicketPageState extends ConsumerState<CustomerTicketPage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    _poller.dispose();
+    _sync.dispose();
+    _visibleTicket.hide(widget.ticket.id);
     super.dispose();
   }
 
-  /// Polls only while the app is in front, this route is on top and this
+  /// Reads only while the app is in front, this route is on top and this
   /// tab is showing.
   void _syncPolling() {
     final bool visible =
         _appVisible &&
         TickerMode.valuesOf(context).enabled &&
         (ModalRoute.of(context)?.isCurrent ?? true);
-    if (!visible) {
-      _poller.pause();
-      return;
-    }
-    _poller.resume(refreshFirst: _started);
-    _started = true;
+    _sync.setVisible(visible);
+    // Alerts about this ticket are not shown on top of it.
+    visible
+        ? _visibleTicket.show(widget.ticket.id)
+        : _visibleTicket.hide(widget.ticket.id);
   }
 
   Future<void> _cancel(CustomerTicket ticket) async {
@@ -148,13 +187,6 @@ class _CustomerTicketPageState extends ConsumerState<CustomerTicketPage>
       ticketDetailsProvider(widget.ticket),
     );
 
-    // Nothing more can change: stop asking.
-    ref.listen(ticketDetailsProvider(widget.ticket), (previous, next) {
-      if (next.value?.isFinished ?? false) {
-        _poller.finish();
-      }
-    });
-
     return DoryPageScaffold(
       title: l10n.ticketTitle,
       body: switch (value) {
@@ -205,10 +237,19 @@ class _CustomerTicketPageState extends ConsumerState<CustomerTicketPage>
         ],
         if (ticket.status.isActive) ...<Widget>[
           const SizedBox(height: AppSpacing.md),
-          Text(
-            l10n.ticketPollingNote(TicketConfig.pollInterval.inSeconds),
-            style: Theme.of(context).textTheme.bodySmall,
-            textAlign: TextAlign.center,
+          NotificationOffer(
+            guestTicketId: widget.ticket.isGuest ? ticket.id : null,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          ValueListenableBuilder<bool>(
+            valueListenable: _sync.live,
+            builder: (context, live, _) => Text(
+              live
+                  ? l10n.ticketLiveNote
+                  : l10n.ticketPollingNote(TicketConfig.pollInterval.inSeconds),
+              style: Theme.of(context).textTheme.bodySmall,
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
         // Finished tickets offer no ordinary actions.

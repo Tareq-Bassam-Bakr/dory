@@ -2025,4 +2025,144 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profilePhoneOptional => 'Phone number (optional)';
+
+  @override
+  String get ticketLiveNote => 'Updates arrive as soon as the business acts.';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get notificationsFilterAll => 'All';
+
+  @override
+  String get notificationsFilterUnread => 'Unread';
+
+  @override
+  String get notificationsFilterRead => 'Read';
+
+  @override
+  String get notificationsEmptyTitle => 'No notifications yet';
+
+  @override
+  String get notificationsNoUnreadTitle => 'Nothing unread';
+
+  @override
+  String get notificationsEmptyMessage =>
+      'Updates about your tickets and queues appear here.';
+
+  @override
+  String get notificationsSignInTitle => 'Sign in to see notifications';
+
+  @override
+  String get notificationsSignInMessage =>
+      'As a guest, you see the updates on your ticket itself.';
+
+  @override
+  String get notificationsUnreadLabel => 'Unread';
+
+  @override
+  String notificationsBellUnread(int count) {
+    return 'Notifications, $count unread';
+  }
+
+  @override
+  String get notificationSettingsTitle => 'Notification settings';
+
+  @override
+  String get notificationSettingsPhone => 'On this phone';
+
+  @override
+  String get notificationSettingsWhat => 'What to tell you';
+
+  @override
+  String get notificationSettingsPushReady =>
+      'Push notifications reach this phone even when DORY is closed, if Android allows it.';
+
+  @override
+  String get notificationSettingsPushUnavailable =>
+      'Push notifications are not set up yet. While DORY is open, you are still told at once.';
+
+  @override
+  String get notificationPermissionGranted =>
+      'Notifications are allowed on this phone.';
+
+  @override
+  String get notificationPermissionDenied =>
+      'DORY cannot show notifications on this phone.';
+
+  @override
+  String get notificationPermissionAllow => 'Allow notifications';
+
+  @override
+  String get notificationPermissionOpenSettings => 'Open phone settings';
+
+  @override
+  String get notificationPrefTickets => 'My tickets';
+
+  @override
+  String get notificationPrefTicketsHint =>
+      'Called, served, completed, cancelled or skipped';
+
+  @override
+  String get notificationPrefAlmostTurn => 'Almost my turn';
+
+  @override
+  String get notificationPrefAlmostTurnHint =>
+      'Once, when only a few people are ahead';
+
+  @override
+  String get notificationPrefQueue => 'Queue paused or closed';
+
+  @override
+  String get notificationPrefQueueHint => 'For queues you are waiting in';
+
+  @override
+  String get notificationPrefStaffNew => 'New customers';
+
+  @override
+  String get notificationPrefStaffNewHint =>
+      'Staff: someone joined a queue you run';
+
+  @override
+  String get notificationPrefStaffCancelled => 'Customer cancellations';
+
+  @override
+  String get notificationPrefStaffCancelledHint =>
+      'Staff: a customer left a queue you run';
+
+  @override
+  String get notificationPrefPush => 'Push to my phones';
+
+  @override
+  String get notificationPrefPushHint =>
+      'Off: notifications stay in the app only';
+
+  @override
+  String get notificationOfferTitle => 'Get an alert when it\'s your turn?';
+
+  @override
+  String get notificationOfferMessagePush =>
+      'DORY tells you when you are called, even when the app is in the background.';
+
+  @override
+  String get notificationOfferMessageInApp =>
+      'While DORY is open, it alerts you when you are called, even on other screens.';
+
+  @override
+  String get notificationOfferAllow => 'Allow';
+
+  @override
+  String get notificationOfferLater => 'Not now';
+
+  @override
+  String get queueRealtimeLive => 'Live: changes appear at once.';
+
+  @override
+  String queueRealtimePolling(int seconds) {
+    return 'Refreshed every $seconds seconds.';
+  }
 }

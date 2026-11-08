@@ -3,6 +3,7 @@ import 'package:dory_app/app/localization/language_controller.dart';
 import 'package:dory_app/app/router/app_router.dart';
 import 'package:dory_app/app/theme/app_theme.dart';
 import 'package:dory_app/core/constants/app_constants.dart';
+import 'package:dory_app/features/notifications/presentation/widgets/notification_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -27,6 +28,9 @@ class DoryApp extends ConsumerWidget {
       supportedLocales: AppLocales.supported,
       localizationsDelegates: AppLocales.delegates,
       routerConfig: router,
+      // Notifications start with the app: taps, alerts, push.
+      builder: (context, child) =>
+          NotificationsHost(child: child ?? const SizedBox.shrink()),
     );
   }
 }

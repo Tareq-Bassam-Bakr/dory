@@ -73,6 +73,7 @@ class _QueueDashboardPageState extends ConsumerState<QueueDashboardPage> {
 
     return AutoRefresh(
       onTick: _refresh,
+      channels: <String>['private-queue-sessions.${widget.sessionId}'],
       child: DoryPageScaffold(
         title: dashboard.value?.queueName ?? l10n.queueDashboardTitle,
         body: LiveValueView<QueueDashboard>(

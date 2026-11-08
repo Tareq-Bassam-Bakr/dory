@@ -5,12 +5,15 @@ import 'package:dory_app/app/router/app_router.dart';
 import 'package:dory_app/app/theme/app_theme.dart';
 import 'package:dory_app/core/location/location_service.dart';
 import 'package:dory_app/core/network/network_providers.dart';
+import 'package:dory_app/core/notifications/local_notifier.dart';
+import 'package:dory_app/core/notifications/push_messaging.dart';
 import 'package:dory_app/core/storage/in_memory_key_value_storage.dart';
 import 'package:dory_app/core/storage/key_value_storage.dart';
 import 'package:dory_app/core/storage/secure_store.dart';
 import 'package:dory_app/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:dory_app/features/maps/presentation/providers/map_providers.dart';
+import 'package:dory_app/features/notifications/presentation/providers/notification_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,21 +23,29 @@ import 'package:material_ui/material_ui.dart';
 import 'fake_auth_repository.dart';
 import 'fake_http_adapter.dart';
 import 'fake_location.dart';
+import 'fake_notifications.dart';
 
 /// Base URL of the fake API in tests. Nothing listens there: every request
 /// goes through the injected [FakeHttpAdapter].
 const String testApiBaseUrl = 'http://dory.test/api/v1';
 
 /// Overrides shared by every test app: volatile storage, a fake HTTP
-/// transport (unhandled requests get a 404 envelope) and, unless the test
-/// passes its own, a signed-out [FakeAuthRepository].
+/// transport (unhandled requests get a 404 envelope), fake notifications
+/// without Firebase and, unless the test passes its own, a signed-out
+/// [FakeAuthRepository].
 List<Override> testOverrides({
   KeyValueStorage? storage,
   AuthRepository? authRepository,
   HttpClientAdapter? http,
   SecureStore? secureStore,
   LocationService? location,
+  LocalNotifier? notifier,
+  PushMessaging? push,
 }) => <Override>[
+  localNotifierProvider.overrideWithValue(notifier ?? FakeLocalNotifier()),
+  pushMessagingProvider.overrideWithValue(
+    push ?? const DisabledPushMessaging(),
+  ),
   keyValueStorageProvider.overrideWithValue(
     storage ?? InMemoryKeyValueStorage(),
   ),
@@ -58,6 +69,8 @@ ProviderContainer createTestContainer({
   HttpClientAdapter? http,
   SecureStore? secureStore,
   LocationService? location,
+  LocalNotifier? notifier,
+  PushMessaging? push,
   List<Override> overrides = const <Override>[],
 }) {
   return ProviderContainer.test(
@@ -68,6 +81,8 @@ ProviderContainer createTestContainer({
         http: http,
         secureStore: secureStore,
         location: location,
+        notifier: notifier,
+        push: push,
       ),
       ...overrides,
     ],
@@ -130,6 +145,9 @@ Future<GoRouter> pumpAppAt(
   KeyValueStorage? storage,
   SecureStore? secureStore,
   LocationService? locationService,
+  LocalNotifier? notifier,
+  PushMessaging? push,
+  List<Override> overrides = const <Override>[],
   Size size = const Size(390, 900),
 }) async {
   setTestWindowSize(tester, size);
@@ -139,6 +157,9 @@ Future<GoRouter> pumpAppAt(
     storage: storage,
     secureStore: secureStore,
     location: locationService,
+    notifier: notifier,
+    push: push,
+    overrides: overrides,
   );
   final GoRouter router = container.read(appRouterProvider);
   await pumpDoryApp(tester, container);

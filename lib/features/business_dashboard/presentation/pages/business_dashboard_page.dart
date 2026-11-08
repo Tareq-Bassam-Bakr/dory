@@ -6,6 +6,7 @@ import 'package:dory_app/features/business_dashboard/presentation/widgets/busine
 import 'package:dory_app/features/businesses/domain/entities/business.dart';
 import 'package:dory_app/features/businesses/presentation/providers/business_providers.dart';
 import 'package:dory_app/features/businesses/presentation/widgets/business_labels.dart';
+import 'package:dory_app/features/notifications/presentation/widgets/notification_widgets.dart';
 import 'package:dory_app/features/team/presentation/widgets/join_invitation_dialog.dart';
 import 'package:dory_app/shared/components/async_value_view.dart';
 import 'package:dory_app/shared/components/category_icon.dart';
@@ -29,6 +30,7 @@ class BusinessDashboardPage extends ConsumerWidget {
     return DoryPageScaffold(
       title: l10n.myBusinessesTitle,
       actions: <Widget>[
+        const NotificationBell(),
         IconButton(
           tooltip: l10n.myBusinessesJoin,
           icon: const Icon(Icons.mark_email_unread_outlined),

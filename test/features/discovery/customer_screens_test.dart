@@ -148,8 +148,8 @@ void main() {
       expect(find.text('No queues open right now'), findsOneWidget);
     });
 
-    testWidgets('notifications are an honest placeholder', (tester) async {
-      await pumpAppAt(
+    testWidgets('the bell opens the notification center', (tester) async {
+      final GoRouter router = await pumpAppAt(
         tester,
         AppRoutes.customerHome,
         authRepository: FakeAuthRepository(),
@@ -157,10 +157,11 @@ void main() {
       );
 
       await tester.tap(find.byIcon(Icons.notifications_none_rounded));
-      await tester.pump();
+      await tester.pumpAndSettle();
 
-      expect(find.textContaining('upcoming update'), findsOneWidget);
-      await tester.pumpAndSettle(const Duration(seconds: 5));
+      expect(topLocation(router), AppRoutes.customerNotifications);
+      // Guests are invited to sign in, not shown an empty list.
+      expect(find.text('Sign in to see notifications'), findsOneWidget);
     });
   });
 

@@ -8,6 +8,7 @@ import 'package:dory_app/features/authentication/domain/entities/auth_user.dart'
 import 'package:dory_app/features/authentication/domain/entities/registration_details.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_providers.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_state.dart';
+import 'package:dory_app/features/notifications/presentation/providers/notification_coordinator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Owns the session for the whole app.
@@ -100,6 +101,13 @@ class AuthController extends Notifier<AuthState> {
   }
 
   Future<void> logout() async {
+    // While the token still works: this phone stops receiving the
+    // account's notifications. Never blocks signing out.
+    try {
+      await ref.read(deviceRegistrationProvider).beforeSignOut();
+    } on Object catch (error, stackTrace) {
+      ErrorReporter.report(error, stackTrace, context: 'Device removal');
+    }
     await ref.read(logoutUseCaseProvider).call();
     state = const Unauthenticated();
   }

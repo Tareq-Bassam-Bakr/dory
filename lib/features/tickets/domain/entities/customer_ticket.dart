@@ -34,6 +34,7 @@ class CustomerTicket {
     this.startedAt,
     this.completedAt,
     this.endedAt,
+    this.realtimeChannels = const <String>[],
   });
 
   final String id;
@@ -73,6 +74,12 @@ class CustomerTicket {
   final DateTime? startedAt;
   final DateTime? completedAt;
   final DateTime? endedAt;
+
+  /// Reverb channels that announce changes to this ticket
+  /// (docs/BROADCAST_CHANNELS.md): the session's public signal, plus the
+  /// private ticket channel for signed-in customers. Announcements only:
+  /// the ticket itself is always read from the API.
+  final List<String> realtimeChannels;
 
   /// Nothing more will happen to this ticket.
   bool get isFinished => !status.isActive;

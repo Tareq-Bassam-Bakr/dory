@@ -12,7 +12,7 @@ import 'package:dory_app/features/home/presentation/widgets/category_strip.dart'
 import 'package:dory_app/features/home/presentation/widgets/home_search_entry.dart';
 import 'package:dory_app/features/maps/presentation/providers/location_providers.dart';
 import 'package:dory_app/features/maps/presentation/widgets/location_picker.dart';
-import 'package:dory_app/shared/components/coming_soon.dart';
+import 'package:dory_app/features/notifications/presentation/widgets/notification_widgets.dart';
 import 'package:dory_app/shared/enums/app_workspace.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -58,12 +58,7 @@ class CustomerHomePage extends ConsumerWidget {
             onPressed: () =>
                 context.go(AppRoutes.workspaceHome(AppWorkspace.business)),
           ),
-        // Notifications arrive in a later phase; this is an honest placeholder.
-        IconButton(
-          tooltip: l10n.homeNotifications,
-          icon: const Icon(Icons.notifications_none_rounded),
-          onPressed: () => showComingSoonMessage(context),
-        ),
+        const NotificationBell(),
       ],
       body: RefreshIndicator(
         onRefresh: () => _refresh(ref),

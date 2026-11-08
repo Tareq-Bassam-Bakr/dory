@@ -43,6 +43,10 @@ dependencies:
   # While-in-use location only, requested when a customer asks for it.
   geolocator: ^14.1.2
   url_launcher: ^6.3.3
+  web_socket_channel: ^3.0.3
+  firebase_core: ^4.15.2
+  firebase_messaging: ^16.7.1
+  flutter_local_notifications: ^22.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter

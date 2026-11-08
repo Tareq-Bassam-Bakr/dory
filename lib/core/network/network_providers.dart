@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:dio/dio.dart';
 import 'package:dory_app/app/localization/language_controller.dart';
@@ -90,10 +91,12 @@ final Provider<Dio> dioProvider = Provider<Dio>((ref) {
   dio.interceptors.addAll(<Interceptor>[
     InterceptorsWrapper(
       onRequest: (options, handler) {
-        final Locale? locale = ref.read(languageControllerProvider).locale;
-        if (locale != null) {
-          options.headers['Accept-Language'] = locale.languageCode;
-        }
+        // The chosen language, else the device's: the server renders
+        // notification texts in it.
+        final Locale locale =
+            ref.read(languageControllerProvider).locale ??
+            PlatformDispatcher.instance.locale;
+        options.headers['Accept-Language'] = locale.languageCode;
         handler.next(options);
       },
     ),

@@ -60,8 +60,37 @@ class ApiClient {
     return _send(() => _dio.put<Object?>(path, data: body));
   }
 
-  Future<ApiEnvelope> delete(String path) {
-    return _send(() => _dio.delete<Object?>(path));
+  Future<ApiEnvelope> delete(
+    String path, {
+    Object? body,
+    Map<String, String>? headers,
+  }) {
+    return _send(
+      () => _dio.delete<Object?>(
+        path,
+        data: body,
+        options: headers == null ? null : Options(headers: headers),
+      ),
+    );
+  }
+
+  /// A POST whose answer is not the API envelope: Laravel's broadcasting
+  /// endpoint answers `{"auth": "..."}` (docs/BROADCAST_CHANNELS.md).
+  Future<JsonMap> postRaw(String path, {Object? body}) async {
+    final Response<Object?> response;
+    try {
+      response = await _dio.post<Object?>(path, data: body);
+    } on DioException catch (error) {
+      throw ApiException.fromDio(error);
+    }
+    try {
+      return asJsonMap(response.data, context: 'response');
+    } on FormatException {
+      throw ApiException(
+        ApiErrorKind.badResponse,
+        statusCode: response.statusCode,
+      );
+    }
   }
 
   Future<ApiEnvelope> _send(

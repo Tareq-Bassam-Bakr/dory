@@ -3601,6 +3601,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Phone number (optional)'**
   String get profilePhoneOptional;
+
+  /// Ticket screen when real-time updates are connected
+  ///
+  /// In en, this message translates to:
+  /// **'Updates arrive as soon as the business acts.'**
+  String get ticketLiveNote;
+
+  /// Notification center title
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// Action
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get notificationsMarkAllRead;
+
+  /// Filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get notificationsFilterAll;
+
+  /// Filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get notificationsFilterUnread;
+
+  /// Filter chip
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get notificationsFilterRead;
+
+  /// Empty state
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notificationsEmptyTitle;
+
+  /// Empty state of the unread filter
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing unread'**
+  String get notificationsNoUnreadTitle;
+
+  /// Empty state message
+  ///
+  /// In en, this message translates to:
+  /// **'Updates about your tickets and queues appear here.'**
+  String get notificationsEmptyMessage;
+
+  /// Guests
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to see notifications'**
+  String get notificationsSignInTitle;
+
+  /// Guests
+  ///
+  /// In en, this message translates to:
+  /// **'As a guest, you see the updates on your ticket itself.'**
+  String get notificationsSignInMessage;
+
+  /// Screen reader label of an unread notification
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get notificationsUnreadLabel;
+
+  /// Bell tooltip with a count
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications, {count} unread'**
+  String notificationsBellUnread(int count);
+
+  /// Settings title
+  ///
+  /// In en, this message translates to:
+  /// **'Notification settings'**
+  String get notificationSettingsTitle;
+
+  /// Section
+  ///
+  /// In en, this message translates to:
+  /// **'On this phone'**
+  String get notificationSettingsPhone;
+
+  /// Section
+  ///
+  /// In en, this message translates to:
+  /// **'What to tell you'**
+  String get notificationSettingsWhat;
+
+  /// Push is configured
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications reach this phone even when DORY is closed, if Android allows it.'**
+  String get notificationSettingsPushReady;
+
+  /// Push is not configured
+  ///
+  /// In en, this message translates to:
+  /// **'Push notifications are not set up yet. While DORY is open, you are still told at once.'**
+  String get notificationSettingsPushUnavailable;
+
+  /// Permission state
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are allowed on this phone.'**
+  String get notificationPermissionGranted;
+
+  /// Permission state
+  ///
+  /// In en, this message translates to:
+  /// **'DORY cannot show notifications on this phone.'**
+  String get notificationPermissionDenied;
+
+  /// Button
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications'**
+  String get notificationPermissionAllow;
+
+  /// Button
+  ///
+  /// In en, this message translates to:
+  /// **'Open phone settings'**
+  String get notificationPermissionOpenSettings;
+
+  /// Preference
+  ///
+  /// In en, this message translates to:
+  /// **'My tickets'**
+  String get notificationPrefTickets;
+
+  /// Preference hint
+  ///
+  /// In en, this message translates to:
+  /// **'Called, served, completed, cancelled or skipped'**
+  String get notificationPrefTicketsHint;
+
+  /// Preference
+  ///
+  /// In en, this message translates to:
+  /// **'Almost my turn'**
+  String get notificationPrefAlmostTurn;
+
+  /// Preference hint
+  ///
+  /// In en, this message translates to:
+  /// **'Once, when only a few people are ahead'**
+  String get notificationPrefAlmostTurnHint;
+
+  /// Preference
+  ///
+  /// In en, this message translates to:
+  /// **'Queue paused or closed'**
+  String get notificationPrefQueue;
+
+  /// Preference hint
+  ///
+  /// In en, this message translates to:
+  /// **'For queues you are waiting in'**
+  String get notificationPrefQueueHint;
+
+  /// Staff preference
+  ///
+  /// In en, this message translates to:
+  /// **'New customers'**
+  String get notificationPrefStaffNew;
+
+  /// Staff preference hint
+  ///
+  /// In en, this message translates to:
+  /// **'Staff: someone joined a queue you run'**
+  String get notificationPrefStaffNewHint;
+
+  /// Staff preference
+  ///
+  /// In en, this message translates to:
+  /// **'Customer cancellations'**
+  String get notificationPrefStaffCancelled;
+
+  /// Staff preference hint
+  ///
+  /// In en, this message translates to:
+  /// **'Staff: a customer left a queue you run'**
+  String get notificationPrefStaffCancelledHint;
+
+  /// Preference
+  ///
+  /// In en, this message translates to:
+  /// **'Push to my phones'**
+  String get notificationPrefPush;
+
+  /// Preference hint
+  ///
+  /// In en, this message translates to:
+  /// **'Off: notifications stay in the app only'**
+  String get notificationPrefPushHint;
+
+  /// Offer on a waiting ticket
+  ///
+  /// In en, this message translates to:
+  /// **'Get an alert when it\'s your turn?'**
+  String get notificationOfferTitle;
+
+  /// Offer, push configured
+  ///
+  /// In en, this message translates to:
+  /// **'DORY tells you when you are called, even when the app is in the background.'**
+  String get notificationOfferMessagePush;
+
+  /// Offer, push not configured
+  ///
+  /// In en, this message translates to:
+  /// **'While DORY is open, it alerts you when you are called, even on other screens.'**
+  String get notificationOfferMessageInApp;
+
+  /// Button
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get notificationOfferAllow;
+
+  /// Button
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get notificationOfferLater;
+
+  /// Staff screens with real-time connected
+  ///
+  /// In en, this message translates to:
+  /// **'Live: changes appear at once.'**
+  String get queueRealtimeLive;
+
+  /// Staff screens polling
+  ///
+  /// In en, this message translates to:
+  /// **'Refreshed every {seconds} seconds.'**
+  String queueRealtimePolling(int seconds);
 }
 
 class _AppLocalizationsDelegate
