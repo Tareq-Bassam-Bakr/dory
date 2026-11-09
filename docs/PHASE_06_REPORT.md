@@ -133,13 +133,13 @@ fixes).
 | Backend, MariaDB 10.4 (`composer test:mariadb`) | ✅ **640 passed** (5562 assertions), including all 8 concurrency tests |
 | Backend, SQLite (`composer test`) | ✅ **631 passed, 9 skipped** (5370 assertions). The 9 need MySQL or MariaDB |
 | Pint | ✅ passed |
-| Flutter (`flutter test`) | ✅ **576 passed** |
+| Flutter (`flutter test`) | ✅ **578 passed** |
 | Flutter analyzer | ✅ no issues |
 | `dart format` | ✅ no changes |
 | On-device tests (`flutter test integration_test`, TECNO KM7) | ✅ **5 passed** in one run: app launch, the Phase 03 journey, the Phase 05 guest journey, and the two new real-time tests |
 | GitHub Actions | ⚠️ not run: it still does not start for this repository (account-level) |
 
-Phase 06 added 64 backend tests (576 → 640), 67 Flutter tests (509 → 576)
+Phase 06 added 64 backend tests (576 → 640), 69 Flutter tests (509 → 578)
 and 2 on-device tests (3 → 5). No existing test was removed or weakened.
 Changed existing tests:
 
@@ -305,7 +305,10 @@ Also changed after the phone test:
 - `backend/.env` (ignored by Git) gained `BROADCAST_CONNECTION=reverb`, the
   `REVERB_*` keys (random, local), `FCM_ENABLED=false` and the queue
   settings. A backup is in `backend/.env.backup`.
-- `dory_db`: **unchanged**. The four Phase 06 migrations are pending: `start_dory.bat` lists them and runs them only if you answer yes. Until then, the notification screens and notification jobs fail on `dory_db`. It still has no users or businesses.
+- `dory_db`: the four Phase 06 migrations were applied on 2026-11-09 with
+  your approval ([Applying the migrations to dory_db](#applying-the-migrations-to-dory_db)).
+  It has one test account, `phase06.check@dory.test`, which you approved for
+  checking the notification screens. It has no businesses.
 - `dory_db_testing` held the phone-test data. The MariaDB suite afterwards
   reset it, as every run does.
 - The local MySQL 8.4 test server is stopped. Nothing listens on 8000 or 8080,
@@ -313,6 +316,62 @@ Also changed after the phone test:
 - The phone has the debug build that `start_dory.bat` installed, pointing at
   `127.0.0.1` through `adb reverse`, with notifications allowed. Its saved
   session belongs to the reset test database, so it opens signed out.
+
+## Applying the migrations to dory_db
+
+Done on 2026-11-09 after your approval, in this order.
+
+1. **Backup**, outside the repository:
+   - file: `D:\dory-backups\dory_db-before-phase06-20261109-114324.sql`;
+   - made with XAMPP's `mysqldump`, `--single-transaction`, routines,
+     triggers and events;
+   - 44,943 bytes, 25 tables, ending in "Dump completed";
+   - SHA-256 `20AC49D4713CFB29736B5FF59597DF8CE912BDC905686C0CC22A547D9FE86800`.
+
+   To restore it: `D:\xampp\mysql\bin\mysql.exe -u root < "<file>"`. This
+   replaces the current `dory_db`.
+2. **Connection:** Laravel's default connection was `mariadb` on
+   127.0.0.1:3306, database `dory_db` (`SELECT DATABASE()`), MariaDB
+   10.4.32. That is XAMPP's `D:\xampp\mysql\bin\mysqld.exe`, process 4616.
+   No `DB_*` variable overrode `backend/.env`.
+3. **The four migrations** only create new tables: `notifications`,
+   `notification_preferences`, `push_devices` and
+   `notification_dispatches`. Their foreign keys point at the existing
+   `users` and `queue_tickets`. No existing table is altered and nothing
+   is deleted.
+4. **Pending before:** exactly these four. The other 23 had run, and none of
+   the four tables existed.
+5. **Run:** `php artisan migrate` (the normal command, nothing else). All
+   four reported DONE, in batch 5.
+6. **After:**
+   - `migrate:status`: 27 run, 0 pending;
+   - all 25 existing tables are present, with identical row counts
+     (`business_categories` 11; `migrations` 23 → 27);
+   - the four new tables exist with their unique keys, indexes and foreign
+     keys.
+7. **Tests:** the notification, device and real-time backend tests, 64
+   passed (SQLite in memory: no database was touched). The Flutter
+   notification and real-time tests, 53 passed.
+8. **With `start_dory.bat`** (now "No pending migrations") and the phone:
+   - the notification screen asked guests to sign in;
+   - after signing in with the approved test account, the notification
+     center loaded from `dory_db`, with its filters and empty state;
+   - turning "almost your turn" off in Notification settings stored
+     `almost_turn = 0` in `notification_preferences`, and turning it back
+     on stored `1`.
+
+   `stop_dory.bat` stopped everything afterwards.
+
+`dory_db_testing`, the MySQL 8.4 test server and XAMPP's configuration were
+not touched by this step.
+
+**Found while checking:** after signing in from the notification screen, the
+login screen stayed on top, although the sign-in had succeeded (the API
+issued the token). The screen had been opened with `push`, and the login
+screen leaves through the router's redirect, which never sees a pushed
+screen. The queue join page (Phase 05) had the same pattern. Both now use
+`go`, like every other sign-in link, and each has a test that fails on the
+old code.
 
 ## Commits
 
@@ -328,7 +387,8 @@ service was activated.
 | `3042739` | App: Reverb client, Reverb-first tickets and staff screens, FCM handling, notification center (J to N) |
 | `242d25d` | Live-mode note on staff screens, push registration follows the app language |
 | `d9c1a5c` | `start_dory.bat` and `stop_dory.bat`, documentation, first report (P, Q, S) |
-| *(this commit)* | Phone test (O): the six bugs it found, with tests; Phase 06 device tests; restart of stopped services in `start_dory`; report |
+| `f0663a5` | Phone test (O): the six bugs it found, with tests; Phase 06 device tests; restart of stopped services in `start_dory`; report |
+| *(this commit)* | Migrations applied to `dory_db` (documented); sign-in from the notification and join screens returns to them |
 
 ## Remaining work
 
@@ -337,8 +397,8 @@ service was activated.
 2. Fix the GitHub Actions account issue, so MySQL 8.4 runs in CI.
 3. Production real-time: TLS (`wss`), a process manager, and Redis if more
    than one server is needed.
-4. Decide on the four pending migrations on `dory_db` (`start_dory.bat`
-   asks).
+4. Remove the test account `phase06.check@dory.test` from `dory_db` when it
+   is no longer useful (on request).
 
 ## Next
 

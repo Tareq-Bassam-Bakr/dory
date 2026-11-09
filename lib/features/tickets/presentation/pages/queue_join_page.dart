@@ -332,9 +332,10 @@ class _SignInPrompt extends StatelessWidget {
         DoryButton(
           label: l10n.welcomeLogin,
           variant: DoryButtonVariant.tertiary,
-          onPressed: () => context.push(
-            AppRoutes.withFrom(AppRoutes.login, Uri.parse(from)),
-          ),
+          // go, not push: the login screen leaves through the router's
+          // redirect, which a pushed screen never gets.
+          onPressed: () =>
+              context.go(AppRoutes.withFrom(AppRoutes.login, Uri.parse(from))),
         ),
       ],
     );

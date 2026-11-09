@@ -123,7 +123,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 message: l10n.notificationsSignInMessage,
                 action: DoryStatusAction(
                   label: l10n.welcomeLogin,
-                  onPressed: () => context.push(
+                  // go, not push: the login screen leaves through the
+                  // router's redirect, which a pushed screen never gets.
+                  onPressed: () => context.go(
                     AppRoutes.withFrom(
                       AppRoutes.login,
                       Uri.parse(AppRoutes.customerNotifications),

@@ -256,6 +256,29 @@ void main() {
         ),
       );
 
+    testWidgets('signing in from the join screen comes back to it', (
+      tester,
+    ) async {
+      // Found on a phone (the same screen pattern): a pushed login screen
+      // stayed after signing in.
+      final GoRouter router = await openJoin(tester, guestApi());
+      await tester.ensureVisible(find.text('Log in').last);
+      await tester.tap(find.text('Log in').last);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byType(TextFormField).at(0),
+        FakeAuthRepository.validEmail,
+      );
+      await tester.enterText(
+        find.byType(TextFormField).at(1),
+        FakeAuthRepository.validPassword,
+      );
+      await tester.tap(find.widgetWithText(FilledButton, 'Log in'));
+      await tester.pumpAndSettle();
+
+      expect(topLocation(router), AppRoutes.customerQueue(publicQueueId));
+    });
+
     testWidgets('asks only for what the queue requires', (tester) async {
       await openJoin(
         tester,

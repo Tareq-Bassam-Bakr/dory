@@ -105,6 +105,39 @@ void main() {
     );
   }
 
+  Future<void> signIn(WidgetTester tester) async {
+    await tester.enterText(
+      find.byType(TextFormField).at(0),
+      FakeAuthRepository.validEmail,
+    );
+    await tester.enterText(
+      find.byType(TextFormField).at(1),
+      FakeAuthRepository.validPassword,
+    );
+    await tester.tap(find.widgetWithText(FilledButton, 'Log in'));
+    await tester.pumpAndSettle();
+  }
+
+  group('signing in from the notification center', () {
+    testWidgets('returns to the notifications once signed in', (tester) async {
+      // Found on a phone: a pushed login screen stayed after signing in.
+      final GoRouter router = await pumpAppAt(
+        tester,
+        AppRoutes.customerNotifications,
+        authRepository: FakeAuthRepository(),
+        http: api(),
+      );
+      expect(find.text('Sign in to see notifications'), findsOneWidget);
+
+      await tester.tap(find.text('Log in'));
+      await tester.pumpAndSettle();
+      await signIn(tester);
+
+      expect(topLocation(router), AppRoutes.customerNotifications);
+      expect(find.text("It's your turn"), findsOneWidget);
+    });
+  });
+
   group('notification center', () {
     testWidgets('lists the server notifications, newest first', (tester) async {
       await pumpAppAt(

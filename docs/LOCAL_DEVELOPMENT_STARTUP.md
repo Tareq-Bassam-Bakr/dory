@@ -49,7 +49,12 @@ so no system setting changes.
    - **Pending migrations are listed and you are asked** `[y/N]`. They run
      only on a yes, and only when `APP_ENV=local` and the database is not a
      `_testing` one.
-   - Anything else leaves the database untouched. The script never runs
+   - Anything else leaves the database untouched.
+   - Before applying migrations to a database you care about, back it up,
+     for example `D:\xampp\mysql\bin\mysqldump.exe -u <user> -p
+     --single-transaction --routines --triggers --databases dory_db >
+     D:\dory-backups\dory_db.sql`. That is how the Phase 06 migrations
+     were applied ([PHASE_06_REPORT.md](PHASE_06_REPORT.md#applying-the-migrations-to-dory_db)). The script never runs
      `migrate:fresh`, `migrate:refresh`, `migrate:reset`, `db:wipe` or
      `db:seed`, and never deletes records.
 5. **Ports 8000 and 8080:** a port held by a program this script did not
