@@ -54,6 +54,7 @@ dev_dependencies:
     sdk: flutter
   fake_async: ^1.3.3
   flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true
@@ -76,3 +77,18 @@ flutter:
           weight: 600
         - asset: assets/fonts/ibm_plex_sans_arabic/IBMPlexSansArabic-Bold.ttf
           weight: 700
+
+# App icon (docs/APP_ICON.md). Regenerate after changing the master:
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/branding/DORY_App_Icon_1024.png"
+  android: "ic_launcher"
+  min_sdk_android: 24
+  # Adaptive icon: the whole master fills the visible part of the layer
+  # (16% inset each side); the background is the master's own edge colour,
+  # so no seam shows on any launcher shape.
+  adaptive_icon_foreground: "assets/branding/DORY_App_Icon_1024.png"
+  adaptive_icon_foreground_inset: 16
+  adaptive_icon_background: "#062D73"
+  ios: true
+  remove_alpha_ios: true
