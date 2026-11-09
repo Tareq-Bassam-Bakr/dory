@@ -2,6 +2,7 @@ import 'package:dory_app/app/router/app_routes.dart';
 import 'package:dory_app/app/router/auth_redirect.dart';
 import 'package:dory_app/app/router/not_found_page.dart';
 import 'package:dory_app/app/router/workspace_shell.dart';
+import 'package:dory_app/features/analytics/presentation/pages/business_insights_page.dart';
 import 'package:dory_app/features/authentication/presentation/pages/login_page.dart';
 import 'package:dory_app/features/authentication/presentation/pages/register_page.dart';
 import 'package:dory_app/features/authentication/presentation/pages/splash_page.dart';
@@ -298,6 +299,11 @@ List<RouteBase> _businessManagementRoutes() {
               ],
             ),
           ],
+        ),
+        GoRoute(
+          path: 'insights',
+          builder: (context, state) =>
+              BusinessInsightsPage(businessId: business(state)),
         ),
         GoRoute(
           path: 'team',

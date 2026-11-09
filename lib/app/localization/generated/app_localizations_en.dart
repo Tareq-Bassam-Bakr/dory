@@ -2160,4 +2160,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get queueRealtimeLive => 'Live: changes appear at once.';
+
+  @override
+  String get insightsTitle => 'Insights';
+
+  @override
+  String get insightsEntry => 'Insights and peak times';
+
+  @override
+  String insightsPeriod(int days) {
+    return 'Last $days days';
+  }
+
+  @override
+  String get insightsCustomers => 'Customers';
+
+  @override
+  String get insightsServed => 'Served';
+
+  @override
+  String get insightsAverageWait => 'Average wait';
+
+  @override
+  String get insightsMissedTurns => 'Missed turns';
+
+  @override
+  String insightsPercentValue(int value) {
+    return '$value%';
+  }
+
+  @override
+  String insightsChangeUp(int percent) {
+    return '$percent% more customers than the previous period';
+  }
+
+  @override
+  String insightsChangeDown(int percent) {
+    return '$percent% fewer customers than the previous period';
+  }
+
+  @override
+  String get insightsRecommendations => 'Recommendations';
+
+  @override
+  String insightsNotEnoughData(int tickets, int minimum) {
+    return '$tickets customers so far. Recommendations start at $minimum, so that they rest on real activity.';
+  }
+
+  @override
+  String get insightsNothingToChange => 'Nothing needs changing right now.';
+
+  @override
+  String get insightsSource =>
+      'Computed from your own queue records with DORY\'s built-in rules.';
+
+  @override
+  String get peakTitle => 'Peak times';
+
+  @override
+  String peakNotEnoughData(int minTickets, int minDays, int tickets, int days) {
+    return 'Peak times need at least $minTickets customers over $minDays days. So far: $tickets over $days days.';
+  }
+
+  @override
+  String get peakBusiest => 'Busiest times';
+
+  @override
+  String get peakQuietest => 'Quietest times';
+
+  @override
+  String peakSlot(String day, String time) {
+    return '$day, $time';
+  }
+
+  @override
+  String peakAverage(String value) {
+    return '$value customers on average';
+  }
+
+  @override
+  String get peakPerHour => 'Customers per hour';
+
+  @override
+  String get peakBusy => 'Busy';
+
+  @override
+  String get peakNormal => 'Normal';
+
+  @override
+  String get peakQuiet => 'Quiet';
+
+  @override
+  String get peakThisWeek => 'This week';
+
+  @override
+  String peakExpected(int customers, String time) {
+    return 'About $customers customers, busiest at $time';
+  }
+
+  @override
+  String get peakUsuallyClosed => 'Usually no customers';
+
+  @override
+  String ticketWaitRange(int low, int high) {
+    return 'Usually $low to $high min';
+  }
 }

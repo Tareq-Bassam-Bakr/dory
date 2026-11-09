@@ -96,6 +96,7 @@ class BusinessPermissions {
     this.createBranches = false,
     this.viewMembers = false,
     this.manageMembers = false,
+    this.viewInsights = false,
   });
 
   final bool update;
@@ -104,4 +105,7 @@ class BusinessPermissions {
   final bool createBranches;
   final bool viewMembers;
   final bool manageMembers;
+
+  /// Insights and peak times (owners and managers).
+  final bool viewInsights;
 }

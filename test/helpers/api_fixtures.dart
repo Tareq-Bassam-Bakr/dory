@@ -88,6 +88,7 @@ const Map<String, Object?> ownerPermissions = <String, Object?>{
   'create_branches': true,
   'view_members': true,
   'manage_members': true,
+  'view_insights': true,
 };
 
 const Map<String, Object?> employeePermissions = <String, Object?>{

@@ -24,6 +24,8 @@ class CustomerTicket {
     this.position,
     this.peopleAhead,
     this.estimatedMinutes,
+    this.waitRangeLowMinutes,
+    this.waitRangeHighMinutes,
     this.nowServing = const <String>[],
     this.arriveBy,
     this.canCancel = false,
@@ -59,6 +61,10 @@ class CustomerTicket {
   final int? position;
   final int? peopleAhead;
   final int? estimatedMinutes;
+
+  /// Likely range of the wait, from recent service times (smart estimate).
+  final int? waitRangeLowMinutes;
+  final int? waitRangeHighMinutes;
 
   /// Ticket numbers being served: numbers only, never people.
   final List<String> nowServing;

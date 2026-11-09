@@ -2,13 +2,13 @@
 
 Production targets MySQL 8.4 LTS; local development uses XAMPP's MariaDB 10.4.
 
-## Status (2026-11-09, end of Phase 06)
+## Status (2026-11-09, end of Phase 07)
 
 | Database | How | Result |
 |---|---|---|
-| SQLite (in memory) | `composer test` | ✅ 631 passed, 9 skipped (tests that need MySQL/MariaDB) |
-| MariaDB 10.4 (XAMPP) | `composer test:mariadb` | ✅ 640 passed, including all 8 concurrency tests and the full migration rollback test |
-| **MySQL 8.4.13 LTS** (local, see below) | `composer test:mysql` | ✅ **640 passed** (5562 assertions), including all 8 multi-process concurrency tests and the full migration rollback test (with the four Phase 06 migrations) |
+| SQLite (in memory) | `composer test` | ✅ 654 passed, 9 skipped (tests that need MySQL/MariaDB) |
+| MariaDB 10.4 (XAMPP) | `composer test:mariadb` | ✅ 663 passed, including all 8 concurrency tests and the full migration rollback test |
+| **MySQL 8.4.13 LTS** (local, see below) | `composer test:mysql` | ✅ **663 passed** (5708 assertions), including all 8 multi-process concurrency tests and the full migration rollback test (with the four Phase 06 migrations) |
 | MySQL 8.4 in GitHub Actions | `.github/workflows/backend-tests.yml`, job `mysql84` | ⚠️ not run: every run of this private repository still ends in `startup_failure` with zero jobs, which points to an account-level Actions setting (minutes, spending limit or verification), not to the workflow |
 
 Migrations on MySQL 8.4: `migrate:fresh` → `migrate:rollback --step=6` (the

@@ -288,6 +288,8 @@ class _TicketFace extends StatelessWidget {
     final bool live = ticket.status.isActive;
     final int? position = ticket.position;
     final int? minutes = ticket.estimatedMinutes;
+    final int? low = ticket.waitRangeLowMinutes;
+    final int? high = ticket.waitRangeHighMinutes;
     final DateTime? arriveBy = ticket.arriveBy;
 
     return DecoratedBox(
@@ -340,6 +342,11 @@ class _TicketFace extends StatelessWidget {
                 waitLabel(l10n, minutes),
                 style: text.bodyMedium?.copyWith(color: AppColors.onPrimary),
               ),
+              if (low != null && high != null && high > low)
+                Text(
+                  l10n.ticketWaitRange(low, high),
+                  style: text.bodySmall?.copyWith(color: AppColors.onPrimary),
+                ),
             ],
             if (arriveBy != null) ...<Widget>[
               const SizedBox(height: AppSpacing.sm),

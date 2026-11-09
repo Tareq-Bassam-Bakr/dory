@@ -44,6 +44,12 @@ class ApiTicketRepository implements TicketRepository {
       position: json.integerOrNull('position'),
       peopleAhead: json.integerOrNull('people_ahead'),
       estimatedMinutes: estimate?.integerOrNull('minutes'),
+      waitRangeLowMinutes: estimate
+          ?.objectOrNull('range')
+          ?.integerOrNull('low_minutes'),
+      waitRangeHighMinutes: estimate
+          ?.objectOrNull('range')
+          ?.integerOrNull('high_minutes'),
       nowServing: serving is List
           ? serving.whereType<String>().toList()
           : const <String>[],

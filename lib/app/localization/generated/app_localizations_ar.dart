@@ -2145,4 +2145,108 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get queueRealtimeLive => 'مباشر: تظهر التغييرات فورًا.';
+
+  @override
+  String get insightsTitle => 'الرؤى';
+
+  @override
+  String get insightsEntry => 'الرؤى وأوقات الذروة';
+
+  @override
+  String insightsPeriod(int days) {
+    return 'آخر $days يومًا';
+  }
+
+  @override
+  String get insightsCustomers => 'العملاء';
+
+  @override
+  String get insightsServed => 'خُدموا';
+
+  @override
+  String get insightsAverageWait => 'متوسط الانتظار';
+
+  @override
+  String get insightsMissedTurns => 'فاتهم الدور';
+
+  @override
+  String insightsPercentValue(int value) {
+    return '$value٪';
+  }
+
+  @override
+  String insightsChangeUp(int percent) {
+    return 'عملاء أكثر بنسبة $percent٪ من الفترة السابقة';
+  }
+
+  @override
+  String insightsChangeDown(int percent) {
+    return 'عملاء أقل بنسبة $percent٪ من الفترة السابقة';
+  }
+
+  @override
+  String get insightsRecommendations => 'التوصيات';
+
+  @override
+  String insightsNotEnoughData(int tickets, int minimum) {
+    return '$tickets عميلًا حتى الآن. تبدأ التوصيات عند $minimum عميلًا لتعتمد على نشاط حقيقي.';
+  }
+
+  @override
+  String get insightsNothingToChange => 'لا شيء يحتاج إلى تغيير الآن.';
+
+  @override
+  String get insightsSource => 'محسوبة من سجلات أدوارك بقواعد DORY المدمجة.';
+
+  @override
+  String get peakTitle => 'أوقات الذروة';
+
+  @override
+  String peakNotEnoughData(int minTickets, int minDays, int tickets, int days) {
+    return 'تحتاج أوقات الذروة إلى $minTickets عميلًا على الأقل خلال $minDays يومًا. حتى الآن: $tickets خلال $days يومًا.';
+  }
+
+  @override
+  String get peakBusiest => 'أكثر الأوقات ازدحامًا';
+
+  @override
+  String get peakQuietest => 'أهدأ الأوقات';
+
+  @override
+  String peakSlot(String day, String time) {
+    return '$day، $time';
+  }
+
+  @override
+  String peakAverage(String value) {
+    return '$value عميل في المتوسط';
+  }
+
+  @override
+  String get peakPerHour => 'العملاء في كل ساعة';
+
+  @override
+  String get peakBusy => 'مزدحم';
+
+  @override
+  String get peakNormal => 'عادي';
+
+  @override
+  String get peakQuiet => 'هادئ';
+
+  @override
+  String get peakThisWeek => 'هذا الأسبوع';
+
+  @override
+  String peakExpected(int customers, String time) {
+    return 'نحو $customers عميل، والذروة $time';
+  }
+
+  @override
+  String get peakUsuallyClosed => 'عادةً بلا عملاء';
+
+  @override
+  String ticketWaitRange(int low, int high) {
+    return 'عادةً من $low إلى $high دقيقة';
+  }
 }

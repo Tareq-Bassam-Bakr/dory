@@ -215,6 +215,14 @@ class _OverviewState extends ConsumerState<_Overview> {
                 trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => context.go(AppRoutes.branches(business.id)),
               ),
+              if (can.viewInsights)
+                ListTile(
+                  leading: const Icon(Icons.insights_outlined),
+                  title: Text(l10n.insightsEntry),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () =>
+                      context.go(AppRoutes.businessInsights(business.id)),
+                ),
               if (can.viewMembers)
                 ListTile(
                   leading: const Icon(Icons.groups_outlined),

@@ -69,6 +69,7 @@ abstract final class BusinessModels {
         createBranches: permissions.boolean('create_branches'),
         viewMembers: permissions.boolean('view_members'),
         manageMembers: permissions.boolean('manage_members'),
+        viewInsights: permissions.boolean('view_insights'),
       ),
     );
   }

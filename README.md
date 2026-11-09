@@ -13,7 +13,12 @@ This repository contains both parts of the product:
 | Mobile app | repository root (`lib/`, `android/`, `ios/`, …) | Flutter 3.44, Riverpod 3, GoRouter 18 |
 | API | [`backend/`](backend) | Laravel 13, PHP 8.4, MySQL/MariaDB, Sanctum |
 
-> **Status: Phase 06 complete.** Queue changes reach tickets and staff
+> **Status: Phase 07 complete.** Wait estimates use what is happening at the
+> counter, owners and managers see peak times and recommendations from their
+> own records, in English and Arabic. These are statistics and explicit rules,
+> with no external AI service ([docs/AI_ARCHITECTURE.md](docs/AI_ARCHITECTURE.md)).
+>
+> Phase 06 delivered real-time: queue changes reach tickets and staff
 > screens at once through Laravel Reverb (self-hosted WebSockets), with the
 > 15-second polling kept as the fallback. Signed-in users have a notification
 > center with preferences; queue alerts (your turn, almost your turn,
@@ -264,3 +269,11 @@ Real-time and notifications (Phase 06):
 | [DEVICE_TOKEN_SECURITY.md](docs/DEVICE_TOKEN_SECURITY.md) | How push tokens are stored, registered and revoked |
 | [LOCAL_DEVELOPMENT_STARTUP.md](docs/LOCAL_DEVELOPMENT_STARTUP.md) | `start_dory.bat` and `stop_dory.bat` |
 | [PHASE_06_REPORT.md](docs/PHASE_06_REPORT.md) | What Phase 06 delivered, test results, open items |
+
+AI intelligence (Phase 07):
+
+| Document | Contents |
+|---|---|
+| [AI_ARCHITECTURE.md](docs/AI_ARCHITECTURE.md) | Wait prediction, peak times, insights, adding a language model later |
+| [WAIT_TIME_ESTIMATION.md](docs/WAIT_TIME_ESTIMATION.md) | The estimate, its range and confidence |
+| [PHASE_07_REPORT.md](docs/PHASE_07_REPORT.md) | What Phase 07 delivered, test results, limitations |

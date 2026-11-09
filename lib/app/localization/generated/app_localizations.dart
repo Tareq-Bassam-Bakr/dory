@@ -3841,6 +3841,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Live: changes appear at once.'**
   String get queueRealtimeLive;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insightsTitle;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Insights and peak times'**
+  String get insightsEntry;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Last {days} days'**
+  String insightsPeriod(int days);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Customers'**
+  String get insightsCustomers;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Served'**
+  String get insightsServed;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Average wait'**
+  String get insightsAverageWait;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Missed turns'**
+  String get insightsMissedTurns;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'{value}%'**
+  String insightsPercentValue(int value);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% more customers than the previous period'**
+  String insightsChangeUp(int percent);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'{percent}% fewer customers than the previous period'**
+  String insightsChangeDown(int percent);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendations'**
+  String get insightsRecommendations;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'{tickets} customers so far. Recommendations start at {minimum}, so that they rest on real activity.'**
+  String insightsNotEnoughData(int tickets, int minimum);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing needs changing right now.'**
+  String get insightsNothingToChange;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Computed from your own queue records with DORY\'s built-in rules.'**
+  String get insightsSource;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Peak times'**
+  String get peakTitle;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Peak times need at least {minTickets} customers over {minDays} days. So far: {tickets} over {days} days.'**
+  String peakNotEnoughData(int minTickets, int minDays, int tickets, int days);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Busiest times'**
+  String get peakBusiest;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Quietest times'**
+  String get peakQuietest;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'{day}, {time}'**
+  String peakSlot(String day, String time);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'{value} customers on average'**
+  String peakAverage(String value);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Customers per hour'**
+  String get peakPerHour;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Busy'**
+  String get peakBusy;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get peakNormal;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet'**
+  String get peakQuiet;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'This week'**
+  String get peakThisWeek;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'About {customers} customers, busiest at {time}'**
+  String peakExpected(int customers, String time);
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Usually no customers'**
+  String get peakUsuallyClosed;
+
+  /// Business insights (Phase 07)
+  ///
+  /// In en, this message translates to:
+  /// **'Usually {low} to {high} min'**
+  String ticketWaitRange(int low, int high);
 }
 
 class _AppLocalizationsDelegate
