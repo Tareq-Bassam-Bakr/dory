@@ -92,8 +92,12 @@ screen.
 - **Tapping** opens the target screen: the ticket (signed in or guest), the
   staff queue page for staff alerts, or the notification center. Targets
   are checked: unknown kinds and malformed ids open the notification center.
-  A tap that starts the app waits until sign-in is restored. If the user is
-  signed out, it opens sign-in first and then the target.
+  - The target opens on top of the current screen, so Back returns there,
+    or to the home screen the app opened on. Before the phone test, Back
+    left DORY. A target in the other area (customer or business) replaces
+    the screen, because each area has its own navigation shell.
+  - A tap that starts the app waits until sign-in is restored. If the user
+    is signed out, it opens sign-in first and then the target.
 
 ## Not sent
 

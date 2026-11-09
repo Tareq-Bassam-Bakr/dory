@@ -5,6 +5,7 @@ import 'package:dory_app/app/router/app_routes.dart';
 import 'package:dory_app/app/theme/theme.dart';
 import 'package:dory_app/core/notifications/local_notifier.dart';
 import 'package:dory_app/core/storage/key_value_storage.dart';
+import 'package:dory_app/core/storage/storage_keys.dart';
 import 'package:dory_app/core/widgets/widgets.dart';
 import 'package:dory_app/features/notifications/presentation/providers/notification_coordinator.dart';
 import 'package:dory_app/features/notifications/presentation/providers/notification_providers.dart';
@@ -42,8 +43,6 @@ class NotificationOffer extends ConsumerStatefulWidget {
   /// Set for a guest ticket, so its device registration follows.
   final String? guestTicketId;
 
-  static const String dismissedKey = 'dory.notification_offer_dismissed';
-
   @override
   ConsumerState<NotificationOffer> createState() => _NotificationOfferState();
 }
@@ -52,16 +51,21 @@ class _NotificationOfferState extends ConsumerState<NotificationOffer> {
   bool _hidden = false;
 
   Future<void> _allow() async {
+    // Read before waiting: the screen may close while the dialog is open.
+    final NotificationCoordinator coordinator = ref.read(
+      notificationCoordinatorProvider,
+    );
+    final DeviceRegistration registration = ref.read(
+      deviceRegistrationProvider,
+    );
     final NotificationPermission result = await ref
         .read(notificationPermissionProvider.notifier)
         .request();
     if (result == NotificationPermission.granted) {
-      unawaited(ref.read(notificationCoordinatorProvider).syncDevice());
+      unawaited(coordinator.syncDevice());
       final String? ticketId = widget.guestTicketId;
       if (ticketId != null) {
-        unawaited(
-          ref.read(deviceRegistrationProvider).syncGuestTicket(ticketId),
-        );
+        unawaited(registration.syncGuestTicket(ticketId));
       }
     }
     if (mounted) {
@@ -72,7 +76,7 @@ class _NotificationOfferState extends ConsumerState<NotificationOffer> {
   Future<void> _later() async {
     await ref
         .read(keyValueStorageProvider)
-        .writeString(NotificationOffer.dismissedKey, '1');
+        .writeString(StorageKeys.notificationOfferDismissed, '1');
     if (mounted) {
       setState(() => _hidden = true);
     }
@@ -87,7 +91,7 @@ class _NotificationOfferState extends ConsumerState<NotificationOffer> {
     final bool dismissed =
         ref
             .watch(keyValueStorageProvider)
-            .readString(NotificationOffer.dismissedKey) ==
+            .readString(StorageKeys.notificationOfferDismissed) ==
         '1';
     if (_hidden ||
         dismissed ||
@@ -138,6 +142,13 @@ class _NotificationsHostState extends ConsumerState<NotificationsHost> {
   @override
   void initState() {
     super.initState();
+    // Listened, not just read: Riverpod pauses a provider nobody listens to,
+    // and a paused coordinator misses the session restored after launch, so
+    // the user's own channel stayed closed (found on a phone).
+    ref.listenManual<NotificationCoordinator>(
+      notificationCoordinatorProvider,
+      (_, _) {},
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         unawaited(ref.read(notificationCoordinatorProvider).start());

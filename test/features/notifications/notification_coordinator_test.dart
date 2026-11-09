@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dory_app/app/app.dart';
 import 'package:dory_app/app/localization/app_locales.dart';
 import 'package:dory_app/app/localization/language_controller.dart';
@@ -8,6 +10,7 @@ import 'package:dory_app/core/notifications/push_messaging.dart';
 import 'package:dory_app/core/realtime/realtime_providers.dart';
 import 'package:dory_app/core/storage/in_memory_key_value_storage.dart';
 import 'package:dory_app/core/storage/secure_store.dart';
+import 'package:dory_app/features/authentication/domain/entities/auth_session.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_controller.dart';
 import 'package:dory_app/features/notifications/presentation/providers/notification_coordinator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,8 +72,9 @@ void main() {
       }, status: 201),
     );
 
+  /// The screen on top, with its query (pushed screens included).
   String fullLocation(GoRouter router) =>
-      router.routerDelegate.currentConfiguration.uri.toString();
+      NotificationCoordinator.topLocation(router);
 
   /// The app as it starts on a phone: no explicit navigation by the test.
   Future<GoRouter> startApp(
@@ -115,6 +119,32 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(fullLocation(router), AppRoutes.customerTicket(customerTicketId));
+    });
+
+    testWidgets('Back from an opened notification returns to DORY', (
+      tester,
+    ) async {
+      final FakeLocalNotifier notifier = FakeLocalNotifier();
+      final GoRouter router = await pumpAppAt(
+        tester,
+        AppRoutes.customerHome,
+        authRepository: FakeAuthRepository.signedIn(),
+        http: api(),
+        notifier: notifier,
+      );
+
+      notifier.tap(<String, String>{
+        'kind': 'ticket_completed',
+        'ticket': customerTicketId,
+        'guest': '0',
+      });
+      await tester.pumpAndSettle();
+      expect(fullLocation(router), AppRoutes.customerTicket(customerTicketId));
+
+      // The system Back button.
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(fullLocation(router), AppRoutes.customerHome);
     });
 
     testWidgets('a guest notification opens the guest ticket', (tester) async {
@@ -411,6 +441,98 @@ void main() {
     });
   });
 
+  group('cold start', () {
+    testWidgets(
+      'a session restored after launch still gets its private channel',
+      (tester) async {
+        // Found on a phone: the coordinator was only read, so Riverpod paused
+        // it and it never heard that the stored session came back.
+        final FakeRealtimeServer server = FakeRealtimeServer();
+        final _SlowRestore auth = _SlowRestore();
+        final FakeHttpAdapter http = api()
+          ..reply(
+            'POST',
+            '/broadcasting/auth',
+            const FakeResponse(200, <String, Object?>{'auth': 'key:sig'}),
+          );
+        setTestWindowSize(tester, const Size(390, 900));
+        final ProviderContainer container = createTestContainer(
+          authRepository: auth,
+          http: http,
+          overrides: [
+            realtimeUriProvider.overrideWithValue(
+              Uri.parse('ws://127.0.0.1:8080/app/key'),
+            ),
+            realtimeSocketConnectorProvider.overrideWithValue(server.connect),
+          ],
+        );
+        await pumpDoryApp(tester, container);
+        await tester.pump(const Duration(seconds: 1));
+
+        // The stored session comes back only now.
+        auth.restored.complete(AuthSession(user: testUser()));
+        for (int i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 200));
+        }
+        expect(
+          server.sockets,
+          isNotEmpty,
+          reason: 'The signed-in user needs a connection for their channel.',
+        );
+        server.current.establish();
+        await tester.pumpAndSettle();
+
+        expect(
+          server.current.subscribedChannels,
+          contains('private-users.$userId'),
+        );
+        container.read(realtimeClientProvider)?.dispose();
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(minutes: 1));
+      },
+    );
+  });
+
+  group('the unread badge', () {
+    testWidgets('is read again whenever the user channel is confirmed', (
+      tester,
+    ) async {
+      final FakeRealtimeServer server = FakeRealtimeServer();
+      final FakeHttpAdapter http = api()
+        ..reply(
+          'POST',
+          '/broadcasting/auth',
+          const FakeResponse(200, <String, Object?>{'auth': 'key:sig'}),
+        );
+      await pumpAppAt(
+        tester,
+        AppRoutes.customerHome,
+        authRepository: FakeAuthRepository.signedIn(),
+        http: http,
+        overrides: [
+          realtimeUriProvider.overrideWithValue(
+            Uri.parse('ws://127.0.0.1:8080/app/key'),
+          ),
+          realtimeSocketConnectorProvider.overrideWithValue(server.connect),
+        ],
+      );
+      server.current.establish();
+      await tester.pumpAndSettle();
+      final int before = http.sent('GET', '/me/notifications').length;
+
+      // Back from the background, or reconnected: alerts sent meanwhile are
+      // not replayed.
+      server.current.confirm('private-users.$userId');
+      await tester.pumpAndSettle();
+
+      expect(http.sent('GET', '/me/notifications').length, before + 1);
+      final ProviderContainer container = ProviderScope.containerOf(
+        tester.element(find.byType(DoryApp)),
+      );
+      container.read(realtimeClientProvider)?.dispose();
+    });
+  });
+
   group('device registration', () {
     testWidgets('a signed-in phone with permission registers its token', (
       tester,
@@ -534,7 +656,13 @@ void main() {
         push: FakePushMessaging(),
       );
       await tester.pumpAndSettle();
-      expect(storage.readString(DeviceRegistration.userKey(userId)), isNotNull);
+      expect(
+        DeviceRegistration.storedDevice(
+          storage,
+          DeviceRegistration.userOwner(userId),
+        ),
+        isNotNull,
+      );
 
       final ProviderContainer container = ProviderScope.containerOf(
         tester.element(find.byType(DoryApp)),
@@ -551,7 +679,13 @@ void main() {
         http.sent('DELETE', '/devices/01jdevicexxxxxxxxxxxxxxxxx/unregister'),
         hasLength(1),
       );
-      expect(storage.readString(DeviceRegistration.userKey(userId)), isNull);
+      expect(
+        DeviceRegistration.storedDevice(
+          storage,
+          DeviceRegistration.userOwner(userId),
+        ),
+        isNull,
+      );
     });
 
     testWidgets('a guest ticket registers with its token in a header only', (
@@ -591,9 +725,20 @@ void main() {
       expect(request.headers['X-Ticket-Token'], 'guest-secret-token');
       expect(request.uri.toString(), isNot(contains('guest-secret-token')));
       expect(
-        storage.readString(DeviceRegistration.guestKey(customerTicketId)),
+        DeviceRegistration.storedDevice(
+          storage,
+          DeviceRegistration.guestOwner(customerTicketId),
+        ),
         '01jguestdevicexxxxxxxxxxxx',
       );
     });
   });
+}
+
+/// A stored session that comes back after the app has started.
+class _SlowRestore extends FakeAuthRepository {
+  final Completer<AuthSession?> restored = Completer<AuthSession?>();
+
+  @override
+  Future<AuthSession?> restoreSession() => restored.future;
 }

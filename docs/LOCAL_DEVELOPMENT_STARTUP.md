@@ -35,7 +35,9 @@ so no system setting changes.
 ## What the start checks, in order
 
 1. **An earlier start:** services still running from it are reused, never
-   started twice.
+   started twice. A window whose program has stopped is closed and started
+   again. The window stays open after its program ends, for example a
+   worker that lost its database connection while the computer slept.
 2. **Tools:** PHP 8.3+, Flutter, adb.
 3. **Project:**
    - `backend/.env` with `APP_KEY`;
@@ -116,4 +118,5 @@ reverse` rules the start added are removed; the adb server keeps running.
 | Device … has not allowed USB debugging | unlock the phone and accept the prompt |
 | adb reverse did not take | unplug and replug the phone |
 | Screens say "every 15 seconds" instead of "Live" / "Updates arrive as soon as the business acts" | the app has no Reverb connection: is DORY-REVERB running, and was the app started by `start_dory.bat` (it passes the Reverb key)? |
-| "Live", but changes arrive only when you pull to refresh | DORY-QUEUE is not running: broadcasts wait in the queue |
+| "Live", but changes arrive only when you pull to refresh | DORY-QUEUE is not running: broadcasts wait in the queue. Run `start_dory.bat` again: it restarts a stopped worker |
+| The first screens take long or say DORY cannot be reached, right after the app was built | the PHP development server is slow on its first requests after a build. Wait a moment and retry |

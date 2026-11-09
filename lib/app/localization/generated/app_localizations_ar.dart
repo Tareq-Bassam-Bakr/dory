@@ -2012,7 +2012,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get profilePhoneOptional => 'رقم الهاتف (اختياري)';
 
   @override
-  String get ticketLiveNote => 'تصلك التحديثات فور تنفيذ النشاط لأي إجراء.';
+  String get ticketLiveNote => 'تصلك التحديثات فور أي إجراء من النشاط.';
 
   @override
   String get notificationsTitle => 'الإشعارات';
@@ -2138,7 +2138,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'أثناء فتح DORY ينبّهك عند النداء عليك، حتى في الشاشات الأخرى.';
 
   @override
-  String get notificationOfferAllow => 'سماح';
+  String get notificationOfferAllow => 'السماح';
 
   @override
   String get notificationOfferLater => 'ليس الآن';

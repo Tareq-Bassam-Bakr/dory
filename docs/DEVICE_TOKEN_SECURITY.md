@@ -19,7 +19,10 @@ DORY treats it as a secret. Tests: `tests/Feature/Notifications/PushDevicesTest.
   (`PushDeviceResource` has no token field), and never written to logs.
   Errors log the device's public id.
 - The app does not store the token either; Firebase keeps it. The app
-  remembers only the device ids the server returned (not secret).
+  remembers only the device ids the server returned (not secret), in one
+  listed preference, `dory.push_devices`: a small JSON map per account and
+  per guest ticket. The phone's preference storage accepts only listed keys,
+  and the first version used one key per id, which a phone refuses.
 
 ## Endpoints
 

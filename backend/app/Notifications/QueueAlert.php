@@ -79,7 +79,21 @@ final class QueueAlert extends Notification
         ]))->onQueue((string) config('dory.realtime.queue'));
     }
 
+    /**
+     * The payload's "type" field.
+     */
     public function broadcastType(): string
+    {
+        return 'notification.created';
+    }
+
+    /**
+     * The event name clients subscribe to. Without it Laravel sends the class
+     * name (Illuminate\Notifications\Events\BroadcastNotificationCreated),
+     * and the app, which listens for notification.created, never hears it:
+     * found on a phone (docs/PHASE_06_REPORT.md).
+     */
+    public function broadcastAs(): string
     {
         return 'notification.created';
     }

@@ -603,7 +603,7 @@
   "profileName": "الاسم",
   "profilePhoneOptional": "رقم الهاتف (اختياري)",
 
-  "ticketLiveNote": "تصلك التحديثات فور تنفيذ النشاط لأي إجراء.",
+  "ticketLiveNote": "تصلك التحديثات فور أي إجراء من النشاط.",
   "notificationsTitle": "الإشعارات",
   "notificationsMarkAllRead": "تعليم الكل كمقروء",
   "notificationsFilterAll": "الكل",
@@ -640,7 +640,7 @@
   "notificationOfferTitle": "هل تريد تنبيهًا عندما يحين دورك؟",
   "notificationOfferMessagePush": "يُعلمك DORY عند النداء عليك، حتى عندما يكون التطبيق في الخلفية.",
   "notificationOfferMessageInApp": "أثناء فتح DORY ينبّهك عند النداء عليك، حتى في الشاشات الأخرى.",
-  "notificationOfferAllow": "سماح",
+  "notificationOfferAllow": "السماح",
   "notificationOfferLater": "ليس الآن",
   "queueRealtimeLive": "مباشر: تظهر التغييرات فورًا."
 }

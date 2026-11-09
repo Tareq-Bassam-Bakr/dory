@@ -17,6 +17,14 @@ abstract final class StorageKeys {
   /// Businesses saved on this device while signed out.
   static const String localFavorites = 'dory.local_favorites';
 
+  /// "Not now" on the offer to turn notifications on.
+  static const String notificationOfferDismissed =
+      'dory.notification_offer_dismissed';
+
+  /// The server's push device ids for this phone, per account and per guest
+  /// ticket (JSON). Not secret: the FCM token itself is never stored here.
+  static const String pushDevices = 'dory.push_devices';
+
   static const Set<String> all = <String>{
     languageCode,
     guestTickets,
@@ -24,5 +32,7 @@ abstract final class StorageKeys {
     searchRadiusKm,
     recentSearches,
     localFavorites,
+    notificationOfferDismissed,
+    pushDevices,
   };
 }

@@ -70,6 +70,33 @@ See [BROADCAST_CHANNELS.md](BROADCAST_CHANNELS.md).
 Real-time is off unless the build passes `DORY_REVERB_APP_KEY`; tests and
 builds without it behave exactly as in Phase 05.
 
+`NotificationsHost` keeps a listener on the notification coordinator for the
+app's whole life. Riverpod 3 pauses a provider that is only read, and a
+paused coordinator missed the session restored at launch, so the user's
+channel stayed closed after a cold start. The phone test found this.
+
+## Testing on a device
+
+`integration_test/phase06_realtime_test.dart` needs the API, Reverb and a
+worker on a throwaway database, plus `adb reverse` for 8000 and 8080:
+
+```powershell
+flutter test integration_test/phase06_realtime_test.dart -d <device> --dart-define=DORY_REVERB_APP_KEY=<key> --dart-define=DORY_E2E_STAFF_EMAIL=<owner> --dart-define=DORY_E2E_STAFF_PASSWORD=<password>
+```
+
+The tests:
+
+- **Guest ticket:** a guest joins, the ticket must show the live note, and
+  staff "call", "start" and "complete" must each reach the screen within
+  6 seconds. Polling would take 15, and live mode has no timer.
+- **Staff dashboard:** a staff member signs in through the real login
+  screen, and a new customer must appear on the live dashboard within
+  6 seconds.
+
+Use a password of letters and digits: `flutter.bat` mangles symbols on its
+command line. The first requests after a Gradle build can take half a
+minute on the PHP development server, so warm the API first.
+
 ## Notifications
 
 See [NOTIFICATION_EVENTS.md](NOTIFICATION_EVENTS.md),

@@ -43,12 +43,19 @@ needs the ticket token.
 | `queue.changed` | `queue-updates.{session}` | `session`, `session_status`, `changed_at` |
 | `ticket.updated` | `private-tickets.{ticket}` | `ticket`, `status`, `event`, `occurred_at` |
 | `queue.updated` | `private-queue-sessions.{session}`, `private-businesses.{business}` | `kind`, `queue`, `session`, `ticket`, `status`, `occurred_at` |
-| `notification.created` | `private-users.{user}` | `id`, `kind`, `ticket` |
+| `notification.created` | `private-users.{user}` | `kind`, `ticket`, `id`, `type` (`notification.created`) |
 
 `kind` of `queue.updated` is one of: `ticket_joined`,
 `ticket_status_changed`, `customer_cancelled`, `session_changed`,
 `queue_status_changed`, `capacity_changed`, `settings_changed`.
 
 No event carries a name, phone number, email or token. Payload keys are
-fixed by tests (`QueueBroadcastsTest`). Client events (`client-*`) are
+fixed by tests (`QueueBroadcastsTest`, and
+`QueueNotificationsTest::test_the_app_hears_new_notifications_on_the_users_channel`).
+
+`notification.created` is the event name because `QueueAlert` defines
+`broadcastAs()`. Without it, Laravel names the event after its class
+(`Illuminate\Notifications\Events\BroadcastNotificationCreated`), and the
+app never hears it. The phone test found this; the unit tests on both sides
+had assumed the name. Client events (`client-*`) are
 refused by Reverb and ignored by the app.

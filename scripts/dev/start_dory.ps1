@@ -154,6 +154,15 @@ function Test-OurProcess($Service) {
     return $started -eq $Service.created
 }
 
+# The window stays open (cmd /k) after its program ends, for example a worker
+# that lost its database connection. The service runs only while something
+# still runs inside the window.
+function Test-ServiceAlive($Service) {
+    $children = @(Get-CimInstance Win32_Process -Filter ("ParentProcessId = " + [int]$Service.pid) -ErrorAction SilentlyContinue |
+        Where-Object { $_.Name -ne 'conhost.exe' })
+    return $children.Count -gt 0
+}
+
 function Start-DoryWindow([string]$Title, [string]$WorkingDirectory, [string]$Command) {
     $arguments = '/k title ' + $Title + ' && cd /d "' + $WorkingDirectory + '" && ' + $Command
     $process = Start-Process -FilePath 'cmd.exe' -ArgumentList $arguments -PassThru -WindowStyle Normal
@@ -274,9 +283,16 @@ Add-Content -Path $LogFile -Value "DORY startup $(Get-Date -Format o) in $Root"
 Write-Step 'Processes from an earlier start'
 $running = @()
 foreach ($service in Read-State) {
-    if (Test-OurProcess $service) {
+    if (-not (Test-OurProcess $service)) {
+        continue
+    }
+    if (Test-ServiceAlive $service) {
         $running += $service
         Write-Note ("{0} is already running (window {1}, process {2})." -f $service.name, $service.title, $service.pid)
+    } else {
+        # Our own window (same id, title and start time), with nothing left in it.
+        & taskkill.exe /PID ([int]$service.pid) /T /F | Out-Null
+        Write-Note ("{0} had stopped; its window stayed open. Closed it: it is started again below." -f $service.title)
     }
 }
 if ($running.Count -eq 0) {

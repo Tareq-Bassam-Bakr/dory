@@ -196,8 +196,11 @@ class TicketDetails extends AsyncNotifier<CustomerTicket> {
   }
 
   Future<CustomerTicket> _read() async {
+    // Read everything before the first await: the screen can close, and this
+    // provider be disposed, while a request is in flight.
+    final TicketRepository repository = _repository;
     if (!ticketRef.isGuest) {
-      return _repository.ticket(ticketRef.id);
+      return repository.ticket(ticketRef.id);
     }
     final String? token = await ref
         .read(guestTicketVaultProvider)
@@ -205,11 +208,13 @@ class TicketDetails extends AsyncNotifier<CustomerTicket> {
     if (token == null) {
       throw const GuestCredentialsMissing();
     }
-    final CustomerTicket ticket = await _repository.guestTicket(
+    final CustomerTicket ticket = await repository.guestTicket(
       ticketRef.id,
       token,
     );
-    await ref.read(guestTicketsProvider.notifier).update(ticket);
+    if (ref.mounted) {
+      await ref.read(guestTicketsProvider.notifier).update(ticket);
+    }
     return ticket;
   }
 

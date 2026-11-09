@@ -66,6 +66,9 @@ screen.
 - **Live:** while the app is open and signed in, `notification.created` on
   `private-users.{id}` refreshes the badge and shows a local notification,
   unless that ticket is already on screen.
-- The badge is also read after sign-in, when a push arrives in front, and
-  whenever the Notifications screen loads. Without Reverb it does not
-  refresh by itself while the app sits open.
+- The badge is also read whenever the user's channel is confirmed: at
+  start and sign-in, after returning from the background, and after a
+  reconnection, because alerts sent meanwhile are not replayed. It is also
+  read when a push arrives in front and when the Notifications screen
+  loads. Without Reverb it does not refresh by itself while the app sits
+  open.

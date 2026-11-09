@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
+import 'dart:convert';
 
 import 'package:dory_app/app/localization/app_locales.dart';
 import 'package:dory_app/app/localization/language_controller.dart';
@@ -13,6 +14,7 @@ import 'package:dory_app/core/notifications/push_messaging.dart';
 import 'package:dory_app/core/realtime/pusher_client.dart';
 import 'package:dory_app/core/realtime/realtime_providers.dart';
 import 'package:dory_app/core/storage/key_value_storage.dart';
+import 'package:dory_app/core/storage/storage_keys.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_controller.dart';
 import 'package:dory_app/features/authentication/presentation/providers/auth_state.dart';
 import 'package:dory_app/features/businesses/presentation/providers/business_providers.dart';
@@ -36,10 +38,47 @@ class DeviceRegistration {
 
   final Ref _ref;
 
-  static String userKey(String userId) => 'dory.push_device.user.$userId';
+  /// Where the device id of an account or a guest ticket is kept, inside
+  /// [StorageKeys.pushDevices].
+  static String userOwner(String userId) => 'user:$userId';
 
-  static String guestKey(String ticketId) =>
-      'dory.push_device.ticket.$ticketId';
+  static String guestOwner(String ticketId) => 'ticket:$ticketId';
+
+  /// The device id the server returned for [owner], if any.
+  static String? storedDevice(KeyValueStorage storage, String owner) =>
+      _stored(storage)[owner];
+
+  static Map<String, String> _stored(KeyValueStorage storage) {
+    final String? raw = storage.readString(StorageKeys.pushDevices);
+    if (raw == null) {
+      return <String, String>{};
+    }
+    try {
+      final Object? decoded = jsonDecode(raw);
+      if (decoded is Map) {
+        return <String, String>{
+          for (final MapEntry<Object?, Object?> entry in decoded.entries)
+            if (entry.key is String && entry.value is String)
+              entry.key! as String: entry.value! as String,
+        };
+      }
+    } on FormatException {
+      // Unreadable: start over; the server replaces registrations anyway.
+    }
+    return <String, String>{};
+  }
+
+  Future<void> _remember(String owner, String? deviceId) {
+    final Map<String, String> devices = _stored(_storage);
+    if (deviceId == null) {
+      devices.remove(owner);
+    } else {
+      devices[owner] = deviceId;
+    }
+    return devices.isEmpty
+        ? _storage.remove(StorageKeys.pushDevices)
+        : _storage.writeString(StorageKeys.pushDevices, jsonEncode(devices));
+  }
 
   PushMessaging get _push => _ref.read(pushMessagingProvider);
 
@@ -88,7 +127,7 @@ class DeviceRegistration {
         device,
         replaces: replaces,
       );
-      await _storage.writeString(userKey(userId), id);
+      await _remember(userOwner(userId), id);
     } on AppFailure catch (failure, stackTrace) {
       ErrorReporter.report(failure, stackTrace, context: 'Device registration');
     }
@@ -100,7 +139,7 @@ class DeviceRegistration {
     if (userId == null) {
       return;
     }
-    final String? deviceId = _storage.readString(userKey(userId));
+    final String? deviceId = storedDevice(_storage, userOwner(userId));
     if (deviceId == null) {
       return;
     }
@@ -109,7 +148,7 @@ class DeviceRegistration {
     } on AppFailure catch (failure, stackTrace) {
       ErrorReporter.report(failure, stackTrace, context: 'Device removal');
     }
-    await _storage.remove(userKey(userId));
+    await _remember(userOwner(userId), null);
   }
 
   /// A guest ticket on this device gets the device's alerts.
@@ -130,7 +169,7 @@ class DeviceRegistration {
         device,
         replaces: replaces,
       );
-      await _storage.writeString(guestKey(ticketId), id);
+      await _remember(guestOwner(ticketId), id);
     } on AppFailure catch (failure, stackTrace) {
       ErrorReporter.report(failure, stackTrace, context: 'Guest device');
     }
@@ -142,7 +181,9 @@ class DeviceRegistration {
       if (ticket.status.isActive) {
         await syncGuestTicket(
           ticket.id,
-          replaces: replace ? _storage.readString(guestKey(ticket.id)) : null,
+          replaces: replace
+              ? storedDevice(_storage, guestOwner(ticket.id))
+              : null,
         );
       }
     }
@@ -152,7 +193,9 @@ class DeviceRegistration {
   Future<void> onTokenRefresh() async {
     final String? userId = _ref.read(currentUserIdProvider);
     await syncUser(
-      replaces: userId == null ? null : _storage.readString(userKey(userId)),
+      replaces: userId == null
+          ? null
+          : storedDevice(_storage, userOwner(userId)),
     );
     await syncGuestTickets(replace: true);
   }
@@ -252,17 +295,49 @@ class NotificationCoordinator {
     }
     _pending = null;
     final bool signedIn = auth is Authenticated;
-    final String location =
-        !signedIn && !target.guest && target.ticketId != null
-        ? AppRoutes.withFrom(AppRoutes.login, Uri.parse(target.location))
-        : target.location;
-    _ref.read(appRouterProvider).go(location);
+    final GoRouter router = _ref.read(appRouterProvider);
+    if (!signedIn && !target.guest && target.ticketId != null) {
+      // Sign in first; the login screen continues to the ticket.
+      router.go(
+        AppRoutes.withFrom(AppRoutes.login, Uri.parse(target.location)),
+      );
+    } else {
+      final String top = topLocation(router);
+      if (top == target.location) {
+        // Already there.
+      } else if (_area(top) == _area(target.location)) {
+        // On top of the current screen, so Back returns to it (or to the
+        // home screen the app opened on) instead of leaving DORY: found on a
+        // phone.
+        unawaited(router.push<void>(target.location));
+      } else {
+        // Customer and business areas have their own shells: switch.
+        router.go(target.location);
+      }
+    }
 
     final String? notificationId = target.notificationId;
     if (signedIn && notificationId != null) {
       unawaited(_markRead(notificationId));
     }
   }
+
+  /// The screen on top, with its query: pushed screens keep the router's
+  /// own location at the screen below them.
+  static String topLocation(GoRouter router) {
+    final RouteMatchList current = router.routerDelegate.currentConfiguration;
+    if (current.isEmpty) {
+      return '';
+    }
+    final RouteMatchBase top = current.last;
+    return top is ImperativeRouteMatch
+        ? top.matches.uri.toString()
+        : current.uri.toString();
+  }
+
+  /// "customer" or "business": the part of the app a location belongs to.
+  static String? _area(String location) =>
+      Uri.parse(location).pathSegments.firstOrNull;
 
   void onAuthChanged(AuthState state) => _openPending();
 
@@ -302,9 +377,18 @@ class NotificationCoordinator {
     _userChannel = channel;
     _subscriptions.add(
       channel.events.listen((event) {
-        if (event.kind == RealtimeEventKind.message &&
-            event.name == 'notification.created') {
-          unawaited(_onRealtimeNotification(event.data));
+        switch (event.kind) {
+          case RealtimeEventKind.subscribed:
+            // Subscribed again after the background or a reconnection:
+            // alerts sent meanwhile are not replayed, so read the badge.
+            unawaited(
+              _ref.read(unreadNotificationsProvider.notifier).refresh(),
+            );
+          case RealtimeEventKind.message
+              when event.name == 'notification.created':
+            unawaited(_onRealtimeNotification(event.data));
+          case RealtimeEventKind.message || RealtimeEventKind.failed:
+            break;
         }
       }),
     );

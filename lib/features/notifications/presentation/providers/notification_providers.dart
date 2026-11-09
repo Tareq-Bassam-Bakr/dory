@@ -188,9 +188,13 @@ class NotificationList extends Notifier<NotificationListState> {
             item.markedRead(),
       ],
     );
+    // Opening an entry leaves this screen, which disposes this list while
+    // the request runs: read the badge before waiting.
+    final UnreadNotifications badge = ref.read(
+      unreadNotificationsProvider.notifier,
+    );
     try {
-      final int unread = await _repository.markRead(notification.id);
-      ref.read(unreadNotificationsProvider.notifier).set(unread);
+      badge.set(await _repository.markRead(notification.id));
     } on AppFailure {
       if (ref.mounted) {
         state = state.copyWith(items: before);
@@ -200,8 +204,11 @@ class NotificationList extends Notifier<NotificationListState> {
   }
 
   Future<void> markAllRead() async {
+    final UnreadNotifications badge = ref.read(
+      unreadNotificationsProvider.notifier,
+    );
     await _repository.markAllRead();
-    ref.read(unreadNotificationsProvider.notifier).set(0);
+    badge.set(0);
     if (ref.mounted) {
       await reload();
     }
@@ -267,7 +274,9 @@ class NotificationPermissionController
     final NotificationPermission result = await ref
         .read(localNotifierProvider)
         .requestPermission();
-    state = AsyncData<NotificationPermission>(result);
+    if (ref.mounted) {
+      state = AsyncData<NotificationPermission>(result);
+    }
     return result;
   }
 
@@ -275,9 +284,12 @@ class NotificationPermissionController
 
   /// After returning from the phone settings.
   Future<void> recheck() async {
-    state = AsyncData<NotificationPermission>(
-      await ref.read(localNotifierProvider).permission(),
-    );
+    final NotificationPermission current = await ref
+        .read(localNotifierProvider)
+        .permission();
+    if (ref.mounted) {
+      state = AsyncData<NotificationPermission>(current);
+    }
   }
 }
 

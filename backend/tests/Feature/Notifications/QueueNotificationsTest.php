@@ -23,7 +23,9 @@ use App\Services\Push\PushOutcome;
 use App\Services\Push\PushSender;
 use App\Services\Queues\TicketStateMachine;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Notifications\Events\BroadcastNotificationCreated;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue as QueueFacade;
 use RuntimeException;
 use Tests\Concerns\BuildsQueues;
@@ -119,6 +121,28 @@ class QueueNotificationsTest extends TestCase
         $this->assertSame($ticket->public_id, $data['ticket']['id']);
         $this->assertSame($ticket->ticket_number, $data['ticket']['number']);
         $this->assertSame('Shifa Clinic', $data['business']['name']);
+    }
+
+    public function test_the_app_hears_new_notifications_on_the_users_channel(): void
+    {
+        // Faked first: the notification channel keeps the dispatcher it was
+        // built with.
+        Event::fake([BroadcastNotificationCreated::class]);
+        $customer = User::factory()->create();
+        $ticket = $this->join($customer);
+
+        $this->staff('call', $ticket);
+
+        // The name, channel and payload the app subscribes to.
+        Event::assertDispatched(BroadcastNotificationCreated::class, function (BroadcastNotificationCreated $event) use ($customer, $ticket): bool {
+            $channels = array_map(fn ($channel) => $channel->name, $event->broadcastOn());
+
+            return $event->broadcastAs() === 'notification.created'
+                && $channels === ['private-users.'.$customer->public_id]
+                && array_keys($event->broadcastWith()) === ['kind', 'ticket', 'id', 'type']
+                && $event->broadcastWith()['kind'] === 'ticket_called'
+                && $event->broadcastWith()['ticket'] === $ticket->public_id;
+        });
     }
 
     public function test_skipped_and_no_show_customers_are_told(): void
