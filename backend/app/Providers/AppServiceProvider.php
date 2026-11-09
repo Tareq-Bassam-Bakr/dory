@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Contracts\InsightNarrator;
 use App\Contracts\InvitationNotifier;
 use App\Contracts\WaitTimeEstimator;
 use App\Events\QueueActivity;
@@ -13,6 +14,8 @@ use App\Realtime\QueueActivityRelay;
 use App\Services\Business\CurrentBusinessContext;
 use App\Services\Business\TenantResolver;
 use App\Services\Discovery\PublicCatalogResolver;
+use App\Services\Intelligence\SmartWaitTimeEstimator;
+use App\Services\Intelligence\TemplateInsightNarrator;
 use App\Services\Invitations\MailInvitationNotifier;
 use App\Services\Push\DisabledPushSender;
 use App\Services\Push\FirebasePushSender;
@@ -47,7 +50,16 @@ class AppServiceProvider extends ServiceProvider
 
         // Wait-time estimates (docs/WAIT_TIME_ESTIMATION.md). Scoped: the
         // per-queue rate cache never outlives a request or job.
-        $this->app->scoped(WaitTimeEstimator::class, HistoricalWaitTimeEstimator::class);
+        // Since Phase 07 the smart estimator, built on the historical profile
+        // (docs/AI_ARCHITECTURE.md).
+        $this->app->scoped(HistoricalWaitTimeEstimator::class);
+        $this->app->scoped(WaitTimeEstimator::class, SmartWaitTimeEstimator::class);
+
+        // Who words business insights. Only the built-in templates ship; an
+        // LLM narrator would be selected here with DORY_AI_NARRATOR.
+        $this->app->bind(InsightNarrator::class, fn () => match (config('dory.intelligence.narrator')) {
+            default => new TemplateInsightNarrator,
+        });
 
         // Push notifications (docs/PUSH_NOTIFICATIONS.md): Firebase only when
         // switched on and a credentials file exists. The Firebase SDK is not
@@ -230,6 +242,11 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Push device registration, per user (or IP for guests).
+        // Insights read up to two months of tickets: per user.
+        RateLimiter::for('insights', function (Request $request) {
+            return Limit::perMinute(30)->by('insights:'.($request->user()?->getAuthIdentifier() ?: $request->ip()));
+        });
+
         RateLimiter::for('devices', function (Request $request) {
             return Limit::perMinute(config('dory.rate_limits.devices'))
                 ->by('devices:'.($request->user()?->getAuthIdentifier() ?: $request->ip()));

@@ -89,6 +89,15 @@ final readonly class BusinessAbilities
         return $this->acceptsChanges() && ($this->membership?->role->canManageMembers() ?? false);
     }
 
+    /**
+     * Business insights and peak times: owners and managers. A manager of
+     * selected branches sees only those branches' data.
+     */
+    public function canViewInsights(): bool
+    {
+        return $this->isOwner() || $this->hasRole(BusinessRole::Manager);
+    }
+
     public function canViewBranch(Branch $branch): bool
     {
         return $this->membership?->canAccessBranch($branch) ?? false;
@@ -168,6 +177,7 @@ final readonly class BusinessAbilities
             'create_branches' => $this->canCreateBranches(),
             'view_members' => $this->canViewMembers(),
             'manage_members' => $this->canManageMembers(),
+            'view_insights' => $this->canViewInsights(),
         ];
     }
 

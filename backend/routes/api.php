@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\V1\Businesses\InvitationController;
 use App\Http\Controllers\Api\V1\Businesses\ServiceController;
 use App\Http\Controllers\Api\V1\Customers\FavoriteController;
 use App\Http\Controllers\Api\V1\Discovery\DiscoveryController;
+use App\Http\Controllers\Api\V1\Intelligence\BusinessIntelligenceController;
 use App\Http\Controllers\Api\V1\Notifications\DeviceController;
 use App\Http\Controllers\Api\V1\Notifications\GuestDeviceController;
 use App\Http\Controllers\Api\V1\Notifications\NotificationController;
@@ -119,6 +120,14 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
 
         // Queue configuration (docs/QUEUE_API_REFERENCE.md)
         Route::get('businesses/{business}/queues', [QueueController::class, 'businessIndex'])->name('queues.business-index');
+
+        // Business intelligence (docs/AI_ARCHITECTURE.md)
+        Route::middleware('throttle:insights')->group(function (): void {
+            Route::get('businesses/{business}/insights', [BusinessIntelligenceController::class, 'insights'])
+                ->name('businesses.insights');
+            Route::get('businesses/{business}/peak-times', [BusinessIntelligenceController::class, 'peakTimes'])
+                ->name('businesses.peak-times');
+        });
         Route::get('branches/{branch}/queues', [QueueController::class, 'index'])->name('queues.index');
         Route::post('branches/{branch}/queues', [QueueController::class, 'store'])->name('queues.store');
         Route::get('queues/{queue}', [QueueController::class, 'show'])->name('queues.show');

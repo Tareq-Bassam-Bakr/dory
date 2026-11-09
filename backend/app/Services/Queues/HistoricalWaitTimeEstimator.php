@@ -32,18 +32,32 @@ final class HistoricalWaitTimeEstimator implements WaitTimeEstimator
     private const MAX_SAMPLE_SECONDS = 4 * 3600;
 
     /**
-     * Per-request cache: queue id → [seconds per customer, basis, servers].
+     * Per-request cache: queue id → service profile.
      *
-     * @var array<int, array{0: int, 1: string, 2: int}>
+     * @var array<int, ServiceProfile>
      */
     private array $rates = [];
 
     public function estimate(Queue $queue, int $peopleAhead): WaitEstimate
     {
-        [$perCustomer, $basis, $servers] = $this->rates[$queue->getKey()] ??= $this->rate($queue);
-        $rounds = (int) ceil(max(0, $peopleAhead) / $servers);
+        $profile = $this->profile($queue);
+        $rounds = (int) ceil(max(0, $peopleAhead) / $profile->assignedServers);
 
-        return new WaitEstimate($rounds * $perCustomer, $basis, $perCustomer, $servers);
+        return new WaitEstimate(
+            $rounds * $profile->secondsPerCustomer,
+            $profile->basis,
+            $profile->secondsPerCustomer,
+            $profile->assignedServers,
+        );
+    }
+
+    /**
+     * The queue's service profile (cached for the request), for estimators
+     * that build on this one (SmartWaitTimeEstimator).
+     */
+    public function profile(Queue $queue): ServiceProfile
+    {
+        return $this->rates[$queue->getKey()] ??= $this->rate($queue);
     }
 
     /**
@@ -102,10 +116,7 @@ final class HistoricalWaitTimeEstimator implements WaitTimeEstimator
         $this->rates = [];
     }
 
-    /**
-     * @return array{0: int, 1: string, 2: int}
-     */
-    private function rate(Queue $queue): array
+    private function rate(Queue $queue): ServiceProfile
     {
         $servers = max(1, $queue->activeStaffAssignments()->count());
 
@@ -128,19 +139,47 @@ final class HistoricalWaitTimeEstimator implements WaitTimeEstimator
 
     /**
      * @param  Collection<int, int>  $durations  Recent service times, in seconds.
-     * @return array{0: int, 1: string, 2: int}
      */
-    private function rateFrom(Queue $queue, Collection $durations, int $servers): array
+    private function rateFrom(Queue $queue, Collection $durations, int $servers): ServiceProfile
     {
         if ($durations->count() < $this->historyMinimum()) {
-            return [$queue->configuredServiceMinutes() * 60, WaitEstimate::BASIS_CONFIGURED, $servers];
+            return new ServiceProfile(
+                $queue->configuredServiceMinutes() * 60,
+                WaitEstimate::BASIS_CONFIGURED,
+                $servers,
+                $durations->count(),
+                null,
+                null,
+            );
         }
 
-        $average = (int) round($durations->avg(
-            fn (int $seconds): int => min(self::MAX_SAMPLE_SECONDS, max(self::MIN_SAMPLE_SECONDS, $seconds)),
-        ));
+        $clamped = $durations
+            ->map(fn (int $seconds): int => min(self::MAX_SAMPLE_SECONDS, max(self::MIN_SAMPLE_SECONDS, $seconds)))
+            ->sort()
+            ->values();
 
-        return [$average, WaitEstimate::BASIS_HISTORY, $servers];
+        return new ServiceProfile(
+            (int) round($clamped->avg()),
+            WaitEstimate::BASIS_HISTORY,
+            $servers,
+            $clamped->count(),
+            self::percentile($clamped, 0.25),
+            self::percentile($clamped, 0.75),
+        );
+    }
+
+    /**
+     * Linear interpolation between the closest ranks.
+     *
+     * @param  Collection<int, int>  $sorted
+     */
+    private static function percentile(Collection $sorted, float $fraction): int
+    {
+        $position = ($sorted->count() - 1) * $fraction;
+        $lower = (int) floor($position);
+        $upper = (int) ceil($position);
+
+        return (int) round($sorted[$lower] + ($sorted[$upper] - $sorted[$lower]) * ($position - $lower));
     }
 
     private function historyMinimum(): int

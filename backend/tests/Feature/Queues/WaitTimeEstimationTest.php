@@ -8,6 +8,7 @@ use App\Enums\TicketStatus;
 use App\Models\Queue;
 use App\Models\QueueSession;
 use App\Models\User;
+use App\Services\Intelligence\SmartWaitTimeEstimator;
 use App\Services\Queues\HistoricalWaitTimeEstimator;
 use App\Services\Queues\WaitEstimate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -55,9 +56,11 @@ class WaitTimeEstimationTest extends TestCase
         }
     }
 
-    public function test_the_default_binding_is_the_historical_estimator(): void
+    public function test_the_default_binding_is_the_smart_estimator_on_the_historical_profile(): void
     {
-        $this->assertInstanceOf(HistoricalWaitTimeEstimator::class, app(WaitTimeEstimator::class));
+        // Phase 07: the smart estimator replaced the historical one as the
+        // default, and builds on its profile (tested below, unchanged).
+        $this->assertInstanceOf(SmartWaitTimeEstimator::class, app(WaitTimeEstimator::class));
     }
 
     public function test_without_enough_history_the_configured_duration_is_used(): void

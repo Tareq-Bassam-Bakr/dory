@@ -90,7 +90,10 @@ class GuestJoinTest extends TestCase
             ->assertJsonPath('data.accepting_joins', true)
             ->assertJsonPath('data.waiting_count', 1)
             ->assertJsonPath('data.now_serving', ['HC-002'])
-            ->assertJsonPath('data.estimated_wait.seconds', 12 * 60)
+            // One customer is being served (12 minutes left) and one waits
+            // (12 more): a new customer waits 24. Before Phase 07 the
+            // estimate ignored the customer at the counter and said 12.
+            ->assertJsonPath('data.estimated_wait.seconds', 24 * 60)
             ->assertJsonPath('data.require_guest_name', true)
             ->assertJsonPath('data.require_guest_phone', false);
         $this->assertStringNotContainsString('Secret Name', $response->getContent());

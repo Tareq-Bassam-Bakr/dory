@@ -36,6 +36,14 @@ class BusinessPolicy
         return $this->decide($user, $business, fn (BusinessAbilities $a) => $a->canUpdate(), write: true);
     }
 
+    /**
+     * Insights and peak times (docs/AI_ARCHITECTURE.md): owners and managers.
+     */
+    public function viewInsights(User $user, Business $business): Response
+    {
+        return $this->decide($user, $business, fn (BusinessAbilities $a) => $a->canViewInsights(), write: false);
+    }
+
     public function changeStatus(User $user, Business $business): Response
     {
         return $this->decide($user, $business, fn (BusinessAbilities $a) => $a->canChangeStatus(), write: true);

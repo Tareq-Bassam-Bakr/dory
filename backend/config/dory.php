@@ -136,6 +136,37 @@ return [
     ],
 
     /*
+     * Business intelligence (docs/AI_ARCHITECTURE.md). Everything is computed
+     * from the business's own records; no external service is called.
+     *
+     * - narrator: who words the insights. "template" (built in, English and
+     *   Arabic) is the only one shipped; an LLM narrator can be added later
+     *   behind the same contract without changing callers.
+     * - active_staff_minutes: staff who called a ticket this recently count
+     *   as serving now (wait-time prediction).
+     * - high_confidence_samples: completed tickets needed for a "high"
+     *   confidence wait estimate (or a full queues.wait_history_size window,
+     *   when that is smaller).
+     * - history_days: how far back peak times look.
+     * - insight_days: the period insights compare with the one before it.
+     * - minimum_tickets / forecast_minimum_tickets / forecast_minimum_days:
+     *   below these, the result says there is not enough data yet instead
+     *   of guessing.
+     * - max_rows: an upper bound on the tickets read for one request.
+     */
+    'intelligence' => [
+        'narrator' => env('DORY_AI_NARRATOR', 'template'),
+        'active_staff_minutes' => (int) env('DORY_AI_ACTIVE_STAFF_MINUTES', 45),
+        'high_confidence_samples' => 30,
+        'history_days' => 56,
+        'insight_days' => 30,
+        'minimum_tickets' => 20,
+        'forecast_minimum_tickets' => 50,
+        'forecast_minimum_days' => 14,
+        'max_rows' => 50000,
+    ],
+
+    /*
      * Local demo data (database/seeders/DemoDataSeeder.php). Leave empty to
      * skip demo accounts. Never set this in production.
      */

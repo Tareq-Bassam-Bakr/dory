@@ -138,6 +138,11 @@ return [
         'removed' => 'Business removed from your saved list',
     ],
 
+    'intelligence' => [
+        'insights' => 'Insights.',
+        'peak_times' => 'Peak times.',
+    ],
+
     'notifications' => [
         'listed' => 'Notifications',
         'read' => 'Notification marked as read',
