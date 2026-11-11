@@ -8,6 +8,7 @@ use App\Enums\BranchAccess;
 use App\Enums\BusinessRole;
 use App\Enums\InvitationStatus;
 use App\Enums\MembershipStatus;
+use App\Enums\PlanLimit;
 use App\Exceptions\DuplicateMembershipException;
 use App\Exceptions\InvitationAlreadyPendingException;
 use App\Exceptions\InvitationEmailMismatchException;
@@ -19,6 +20,7 @@ use App\Models\BusinessInvitation;
 use App\Models\BusinessMember;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
+use App\Services\Billing\Entitlements;
 use App\Services\Business\BusinessMembershipService;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
@@ -36,6 +38,8 @@ use Illuminate\Support\Str;
  * - Only the account with the invited email can accept or decline.
  * - Invitations grant manager or employee roles only. Ownership is never
  *   transferable by invitation.
+ * - Team seats come from the business's plan (docs/SUBSCRIPTIONS.md): a
+ *   pending invitation holds a seat, and accepting needs one.
  */
 final class InvitationService
 {
@@ -45,6 +49,7 @@ final class InvitationService
         private readonly BusinessMembershipService $memberships,
         private readonly InvitationNotifier $notifier,
         private readonly AuditLogger $audit,
+        private readonly Entitlements $entitlements,
     ) {}
 
     /**
@@ -73,6 +78,8 @@ final class InvitationService
                     ->where('status', InvitationStatus::Pending->value)
                     ->where('expires_at', '<=', now())
                     ->update(['status' => InvitationStatus::Expired->value, 'pending_key' => null]);
+
+                $this->entitlements->ensureCanAdd($business, PlanLimit::Members);
 
                 $invitation = new BusinessInvitation([
                     'email' => $email,
@@ -141,6 +148,8 @@ final class InvitationService
             $this->ensureCanRespond($locked, $user);
 
             $business = $locked->business;
+            // Active members only: this invitation's own seat is the one taken.
+            $this->entitlements->ensureCanAdd($business, PlanLimit::Members, countInvitations: false);
             $branches = $locked->branch_access === BranchAccess::Selected
                 ? $business->branches()->whereIn('id', $locked->branch_ids ?? [])->get()
                 : null;

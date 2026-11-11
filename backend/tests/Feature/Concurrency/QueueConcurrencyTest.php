@@ -30,6 +30,15 @@ class QueueConcurrencyTest extends TestCase
 {
     use BuildsQueues, BuildsTenants, DatabaseTruncation;
 
+    /**
+     * Reference data that migrations write (the default plans,
+     * docs/SUBSCRIPTIONS.md). Every real database has it; truncating it would
+     * leave a new business without a plan to start on.
+     *
+     * @var list<string>
+     */
+    protected $exceptTables = ['subscription_plans', 'subscription_plan_prices'];
+
     private const WORKERS = 16;
 
     private User $owner;

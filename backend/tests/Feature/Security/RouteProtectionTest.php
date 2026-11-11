@@ -49,6 +49,11 @@ class RouteProtectionTest extends TestCase
         'api.v1.discovery.cities',
         'api.v1.discovery.branches.show',
         'api.v1.discovery.branches.services',
+        // The plans a business can choose (a price list), and payment
+        // provider notifications, which carry the provider's shared secret
+        // (docs/PAYMENTS.md).
+        'api.v1.billing.plans',
+        'api.v1.billing.webhooks',
     ];
 
     /**

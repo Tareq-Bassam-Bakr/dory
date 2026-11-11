@@ -37,6 +37,12 @@ return [
         'discovery' => (int) env('RATE_LIMIT_DISCOVERY_PER_MINUTE', 120),
         // Push device registration, per user (or IP for guests).
         'devices' => (int) env('RATE_LIMIT_DEVICES_PER_MINUTE', 20),
+        // Starting and checking online payments, per user (docs/PAYMENTS.md).
+        'billing_checkout' => (int) env('RATE_LIMIT_BILLING_CHECKOUT_PER_MINUTE', 10),
+        // Payment provider notifications, per IP.
+        'billing_webhooks' => (int) env('RATE_LIMIT_BILLING_WEBHOOKS_PER_MINUTE', 120),
+        // Payment and return pages, per IP.
+        'billing_pages' => (int) env('RATE_LIMIT_BILLING_PAGES_PER_MINUTE', 30),
     ],
 
     /*

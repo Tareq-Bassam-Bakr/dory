@@ -2,8 +2,10 @@
 
 namespace App\Services\Business;
 
+use App\Enums\PlanLimit;
 use App\Models\Branch;
 use App\Models\Business;
+use App\Services\Billing\Entitlements;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -12,16 +14,25 @@ use Illuminate\Support\Facades\DB;
  */
 final class BranchService
 {
+    public function __construct(private readonly Entitlements $entitlements) {}
+
     /**
+     * Refused when the business's plan has no branch left
+     * (docs/SUBSCRIPTIONS.md).
+     *
      * @param  array<string, mixed>  $attributes  Validated branch fields.
      */
     public function create(Business $business, array $attributes): Branch
     {
-        $branch = new Branch($attributes + ['timezone' => $business->timezone]);
-        $branch->business()->associate($business);
-        $branch->saveOrFail();
+        return DB::transaction(function () use ($business, $attributes): Branch {
+            $this->entitlements->ensureCanAdd($business, PlanLimit::Branches);
 
-        return $branch;
+            $branch = new Branch($attributes + ['timezone' => $business->timezone]);
+            $branch->business()->associate($business);
+            $branch->saveOrFail();
+
+            return $branch;
+        });
     }
 
     /**

@@ -44,6 +44,30 @@ class BusinessPolicy
         return $this->decide($user, $business, fn (BusinessAbilities $a) => $a->canViewInsights(), write: false);
     }
 
+    /**
+     * Plan, limits and usage (docs/SUBSCRIPTIONS.md): owners and managers.
+     */
+    public function viewSubscription(User $user, Business $business): Response
+    {
+        return $this->decide($user, $business, fn (BusinessAbilities $a) => $a->canViewSubscription(), write: false);
+    }
+
+    /**
+     * Billing history: the owner, also while the business is suspended.
+     */
+    public function viewBilling(User $user, Business $business): Response
+    {
+        return $this->decide($user, $business, fn (BusinessAbilities $a) => $a->canViewBilling(), write: false);
+    }
+
+    /**
+     * Buying, changing and cancelling plans: the owner.
+     */
+    public function manageBilling(User $user, Business $business): Response
+    {
+        return $this->decide($user, $business, fn (BusinessAbilities $a) => $a->canManageBilling(), write: true);
+    }
+
     public function changeStatus(User $user, Business $business): Response
     {
         return $this->decide($user, $business, fn (BusinessAbilities $a) => $a->canChangeStatus(), write: true);

@@ -14,6 +14,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Tests\Concerns\BuildsQueues;
+use Tests\Concerns\BuildsSubscriptions;
 use Tests\Concerns\BuildsTenants;
 use Tests\TestCase;
 
@@ -24,7 +25,7 @@ use Tests\TestCase;
  */
 class BusinessIntelligenceApiTest extends TestCase
 {
-    use BuildsQueues, BuildsTenants, RefreshDatabase;
+    use BuildsQueues, BuildsSubscriptions, BuildsTenants, RefreshDatabase;
 
     private User $owner;
 
@@ -245,6 +246,8 @@ class BusinessIntelligenceApiTest extends TestCase
         $otherSession = $this->openSession($otherQueue, $otherOwner);
         $this->times(7, fn (int $i) => $this->visit(now()->subDays($i + 1), session: $otherSession));
         $this->times(3, fn (int $i) => $this->visit(now()->subDays($i + 1)));
+        // One branch on its own is a Business plan feature (docs/SUBSCRIPTIONS.md).
+        $this->onPlan($this->business, 'business');
 
         $this->actingAsUser($this->owner, 'GET', $this->uri('insights'))->assertJsonPath('data.metrics.tickets', 3);
         $this->actingAsUser($otherOwner, 'GET', $this->uri('insights', $other))->assertJsonPath('data.metrics.tickets', 7);
@@ -264,6 +267,8 @@ class BusinessIntelligenceApiTest extends TestCase
         $this->times(4, fn (int $i) => $this->visit(now()->subDays($i + 1), session: $malkiSession));
         $this->times(6, fn (int $i) => $this->visit(now()->subDays($i + 1)));
         $manager = $this->memberOf($this->business, BusinessRole::Manager, BranchAccess::Selected, [$malki]);
+        // One branch on its own is a Business plan feature (docs/SUBSCRIPTIONS.md).
+        $this->onPlan($this->business, 'business');
 
         $this->actingAsUser($manager, 'GET', $this->uri('insights'))
             ->assertJsonPath('data.metrics.tickets', 4)

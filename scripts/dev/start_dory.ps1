@@ -5,7 +5,8 @@
 
 .DESCRIPTION
     Checks everything first, then opens one visible window per service:
-    DORY-API, DORY-REVERB, DORY-QUEUE and DORY-FLUTTER. It records the
+    DORY-API, DORY-REVERB, DORY-QUEUE, DORY-SCHEDULER and DORY-FLUTTER. It
+    records the
     processes it started in .dory\run\processes.json, so stop_dory.bat stops
     those and nothing else. Running it again never starts a second copy of
     a service that is still running.
@@ -478,6 +479,25 @@ if (-not (Test-Running 'DORY-QUEUE')) {
     Write-Ok 'Already running'
 }
 
+# The scheduler: billing:sweep every 15 minutes (docs/SUBSCRIPTIONS.md). Plans
+# are right without it; it stores trial ends, unpaid periods and expired
+# payment links. Locally it never deletes anything (routes/console.php).
+Write-Step 'Starting the scheduler (DORY-SCHEDULER)'
+if (-not (Test-Running 'DORY-SCHEDULER')) {
+    $others = @(Get-CimInstance Win32_Process -Filter "Name = 'php.exe'" | Where-Object {
+        $_.CommandLine -like '*schedule:work*' -and $_.CommandLine -like '*artisan*'
+    })
+    if ($others.Count -gt 0) {
+        Write-Note ('A scheduler is already running (process ' + ($others.ProcessId -join ', ') + '), started outside this script. Not starting a second one.')
+    } else {
+        $services += Start-DoryWindow 'DORY-SCHEDULER' $Backend "$phpQuoted artisan schedule:work"
+        Write-State $services @{}
+        Write-Ok 'Scheduler started (billing:sweep every 15 minutes)'
+    }
+} else {
+    Write-Ok 'Already running'
+}
+
 # ----- Flutter -------------------------------------------------------------------------
 
 $extra = @{}
@@ -566,6 +586,7 @@ Write-Host 'DORY is running.' -ForegroundColor Green
 Write-Host "  API      http://127.0.0.1:$ApiPort/api/v1   (window DORY-API)"
 Write-Host "  Reverb   ws://127.0.0.1:$ReverbPort            (window DORY-REVERB)"
 Write-Host '  Worker   queues realtime, notifications, default (window DORY-QUEUE)'
+Write-Host '  Schedule billing:sweep every 15 minutes (window DORY-SCHEDULER)'
 Write-Host '  Stop     double-click stop_dory.bat'
 Write-Host "  Log      $LogFile"
 exit 0

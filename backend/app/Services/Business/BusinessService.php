@@ -10,6 +10,7 @@ use App\Models\Business;
 use App\Models\BusinessCategory;
 use App\Models\User;
 use App\Services\Audit\AuditLogger;
+use App\Services\Billing\SubscriptionService;
 use App\Services\Catalog\ServiceCatalogService;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +28,7 @@ final class BusinessService
         private readonly BranchService $branches,
         private readonly ServiceCatalogService $services,
         private readonly AuditLogger $audit,
+        private readonly SubscriptionService $subscriptions,
     ) {}
 
     /**
@@ -63,6 +65,9 @@ final class BusinessService
                 $business->category()->associate($category);
 
                 $this->memberships->persistWithOwner($business, $owner);
+                // The trial or free plan (docs/SUBSCRIPTIONS.md), before the
+                // first branch, which counts against it.
+                $this->subscriptions->start($business, $owner);
 
                 if ($branch !== null) {
                     $firstBranch = $this->branches->create($business, $branch);

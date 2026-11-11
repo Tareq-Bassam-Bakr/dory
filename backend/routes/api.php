@@ -1,7 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\BillingPlanController;
+use App\Http\Controllers\Api\V1\Admin\BillingSubscriptionController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
+use App\Http\Controllers\Api\V1\Billing\PaymentWebhookController;
+use App\Http\Controllers\Api\V1\Billing\PlanController;
+use App\Http\Controllers\Api\V1\Billing\SubscriptionController;
 use App\Http\Controllers\Api\V1\Businesses\BranchController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessCategoryController;
 use App\Http\Controllers\Api\V1\Businesses\BusinessController;
@@ -71,6 +76,16 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
     // Public reference data.
     Route::get('business-categories', BusinessCategoryController::class)->name('business-categories.index');
 
+    // Plans for businesses (docs/SUBSCRIPTIONS.md), public like a price page.
+    // Customers never need a plan.
+    Route::get('billing/plans', [PlanController::class, 'index'])
+        ->middleware('throttle:discovery')->name('billing.plans');
+
+    // Payment provider notifications (docs/PAYMENTS.md). No account: the
+    // provider authenticates with its shared secret.
+    Route::post('billing/webhooks/{provider}', PaymentWebhookController::class)
+        ->middleware('throttle:billing-webhooks')->name('billing.webhooks');
+
     // Public discovery (docs/CUSTOMER_API_REFERENCE.md). No account needed;
     // only public businesses, branches and services are ever returned.
     Route::prefix('discovery')->name('discovery.')->middleware('throttle:discovery')->group(function (): void {
@@ -117,6 +132,25 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             ->middleware('throttle:invitations')->name('invitations.store');
         Route::delete('businesses/{business}/invitations/{invitation}', [BusinessInvitationController::class, 'destroy'])
             ->name('invitations.destroy');
+
+        // Subscription and billing (docs/SUBSCRIPTIONS.md): owners manage it,
+        // managers see the plan and usage.
+        Route::get('businesses/{business}/subscription', [SubscriptionController::class, 'show'])
+            ->name('businesses.subscription.show');
+        Route::get('businesses/{business}/invoices', [SubscriptionController::class, 'invoices'])
+            ->name('businesses.invoices');
+        Route::middleware('throttle:billing-checkout')->group(function (): void {
+            Route::post('businesses/{business}/subscription/checkout', [SubscriptionController::class, 'checkout'])
+                ->name('businesses.subscription.checkout');
+            Route::get('businesses/{business}/subscription/checkouts/{checkout}', [SubscriptionController::class, 'checkoutStatus'])
+                ->name('businesses.subscription.checkout-status');
+        });
+        Route::post('businesses/{business}/subscription/downgrade', [SubscriptionController::class, 'downgrade'])
+            ->name('businesses.subscription.downgrade');
+        Route::post('businesses/{business}/subscription/cancel', [SubscriptionController::class, 'cancel'])
+            ->name('businesses.subscription.cancel');
+        Route::post('businesses/{business}/subscription/resume', [SubscriptionController::class, 'resume'])
+            ->name('businesses.subscription.resume');
 
         // Queue configuration (docs/QUEUE_API_REFERENCE.md)
         Route::get('businesses/{business}/queues', [QueueController::class, 'businessIndex'])->name('queues.business-index');
@@ -224,6 +258,26 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
             });
         });
     });
+
+    // Platform administration of plans and subscriptions (docs/SUBSCRIPTIONS.md,
+    // "Admin API"). platform.admin runs before any route binding.
+    Route::prefix('admin/billing')->name('admin.billing.')
+        ->middleware(['auth:sanctum', 'active', 'platform.admin'])
+        ->group(function (): void {
+            Route::get('plans', [BillingPlanController::class, 'index'])->name('plans.index');
+            Route::post('plans', [BillingPlanController::class, 'store'])->name('plans.store');
+            Route::put('plans/{billingPlan}', [BillingPlanController::class, 'update'])->name('plans.update');
+            Route::get('subscriptions', [BillingSubscriptionController::class, 'index'])->name('subscriptions.index');
+            Route::get('businesses/{billingBusiness}', [BillingSubscriptionController::class, 'show'])->name('businesses.show');
+            Route::post('businesses/{billingBusiness}/payments', [BillingSubscriptionController::class, 'recordPayment'])
+                ->name('businesses.payments');
+            Route::post('businesses/{billingBusiness}/trial', [BillingSubscriptionController::class, 'extendTrial'])
+                ->name('businesses.trial');
+            Route::post('businesses/{billingBusiness}/plan', [BillingSubscriptionController::class, 'assignPlan'])
+                ->name('businesses.plan');
+            Route::post('businesses/{billingBusiness}/expire', [BillingSubscriptionController::class, 'expire'])
+                ->name('businesses.expire');
+        });
 
     // Viewing an invitation works signed out, so the app can show what it is about.
     Route::get('invitations/{invitationToken}', [InvitationController::class, 'show'])

@@ -2,11 +2,13 @@
 
 namespace App\Services\Queues;
 
+use App\Enums\PlanLimit;
 use App\Events\Realtime\StaffQueueUpdated;
 use App\Exceptions\QueueException;
 use App\Models\Branch;
 use App\Models\Queue;
 use App\Models\Service;
+use App\Services\Billing\Entitlements;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -20,6 +22,8 @@ final class QueueService
 {
     public const PUBLIC_TOKEN_LENGTH = 40;
 
+    public function __construct(private readonly Entitlements $entitlements) {}
+
     /**
      * @param  array<string, mixed>  $attributes  Validated configuration.
      */
@@ -27,6 +31,10 @@ final class QueueService
     {
         try {
             return DB::transaction(function () use ($branch, $service, $attributes): Queue {
+                // Refused when the business's plan has no queue left
+                // (docs/SUBSCRIPTIONS.md).
+                $this->entitlements->ensureCanAdd($branch->loadMissing('business')->business, PlanLimit::Queues);
+
                 $queue = new Queue($attributes);
                 $queue->branch()->associate($branch);
                 $queue->service()->associate($service);

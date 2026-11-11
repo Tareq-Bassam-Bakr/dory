@@ -4,19 +4,26 @@ namespace App\Providers;
 
 use App\Contracts\InsightNarrator;
 use App\Contracts\InvitationNotifier;
+use App\Contracts\PaymentGateway;
 use App\Contracts\WaitTimeEstimator;
 use App\Events\QueueActivity;
+use App\Exceptions\BusinessNotFoundException;
 use App\Exceptions\NotificationException;
+use App\Models\Business;
 use App\Models\PushDevice;
 use App\Models\Queue;
+use App\Models\SubscriptionPlan;
 use App\Models\User;
 use App\Realtime\QueueActivityRelay;
+use App\Services\Billing\PlanCatalog;
 use App\Services\Business\CurrentBusinessContext;
 use App\Services\Business\TenantResolver;
 use App\Services\Discovery\PublicCatalogResolver;
 use App\Services\Intelligence\SmartWaitTimeEstimator;
 use App\Services\Intelligence\TemplateInsightNarrator;
 use App\Services\Invitations\MailInvitationNotifier;
+use App\Services\Payments\MastercardGateway;
+use App\Services\Payments\UnavailablePaymentGateway;
 use App\Services\Push\DisabledPushSender;
 use App\Services\Push\FirebasePushSender;
 use App\Services\Push\PushSender;
@@ -61,6 +68,21 @@ class AppServiceProvider extends ServiceProvider
             default => new TemplateInsightNarrator,
         });
 
+        // Plans (docs/SUBSCRIPTIONS.md): one catalogue per request or job, so
+        // an admin's change of a plan is seen by every service at once.
+        $this->app->scoped(PlanCatalog::class);
+
+        // Online payments (docs/PAYMENTS.md). Without a configured provider,
+        // checkouts are refused and payments are recorded by platform admins.
+        $this->app->bind(PaymentGateway::class, function (): PaymentGateway {
+            $provider = (string) config('billing.provider');
+
+            return match ($provider) {
+                'mastercard' => new MastercardGateway((array) config('billing.providers.mastercard')),
+                default => new UnavailablePaymentGateway($provider === '' ? 'none' : $provider),
+            };
+        });
+
         // Push notifications (docs/PUSH_NOTIFICATIONS.md): Firebase only when
         // switched on and a credentials file exists. The Firebase SDK is not
         // even built otherwise.
@@ -100,7 +122,7 @@ class AppServiceProvider extends ServiceProvider
         $publicIds = [
             'business', 'branch', 'service', 'member', 'invitation',
             'queue', 'queueSession', 'ticket', 'assignment', 'joinableQueue', 'myTicket', 'publicTicket',
-            'publicBranch', 'favoriteBusiness', 'device',
+            'publicBranch', 'favoriteBusiness', 'device', 'checkout', 'billingBusiness',
         ];
         foreach ($publicIds as $parameter) {
             Route::pattern($parameter, '[0-9A-Za-z]{26}');
@@ -111,6 +133,8 @@ class AppServiceProvider extends ServiceProvider
         Route::pattern('publicQueueToken', '[A-Za-z0-9]{40}');
         // A slug or a public id.
         Route::pattern('publicBusiness', '[A-Za-z0-9-]{1,160}');
+        Route::pattern('billingPlan', '[a-z][a-z0-9_-]{1,39}');
+        Route::pattern('provider', '[a-z]{2,30}');
 
         $resolver = fn (): TenantResolver => $this->app->make(TenantResolver::class);
         $user = fn (): ?User => request()->user();
@@ -144,6 +168,20 @@ class AppServiceProvider extends ServiceProvider
         Route::bind('publicBusiness', fn (string $value) => $catalog()->business($value));
         Route::bind('publicBranch', fn (string $value) => $catalog()->branch($value));
         Route::bind('favoriteBusiness', fn (string $value) => $catalog()->favoriteTarget($value));
+
+        // Platform administration (docs/SUBSCRIPTIONS.md): any business, for
+        // platform admins only (the platform.admin middleware ran already;
+        // checked again here, so a binding never reveals a business).
+        Route::bind('billingBusiness', function (string $value) use ($user): Business {
+            if (! ($user()?->isPlatformAdmin() ?? false)) {
+                throw new BusinessNotFoundException;
+            }
+
+            return Business::query()->withTrashed()->where('public_id', $value)->first()
+                ?? throw new BusinessNotFoundException;
+        });
+        Route::bind('billingPlan', fn (string $value) => SubscriptionPlan::query()->with('prices')
+            ->where('code', $value)->firstOrFail());
 
         // The signed-in user's own push devices and notifications only.
         Route::bind('device', fn (string $value) => PushDevice::query()
@@ -241,12 +279,29 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(config('dory.rate_limits.discovery'))->by('discovery:'.$request->ip());
         });
 
-        // Push device registration, per user (or IP for guests).
         // Insights read up to two months of tickets: per user.
         RateLimiter::for('insights', function (Request $request) {
             return Limit::perMinute(30)->by('insights:'.($request->user()?->getAuthIdentifier() ?: $request->ip()));
         });
 
+        // Starting and checking online payments: each start opens a session
+        // with the payment provider. Per user.
+        RateLimiter::for('billing-checkout', function (Request $request) {
+            return Limit::perMinute(config('dory.rate_limits.billing_checkout', 10))
+                ->by('billing-checkout:'.($request->user()?->getAuthIdentifier() ?: $request->ip()));
+        });
+
+        // Payment provider notifications, per IP.
+        RateLimiter::for('billing-webhooks', function (Request $request) {
+            return Limit::perMinute(config('dory.rate_limits.billing_webhooks', 120))->by('billing-webhooks:'.$request->ip());
+        });
+
+        // The payment and return pages, per IP.
+        RateLimiter::for('billing-pages', function (Request $request) {
+            return Limit::perMinute(config('dory.rate_limits.billing_pages', 30))->by('billing-pages:'.$request->ip());
+        });
+
+        // Push device registration, per user (or IP for guests).
         RateLimiter::for('devices', function (Request $request) {
             return Limit::perMinute(config('dory.rate_limits.devices'))
                 ->by('devices:'.($request->user()?->getAuthIdentifier() ?: $request->ip()));

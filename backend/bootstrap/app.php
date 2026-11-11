@@ -3,6 +3,7 @@
 use App\Exceptions\ApiException;
 use App\Exceptions\ApiExceptionRenderer;
 use App\Http\Middleware\AssignRequestId;
+use App\Http\Middleware\EnsurePlatformAdmin;
 use App\Http\Middleware\EnsureTicketAccessToken;
 use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\ForceJsonResponse;
@@ -47,11 +48,14 @@ return Application::configure(basePath: dirname(__DIR__))
             'ticket.token' => EnsureTicketAccessToken::class,
             'guest.locale' => SetGuestLocale::class,
             'guest.form' => VerifyGuestFormSubmission::class,
+            'platform.admin' => EnsurePlatformAdmin::class,
         ]);
 
         // Suspended accounts are rejected right after authentication, before
         // route bindings look up any tenant data.
         $middleware->appendToPriorityList(AuthenticatesRequests::class, EnsureUserIsActive::class);
+        // Platform administration: refused before bindings look anything up.
+        $middleware->appendToPriorityList(EnsureUserIsActive::class, EnsurePlatformAdmin::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

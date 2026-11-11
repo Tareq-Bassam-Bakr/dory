@@ -76,6 +76,7 @@ final class ApiResponse
         ?array $errors = null,
         array $headers = [],
         ?array $debug = null,
+        ?array $details = null,
     ): JsonResponse {
         $payload = [
             'success' => false,
@@ -83,6 +84,11 @@ final class ApiResponse
             'code' => $code,
             'errors' => $errors,
         ];
+
+        // Machine-readable context, e.g. a plan limit and its numbers.
+        if ($details !== null) {
+            $payload['details'] = $details;
+        }
 
         if ($debug !== null) {
             $payload['debug'] = $debug;

@@ -88,7 +88,7 @@ class BusinessCreationTest extends TestCase
             ->assertJsonPath('data.permissions', [
                 'update' => true, 'change_status' => true, 'delete' => true,
                 'create_branches' => true, 'view_members' => true, 'manage_members' => true,
-                'view_insights' => true,
+                'view_insights' => true, 'view_subscription' => true, 'manage_billing' => true,
             ])
             ->assertJsonPath('data.stats', ['branches' => 0, 'services' => 0, 'members' => 1]);
 

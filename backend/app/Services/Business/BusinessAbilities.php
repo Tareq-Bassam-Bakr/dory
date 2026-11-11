@@ -21,6 +21,9 @@ use App\Models\QueueStaffAssignment;
  * - Manager with "selected" access (branch manager): only the assigned
  *   branches and their services. Cannot create or delete branches.
  * - Employee: read-only, within their branch access.
+ * - Billing (docs/SUBSCRIPTIONS.md): the subscription belongs to the
+ *   business. Only the owner manages it and sees billing history; managers
+ *   see the plan and its usage, so they understand a limit.
  *
  * Writes are refused while the business does not accept changes
  * (suspended by the platform).
@@ -96,6 +99,30 @@ final readonly class BusinessAbilities
     public function canViewInsights(): bool
     {
         return $this->isOwner() || $this->hasRole(BusinessRole::Manager);
+    }
+
+    /**
+     * The plan, its limits and usage: owners and managers.
+     */
+    public function canViewSubscription(): bool
+    {
+        return $this->isOwner() || $this->hasRole(BusinessRole::Manager);
+    }
+
+    /**
+     * Billing history: the owner.
+     */
+    public function canViewBilling(): bool
+    {
+        return $this->isOwner();
+    }
+
+    /**
+     * Choosing, paying, changing and cancelling plans: the owner.
+     */
+    public function canManageBilling(): bool
+    {
+        return $this->acceptsChanges() && $this->isOwner();
     }
 
     public function canViewBranch(Branch $branch): bool
@@ -178,6 +205,8 @@ final readonly class BusinessAbilities
             'view_members' => $this->canViewMembers(),
             'manage_members' => $this->canManageMembers(),
             'view_insights' => $this->canViewInsights(),
+            'view_subscription' => $this->canViewSubscription(),
+            'manage_billing' => $this->canManageBilling(),
         ];
     }
 
