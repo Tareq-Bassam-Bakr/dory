@@ -2,13 +2,13 @@
 
 Production targets MySQL 8.4 LTS; local development uses XAMPP's MariaDB 10.4.
 
-## Status (2026-11-09, end of Phase 07)
+## Status (2026-11-11, end of Phase 08)
 
 | Database | How | Result |
 |---|---|---|
-| SQLite (in memory) | `composer test` | ✅ 654 passed, 9 skipped (tests that need MySQL/MariaDB) |
-| MariaDB 10.4 (XAMPP) | `composer test:mariadb` | ✅ 663 passed, including all 8 concurrency tests and the full migration rollback test |
-| **MySQL 8.4.13 LTS** (local, see below) | `composer test:mysql` | ✅ **663 passed** (5708 assertions), including all 8 multi-process concurrency tests and the full migration rollback test (with the four Phase 06 migrations) |
+| SQLite (in memory) | `composer test` | ✅ 722 passed, 9 skipped (tests that need MySQL/MariaDB) |
+| MariaDB 10.4 (XAMPP) | `composer test:mariadb` | ✅ 731 passed, including all 8 concurrency tests and the full migration rollback test |
+| **MySQL 8.4.13 LTS** (local, see below) | `composer test:mysql` | ✅ **731 passed** (6553 assertions), including all 8 multi-process concurrency tests and the full migration rollback test (with the three Phase 08 billing migrations) |
 | MySQL 8.4 in GitHub Actions | `.github/workflows/backend-tests.yml`, job `mysql84` | ⚠️ not run: every run of this private repository still ends in `startup_failure` with zero jobs, which points to an account-level Actions setting (minutes, spending limit or verification), not to the workflow |
 
 Migrations on MySQL 8.4: `migrate:fresh` → `migrate:rollback --step=6` (the
@@ -56,6 +56,14 @@ MariaDB 10.4 has `explicit_defaults_for_timestamp` off, so it adds
 MySQL 8.4 has it on and never did this. Passing on one engine did not reveal the
 problem on the other: it was found in Phase 05, by looking at a real ticket. See
 [QUEUE_DATABASE_SCHEMA.md](QUEUE_DATABASE_SCHEMA.md#timestamps-that-must-not-move).
+
+It came back in Phase 08: the billing tables' required timestamps
+(`issued_at`, `expires_at`, `received_at`, `occurred_at`) had no default.
+MariaDB refused to create the invoices table (a later NOT NULL timestamp gets an
+invalid zero default), and would have made the others update themselves. SQLite
+accepted all of it; the MariaDB run caught it. Every new NOT NULL timestamp
+therefore uses `->useCurrent()`, and `TimestampColumnsTest` checks the whole
+schema on MySQL and MariaDB.
 
 ## The local test server
 

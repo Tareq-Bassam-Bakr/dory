@@ -52,10 +52,11 @@ class ApiException implements Exception {
     this.code,
     this.message,
     this.fieldErrors = const <String, List<String>>{},
+    this.details = const <String, Object?>{},
   });
 
   /// Maps a Dio failure, reading the error envelope when there is one:
-  /// `{ success: false, message, code, errors }`.
+  /// `{ success: false, message, code, errors, details? }`.
   factory ApiException.fromDio(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
@@ -82,12 +83,14 @@ class ApiException implements Exception {
     String? code;
     String? message;
     Map<String, List<String>> fieldErrors = const <String, List<String>>{};
+    JsonMap details = const <String, Object?>{};
 
     final Object? body = response.data;
     if (body is Map) {
       final JsonMap json = asJsonMap(body);
       code = json.stringOrNull('code');
       message = json.stringOrNull('message');
+      details = json.objectOrNull('details') ?? const <String, Object?>{};
       final Object? errors = json['errors'];
       if (errors is Map) {
         fieldErrors = <String, List<String>>{
@@ -107,6 +110,7 @@ class ApiException implements Exception {
       code: code,
       message: message,
       fieldErrors: fieldErrors,
+      details: details,
     );
   }
 
@@ -134,6 +138,10 @@ class ApiException implements Exception {
 
   /// Validation messages per field (422 only).
   final Map<String, List<String>> fieldErrors;
+
+  /// Machine-readable context of some errors, e.g. a plan limit:
+  /// `{limit: branches, max: 1, used: 1, plan: free}`.
+  final JsonMap details;
 
   /// The first validation message for [field], if any.
   String? firstErrorFor(String field) {

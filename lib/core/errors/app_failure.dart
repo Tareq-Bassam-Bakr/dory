@@ -23,6 +23,7 @@ class AppFailure implements Exception {
     this.kind, {
     this.code,
     this.fieldErrors = const <String, String>{},
+    this.details = const <String, Object?>{},
   });
 
   factory AppFailure.fromApi(ApiException error) {
@@ -46,6 +47,7 @@ class AppFailure implements Exception {
             in error.fieldErrors.entries)
           if (entry.value.isNotEmpty) entry.key: entry.value.first,
       },
+      details: error.details,
     );
   }
 
@@ -67,6 +69,16 @@ class AppFailure implements Exception {
 
   /// First server message per field, for validation failures.
   final Map<String, String> fieldErrors;
+
+  /// The API's machine-readable context, e.g. for `plan_limit_reached`:
+  /// `{limit: branches, max: 1, used: 1, plan: free}`.
+  final Map<String, Object?> details;
+
+  /// The business's plan does not allow adding one more (docs/SUBSCRIPTIONS.md).
+  bool get isPlanLimit => code == 'plan_limit_reached';
+
+  /// The business's plan does not include the feature.
+  bool get isFeatureNotInPlan => code == 'feature_not_in_plan';
 
   @override
   String toString() => 'AppFailure(${kind.name}, $code)';

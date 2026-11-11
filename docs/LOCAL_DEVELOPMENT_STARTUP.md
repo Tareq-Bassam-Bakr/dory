@@ -8,6 +8,7 @@ everything, then opens one window per service:
 | DORY-API | `php artisan serve` on <http://127.0.0.1:8000> |
 | DORY-REVERB | `php artisan reverb:start` on `ws://127.0.0.1:8080` |
 | DORY-QUEUE | `php artisan queue:work --queue=realtime,notifications,default` |
+| DORY-SCHEDULER | `php artisan schedule:work`: `billing:sweep` every 15 minutes ([SUBSCRIPTIONS.md](SUBSCRIPTIONS.md#scheduler)) |
 | DORY-FLUTTER | `flutter run` on the connected phone or emulator |
 
 To stop, double-click **`stop_dory.bat`**. It stops exactly these windows
@@ -63,7 +64,10 @@ so no system setting changes.
 7. **Reverb:** a real WebSocket handshake with the app key must answer
    `pusher:connection_established`.
 8. **Worker:** if a `queue:work` started outside the script is already
-   running, no second one is started.
+   running, no second one is started. The same holds for the scheduler
+   (`schedule:work`). Locally the scheduler only runs `billing:sweep`, which
+   updates subscription records and never deletes anything; the cleanup jobs
+   that delete expired tokens run in production only.
 9. **Device:**
    - **One USB phone:** `adb reverse` for 8000 and 8080, checked with
      `adb reverse --list`. The app uses `127.0.0.1`.
@@ -124,4 +128,5 @@ reverse` rules the start added are removed; the adb server keeps running.
 | adb reverse did not take | unplug and replug the phone |
 | Screens say "every 15 seconds" instead of "Live" / "Updates arrive as soon as the business acts" | the app has no Reverb connection: is DORY-REVERB running, and was the app started by `start_dory.bat` (it passes the Reverb key)? |
 | "Live", but changes arrive only when you pull to refresh | DORY-QUEUE is not running: broadcasts wait in the queue. Run `start_dory.bat` again: it restarts a stopped worker |
+| DORY-SCHEDULER says "The billing tables are not migrated yet" | the Phase 08 migrations are pending: start again and answer the migrations question (back up first). Plans are already right without the scheduler |
 | The first screens take long or say DORY cannot be reached, right after the app was built | the PHP development server is slow on its first requests after a build. Wait a moment and retry |

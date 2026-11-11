@@ -97,6 +97,8 @@ class BusinessPermissions {
     this.viewMembers = false,
     this.manageMembers = false,
     this.viewInsights = false,
+    this.viewSubscription = false,
+    this.manageBilling = false,
   });
 
   final bool update;
@@ -108,4 +110,10 @@ class BusinessPermissions {
 
   /// Insights and peak times (owners and managers).
   final bool viewInsights;
+
+  /// The plan, its limits and usage (owners and managers).
+  final bool viewSubscription;
+
+  /// Buying, changing and cancelling plans (the owner).
+  final bool manageBilling;
 }

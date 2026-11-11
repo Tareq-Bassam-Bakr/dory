@@ -4009,6 +4009,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Usually {low} to {high} min'**
   String ticketWaitRange(int low, int high);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Plan and billing'**
+  String get subscriptionEntry;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Plan and billing'**
+  String get subscriptionTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Current plan'**
+  String get subscriptionCurrentPlan;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Free trial'**
+  String get subscriptionStatusTrialing;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get subscriptionStatusActive;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Payment due'**
+  String get subscriptionStatusPastDue;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get subscriptionStatusExpired;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Your trial ends on {date}.'**
+  String subscriptionTrialEnds(String date);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{Ends today} =1{1 day left} other{{count} days left}}'**
+  String subscriptionDaysLeft(int count);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Paid until {date}'**
+  String subscriptionPaidUntil(String date);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Pay again before this date to continue. Plans never renew or charge on their own.'**
+  String get subscriptionRenewalNote;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Ends on {date} and will not continue.'**
+  String subscriptionEndsOn(String date);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The paid period has ended. Pay by {date} to keep this plan; after that the business moves to the Free plan.'**
+  String subscriptionGrace(String date);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The {plan} plan has ended. The business is on the Free plan, and nothing was deleted.'**
+  String subscriptionExpiredNotice(String plan);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Moves to {plan} on {date}.'**
+  String subscriptionScheduled(String plan, String date);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'This plan is provided by DORY.'**
+  String get subscriptionComplimentary;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Plans are switched off: every feature is available without limits.'**
+  String get subscriptionBillingOff;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Usage'**
+  String get subscriptionUsageTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{used} of {max}'**
+  String subscriptionUsageOf(int used, int max);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{used} · unlimited'**
+  String subscriptionUsageUnlimited(int used);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Team seats include the owner and pending invitations.'**
+  String get subscriptionUsageMembersHint;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Over this plan\'s limit: everything keeps working, but nothing more can be added.'**
+  String get subscriptionOverLimit;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Included in this plan'**
+  String get subscriptionIncludedTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Branches'**
+  String get planLimitBranchesLabel;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Queues'**
+  String get planLimitQueuesLabel;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Team seats'**
+  String get planLimitMembersLabel;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Queues, QR joining, live updates and notifications'**
+  String get planFeatureEssentials;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Insights and peak times'**
+  String get planFeatureInsights;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Insights for each branch'**
+  String get planFeatureBranchInsights;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'See plans'**
+  String get subscriptionSeePlans;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Billing history'**
+  String get subscriptionHistory;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel subscription'**
+  String get subscriptionCancel;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'End the trial'**
+  String get subscriptionEndTrial;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel the subscription?'**
+  String get subscriptionCancelTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The plan stays until {date}. Then the business moves to the Free plan. Nothing is deleted.'**
+  String subscriptionCancelMessage(String date);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The business moves to the Free plan now. Nothing is deleted.'**
+  String get subscriptionCancelNowMessage;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription canceled'**
+  String get subscriptionCanceled;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this plan'**
+  String get subscriptionResume;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Your plan continues'**
+  String get subscriptionResumed;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Only the business owner can change the plan.'**
+  String get subscriptionOwnerOnly;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Plans'**
+  String get plansTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get plansMonthly;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly'**
+  String get plansYearly;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} / month'**
+  String plansPerMonth(String amount);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{amount} / year'**
+  String plansPerYear(String amount);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get plansFreePrice;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Current plan'**
+  String get plansCurrentBadge;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Choose {plan}'**
+  String plansChoose(String plan);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Pay for the next period'**
+  String get plansRenew;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to {plan} at renewal'**
+  String plansSwitchLater(String plan);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Not offered for this billing period'**
+  String get plansNotForPeriod;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to {plan}?'**
+  String plansDowngradeTitle(String plan);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'You keep your current plan until {date}, then {plan} starts. Nothing is deleted: anything beyond {plan}\'s limits keeps working, but you cannot add more.'**
+  String plansDowngradeMessage(String plan, String date);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The change is scheduled'**
+  String get plansDowngradeScheduled;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{New businesses try {plan} free for 1 day.} other{New businesses try {plan} free for {days} days.}}'**
+  String plansTrialNote(int days, String plan);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Customers never pay: finding businesses and joining queues are always free.'**
+  String get plansCustomersFree;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Compare plans'**
+  String get plansCompareTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited'**
+  String get plansUnlimited;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Included'**
+  String get plansIncluded;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Not included'**
+  String get plansNotIncluded;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Save {percent}% with yearly billing'**
+  String plansYearlySave(int percent);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Pay by transfer or cash'**
+  String get paymentOfflineTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Online card payment is not available yet. To get {plan} ({amount}), contact DORY support and pay by bank transfer, cash or mobile wallet. The plan starts as soon as the payment is recorded.'**
+  String paymentOfflineMessage(String plan, String amount);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Complete the payment'**
+  String get paymentWaitingTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Pay on the secure page in your browser, then come back to DORY.'**
+  String get paymentWaitingMessage;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Check the payment'**
+  String get paymentCheck;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Payment received. Your plan is active.'**
+  String get paymentPaid;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'No payment is confirmed yet. If you paid, it can take a minute.'**
+  String get paymentPending;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The payment did not go through. Your plan was not changed.'**
+  String get paymentFailed;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'This payment expired. Start again when you are ready.'**
+  String get paymentExpired;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The payment page could not be opened.'**
+  String get paymentCouldNotOpen;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Billing history'**
+  String get billingHistoryTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'No payments yet.'**
+  String get billingHistoryEmpty;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get billingStatusPaid;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get billingStatusFailed;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Void'**
+  String get billingStatusVoid;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get billingStatusOpen;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{start} – {end}'**
+  String billingPeriodRange(String start, String end);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Card'**
+  String get billingMethodCard;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Bank transfer'**
+  String get billingMethodBankTransfer;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get billingMethodCash;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile wallet'**
+  String get billingMethodMobileWallet;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get billingMethodOther;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Plan limit reached'**
+  String get planLimitTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{max, plural, =1{This plan includes 1 branch. Upgrade to add more.} other{This plan includes up to {max} branches. Upgrade to add more.}}'**
+  String planLimitBranches(int max);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{max, plural, =1{This plan includes 1 queue. Upgrade to add more.} other{This plan includes up to {max} queues. Upgrade to add more.}}'**
+  String planLimitQueues(int max);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{max, plural, =1{This plan includes 1 team seat. Upgrade to add more.} other{This plan includes up to {max} team seats, counting the owner and pending invitations. Upgrade to add more.}}'**
+  String planLimitMembers(int max);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get planLimitNotNow;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Not included in your plan'**
+  String get planLockedTitle;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Insights and peak times are part of the paid plans. They are computed from your own queue records.'**
+  String get planLockedInsights;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Insights for one branch on its own come with a bigger plan.'**
+  String get planLockedBranchInsights;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is not included in the current plan.'**
+  String get errorPlanFeature;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Online payment is not available yet. Contact DORY support to pay another way.'**
+  String get errorPaymentsUnavailable;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The payment service could not be reached. Please try again later.'**
+  String get errorPaymentProvider;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'This plan or price is not available.'**
+  String get errorPlanNotAvailable;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'This plan change is not possible right now.'**
+  String get errorPlanChange;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'A smaller plan starts at the end of the paid period. Schedule the switch instead.'**
+  String get errorPlanChangeUseDowngrade;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'This plan is managed by DORY support.'**
+  String get errorPlanChangeManaged;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{{plan} trial: ends today} =1{{plan} trial: 1 day left} other{{plan} trial: {count} days left}}'**
+  String subscriptionBannerTrial(int count, String plan);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Payment due: your plan stays until {date}.'**
+  String subscriptionBannerPastDue(String date);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The {plan} plan ended. The business is on the Free plan.'**
+  String subscriptionBannerExpired(String plan);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Plan: {plan} · {status}'**
+  String subscriptionTileSubtitle(String plan, String status);
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'Everything you already have keeps working.'**
+  String get planLimitKeepsWorking;
+
+  /// Subscriptions (Phase 08)
+  ///
+  /// In en, this message translates to:
+  /// **'The business has no free team seat on its current plan. Ask the owner to upgrade, then accept again.'**
+  String get invitationNoSeat;
 }
 
 class _AppLocalizationsDelegate

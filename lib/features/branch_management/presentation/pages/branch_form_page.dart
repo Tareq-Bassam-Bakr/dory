@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dory_app/app/localization/l10n.dart';
 import 'package:dory_app/app/router/app_routes.dart';
 import 'package:dory_app/app/theme/theme.dart';
@@ -9,6 +11,7 @@ import 'package:dory_app/features/branch_management/presentation/widgets/branch_
 import 'package:dory_app/features/businesses/domain/entities/business.dart';
 import 'package:dory_app/features/businesses/domain/entities/business_draft.dart';
 import 'package:dory_app/features/businesses/presentation/providers/business_providers.dart';
+import 'package:dory_app/features/subscriptions/presentation/widgets/subscription_widgets.dart';
 import 'package:dory_app/shared/components/async_value_view.dart';
 import 'package:dory_app/shared/components/confirm_dialog.dart';
 import 'package:dory_app/shared/components/failure_message.dart';
@@ -132,6 +135,15 @@ class _BranchFormState extends ConsumerState<BranchForm> {
     } on AppFailure catch (failure) {
       if (mounted) {
         setState(() => _failure = failure);
+        if (failure.isPlanLimit) {
+          unawaited(
+            showPlanLimitDialog(
+              context,
+              failure,
+              businessId: widget.businessId,
+            ),
+          );
+        }
       }
     } finally {
       if (mounted) {

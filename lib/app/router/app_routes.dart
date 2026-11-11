@@ -73,6 +73,12 @@ abstract final class AppRoutes {
   static String team(String businessId) => '${business(businessId)}/team';
   static String businessInsights(String businessId) =>
       '${business(businessId)}/insights';
+  static String subscription(String businessId) =>
+      '${business(businessId)}/subscription';
+  static String subscriptionPlans(String businessId) =>
+      '${subscription(businessId)}/plans';
+  static String billingHistory(String businessId) =>
+      '${subscription(businessId)}/history';
   static String teamInvite(String businessId) => '${team(businessId)}/invite';
 
   // Queue management, inside the queues tab.

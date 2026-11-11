@@ -2265,4 +2265,429 @@ class AppLocalizationsEn extends AppLocalizations {
   String ticketWaitRange(int low, int high) {
     return 'Usually $low to $high min';
   }
+
+  @override
+  String get subscriptionEntry => 'Plan and billing';
+
+  @override
+  String get subscriptionTitle => 'Plan and billing';
+
+  @override
+  String get subscriptionCurrentPlan => 'Current plan';
+
+  @override
+  String get subscriptionStatusTrialing => 'Free trial';
+
+  @override
+  String get subscriptionStatusActive => 'Active';
+
+  @override
+  String get subscriptionStatusPastDue => 'Payment due';
+
+  @override
+  String get subscriptionStatusExpired => 'Ended';
+
+  @override
+  String subscriptionTrialEnds(String date) {
+    return 'Your trial ends on $date.';
+  }
+
+  @override
+  String subscriptionDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days left',
+      one: '1 day left',
+      zero: 'Ends today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subscriptionPaidUntil(String date) {
+    return 'Paid until $date';
+  }
+
+  @override
+  String get subscriptionRenewalNote =>
+      'Pay again before this date to continue. Plans never renew or charge on their own.';
+
+  @override
+  String subscriptionEndsOn(String date) {
+    return 'Ends on $date and will not continue.';
+  }
+
+  @override
+  String subscriptionGrace(String date) {
+    return 'The paid period has ended. Pay by $date to keep this plan; after that the business moves to the Free plan.';
+  }
+
+  @override
+  String subscriptionExpiredNotice(String plan) {
+    return 'The $plan plan has ended. The business is on the Free plan, and nothing was deleted.';
+  }
+
+  @override
+  String subscriptionScheduled(String plan, String date) {
+    return 'Moves to $plan on $date.';
+  }
+
+  @override
+  String get subscriptionComplimentary => 'This plan is provided by DORY.';
+
+  @override
+  String get subscriptionBillingOff =>
+      'Plans are switched off: every feature is available without limits.';
+
+  @override
+  String get subscriptionUsageTitle => 'Usage';
+
+  @override
+  String subscriptionUsageOf(int used, int max) {
+    return '$used of $max';
+  }
+
+  @override
+  String subscriptionUsageUnlimited(int used) {
+    return '$used · unlimited';
+  }
+
+  @override
+  String get subscriptionUsageMembersHint =>
+      'Team seats include the owner and pending invitations.';
+
+  @override
+  String get subscriptionOverLimit =>
+      'Over this plan\'s limit: everything keeps working, but nothing more can be added.';
+
+  @override
+  String get subscriptionIncludedTitle => 'Included in this plan';
+
+  @override
+  String get planLimitBranchesLabel => 'Branches';
+
+  @override
+  String get planLimitQueuesLabel => 'Queues';
+
+  @override
+  String get planLimitMembersLabel => 'Team seats';
+
+  @override
+  String get planFeatureEssentials =>
+      'Queues, QR joining, live updates and notifications';
+
+  @override
+  String get planFeatureInsights => 'Insights and peak times';
+
+  @override
+  String get planFeatureBranchInsights => 'Insights for each branch';
+
+  @override
+  String get subscriptionSeePlans => 'See plans';
+
+  @override
+  String get subscriptionHistory => 'Billing history';
+
+  @override
+  String get subscriptionCancel => 'Cancel subscription';
+
+  @override
+  String get subscriptionEndTrial => 'End the trial';
+
+  @override
+  String get subscriptionCancelTitle => 'Cancel the subscription?';
+
+  @override
+  String subscriptionCancelMessage(String date) {
+    return 'The plan stays until $date. Then the business moves to the Free plan. Nothing is deleted.';
+  }
+
+  @override
+  String get subscriptionCancelNowMessage =>
+      'The business moves to the Free plan now. Nothing is deleted.';
+
+  @override
+  String get subscriptionCanceled => 'Subscription canceled';
+
+  @override
+  String get subscriptionResume => 'Keep this plan';
+
+  @override
+  String get subscriptionResumed => 'Your plan continues';
+
+  @override
+  String get subscriptionOwnerOnly =>
+      'Only the business owner can change the plan.';
+
+  @override
+  String get plansTitle => 'Plans';
+
+  @override
+  String get plansMonthly => 'Monthly';
+
+  @override
+  String get plansYearly => 'Yearly';
+
+  @override
+  String plansPerMonth(String amount) {
+    return '$amount / month';
+  }
+
+  @override
+  String plansPerYear(String amount) {
+    return '$amount / year';
+  }
+
+  @override
+  String get plansFreePrice => 'Free';
+
+  @override
+  String get plansCurrentBadge => 'Current plan';
+
+  @override
+  String plansChoose(String plan) {
+    return 'Choose $plan';
+  }
+
+  @override
+  String get plansRenew => 'Pay for the next period';
+
+  @override
+  String plansSwitchLater(String plan) {
+    return 'Switch to $plan at renewal';
+  }
+
+  @override
+  String get plansNotForPeriod => 'Not offered for this billing period';
+
+  @override
+  String plansDowngradeTitle(String plan) {
+    return 'Switch to $plan?';
+  }
+
+  @override
+  String plansDowngradeMessage(String plan, String date) {
+    return 'You keep your current plan until $date, then $plan starts. Nothing is deleted: anything beyond $plan\'s limits keeps working, but you cannot add more.';
+  }
+
+  @override
+  String get plansDowngradeScheduled => 'The change is scheduled';
+
+  @override
+  String plansTrialNote(int days, String plan) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'New businesses try $plan free for $days days.',
+      one: 'New businesses try $plan free for 1 day.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get plansCustomersFree =>
+      'Customers never pay: finding businesses and joining queues are always free.';
+
+  @override
+  String get plansCompareTitle => 'Compare plans';
+
+  @override
+  String get plansUnlimited => 'Unlimited';
+
+  @override
+  String get plansIncluded => 'Included';
+
+  @override
+  String get plansNotIncluded => 'Not included';
+
+  @override
+  String plansYearlySave(int percent) {
+    return 'Save $percent% with yearly billing';
+  }
+
+  @override
+  String get paymentOfflineTitle => 'Pay by transfer or cash';
+
+  @override
+  String paymentOfflineMessage(String plan, String amount) {
+    return 'Online card payment is not available yet. To get $plan ($amount), contact DORY support and pay by bank transfer, cash or mobile wallet. The plan starts as soon as the payment is recorded.';
+  }
+
+  @override
+  String get paymentWaitingTitle => 'Complete the payment';
+
+  @override
+  String get paymentWaitingMessage =>
+      'Pay on the secure page in your browser, then come back to DORY.';
+
+  @override
+  String get paymentCheck => 'Check the payment';
+
+  @override
+  String get paymentPaid => 'Payment received. Your plan is active.';
+
+  @override
+  String get paymentPending =>
+      'No payment is confirmed yet. If you paid, it can take a minute.';
+
+  @override
+  String get paymentFailed =>
+      'The payment did not go through. Your plan was not changed.';
+
+  @override
+  String get paymentExpired =>
+      'This payment expired. Start again when you are ready.';
+
+  @override
+  String get paymentCouldNotOpen => 'The payment page could not be opened.';
+
+  @override
+  String get billingHistoryTitle => 'Billing history';
+
+  @override
+  String get billingHistoryEmpty => 'No payments yet.';
+
+  @override
+  String get billingStatusPaid => 'Paid';
+
+  @override
+  String get billingStatusFailed => 'Failed';
+
+  @override
+  String get billingStatusVoid => 'Void';
+
+  @override
+  String get billingStatusOpen => 'Open';
+
+  @override
+  String billingPeriodRange(String start, String end) {
+    return '$start – $end';
+  }
+
+  @override
+  String get billingMethodCard => 'Card';
+
+  @override
+  String get billingMethodBankTransfer => 'Bank transfer';
+
+  @override
+  String get billingMethodCash => 'Cash';
+
+  @override
+  String get billingMethodMobileWallet => 'Mobile wallet';
+
+  @override
+  String get billingMethodOther => 'Other';
+
+  @override
+  String get planLimitTitle => 'Plan limit reached';
+
+  @override
+  String planLimitBranches(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: 'This plan includes up to $max branches. Upgrade to add more.',
+      one: 'This plan includes 1 branch. Upgrade to add more.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planLimitQueues(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: 'This plan includes up to $max queues. Upgrade to add more.',
+      one: 'This plan includes 1 queue. Upgrade to add more.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planLimitMembers(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other:
+          'This plan includes up to $max team seats, counting the owner and pending invitations. Upgrade to add more.',
+      one: 'This plan includes 1 team seat. Upgrade to add more.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planLimitNotNow => 'Not now';
+
+  @override
+  String get planLockedTitle => 'Not included in your plan';
+
+  @override
+  String get planLockedInsights =>
+      'Insights and peak times are part of the paid plans. They are computed from your own queue records.';
+
+  @override
+  String get planLockedBranchInsights =>
+      'Insights for one branch on its own come with a bigger plan.';
+
+  @override
+  String get errorPlanFeature =>
+      'This feature is not included in the current plan.';
+
+  @override
+  String get errorPaymentsUnavailable =>
+      'Online payment is not available yet. Contact DORY support to pay another way.';
+
+  @override
+  String get errorPaymentProvider =>
+      'The payment service could not be reached. Please try again later.';
+
+  @override
+  String get errorPlanNotAvailable => 'This plan or price is not available.';
+
+  @override
+  String get errorPlanChange => 'This plan change is not possible right now.';
+
+  @override
+  String get errorPlanChangeUseDowngrade =>
+      'A smaller plan starts at the end of the paid period. Schedule the switch instead.';
+
+  @override
+  String get errorPlanChangeManaged => 'This plan is managed by DORY support.';
+
+  @override
+  String subscriptionBannerTrial(int count, String plan) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$plan trial: $count days left',
+      one: '$plan trial: 1 day left',
+      zero: '$plan trial: ends today',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subscriptionBannerPastDue(String date) {
+    return 'Payment due: your plan stays until $date.';
+  }
+
+  @override
+  String subscriptionBannerExpired(String plan) {
+    return 'The $plan plan ended. The business is on the Free plan.';
+  }
+
+  @override
+  String subscriptionTileSubtitle(String plan, String status) {
+    return 'Plan: $plan · $status';
+  }
+
+  @override
+  String get planLimitKeepsWorking =>
+      'Everything you already have keeps working.';
+
+  @override
+  String get invitationNoSeat =>
+      'The business has no free team seat on its current plan. Ask the owner to upgrade, then accept again.';
 }

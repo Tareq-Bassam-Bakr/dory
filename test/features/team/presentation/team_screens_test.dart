@@ -220,6 +220,45 @@ void main() {
       expect(find.byType(BusinessOverviewPage), findsOneWidget);
     });
 
+    testWidgets('a business without a free seat is explained to the invitee', (
+      tester,
+    ) async {
+      http
+        ..reply(
+          'GET',
+          '/invitations/$token',
+          FakeResponse.ok(previewJson(canRespond: true)),
+        )
+        ..reply(
+          'POST',
+          '/invitations/$token/accept',
+          const FakeResponse(403, <String, Object?>{
+            'success': false,
+            'message':
+                'This plan includes up to 3 team seats. Upgrade to add more',
+            'code': 'plan_limit_reached',
+            'errors': null,
+            'details': <String, Object?>{
+              'limit': 'members',
+              'max': 3,
+              'used': 3,
+              'plan': 'free',
+            },
+          }),
+        );
+
+      await pumpAppAt(tester, AppRoutes.invitation(token), http: http);
+      await tester.tap(find.text('Accept and join'));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text(
+          'The business has no free team seat on its current plan. Ask the owner to upgrade, then accept again.',
+        ),
+        findsOneWidget,
+      );
+    });
+
     testWidgets('an expired link is explained', (tester) async {
       http.reply(
         'GET',

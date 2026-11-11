@@ -1,9 +1,11 @@
 import 'package:dory_app/app/localization/l10n.dart';
 import 'package:dory_app/app/theme/theme.dart';
+import 'package:dory_app/core/errors/app_failure.dart';
 import 'package:dory_app/core/widgets/widgets.dart';
 import 'package:dory_app/features/analytics/domain/business_intelligence.dart';
 import 'package:dory_app/features/analytics/presentation/providers/intelligence_providers.dart';
 import 'package:dory_app/features/queues/presentation/widgets/queue_labels.dart';
+import 'package:dory_app/features/subscriptions/presentation/widgets/subscription_widgets.dart';
 import 'package:dory_app/shared/components/async_value_view.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +26,20 @@ class BusinessInsightsPage extends ConsumerWidget {
     final AsyncValue<InsightsReport> insights = ref.watch(
       insightsProvider(businessId),
     );
+
+    // The plan has no insights (docs/SUBSCRIPTIONS.md): say so and offer
+    // the plans, instead of an error. Peak times are not asked for then.
+    final Object? error = insights.error;
+    if (error is AppFailure && error.isFeatureNotInPlan) {
+      return DoryPageScaffold(
+        title: l10n.insightsTitle,
+        body: PlanLockedView(
+          businessId: businessId,
+          message: l10n.planLockedInsights,
+        ),
+      );
+    }
+
     final AsyncValue<PeakTimesReport> peaks = ref.watch(
       peakTimesProvider(businessId),
     );

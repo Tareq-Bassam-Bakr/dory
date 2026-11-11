@@ -8,6 +8,9 @@ import 'package:dory_app/features/businesses/domain/entities/business.dart';
 import 'package:dory_app/features/businesses/domain/entities/business_draft.dart';
 import 'package:dory_app/features/businesses/presentation/providers/business_providers.dart';
 import 'package:dory_app/features/businesses/presentation/widgets/business_labels.dart';
+import 'package:dory_app/features/subscriptions/domain/subscription.dart';
+import 'package:dory_app/features/subscriptions/presentation/providers/subscription_providers.dart';
+import 'package:dory_app/features/subscriptions/presentation/widgets/subscription_widgets.dart';
 import 'package:dory_app/shared/components/async_value_view.dart';
 import 'package:dory_app/shared/components/category_icon.dart';
 import 'package:dory_app/shared/components/confirm_dialog.dart';
@@ -104,6 +107,12 @@ class _OverviewState extends ConsumerState<_Overview> {
     final BusinessPermissions can = business.permissions;
     final String language = Localizations.localeOf(context).languageCode;
     final BusinessStats? stats = business.stats;
+    final BusinessSubscription? subscription = can.viewSubscription
+        ? switch (ref.watch(subscriptionProvider(business.id))) {
+            AsyncData<BusinessSubscription>(:final value) => value,
+            _ => null,
+          }
+        : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -159,6 +168,11 @@ class _OverviewState extends ConsumerState<_Overview> {
             tone: DoryNoticeTone.warning,
           ),
         ],
+        if (subscription != null)
+          SubscriptionAttention(
+            businessId: business.id,
+            subscription: subscription,
+          ),
         if (stats != null) ...<Widget>[
           const SizedBox(height: AppSpacing.lg),
           Row(
@@ -222,6 +236,21 @@ class _OverviewState extends ConsumerState<_Overview> {
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () =>
                       context.go(AppRoutes.businessInsights(business.id)),
+                ),
+              if (can.viewSubscription)
+                ListTile(
+                  leading: const Icon(Icons.workspace_premium_outlined),
+                  title: Text(l10n.subscriptionEntry),
+                  subtitle: subscription == null
+                      ? null
+                      : Text(
+                          l10n.subscriptionTileSubtitle(
+                            subscription.plan.name.of(language),
+                            subscriptionStatusLabel(l10n, subscription.status),
+                          ),
+                        ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.go(AppRoutes.subscription(business.id)),
                 ),
               if (can.viewMembers)
                 ListTile(

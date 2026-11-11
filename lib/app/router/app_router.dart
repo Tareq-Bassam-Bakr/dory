@@ -39,6 +39,9 @@ import 'package:dory_app/features/queues/presentation/pages/session_tickets_page
 import 'package:dory_app/features/queues/presentation/pages/ticket_details_page.dart';
 import 'package:dory_app/features/services/presentation/pages/service_form_page.dart';
 import 'package:dory_app/features/services/presentation/pages/services_list_page.dart';
+import 'package:dory_app/features/subscriptions/presentation/pages/billing_history_page.dart';
+import 'package:dory_app/features/subscriptions/presentation/pages/plans_page.dart';
+import 'package:dory_app/features/subscriptions/presentation/pages/subscription_page.dart';
 import 'package:dory_app/features/team/presentation/pages/invitation_details_page.dart';
 import 'package:dory_app/features/team/presentation/pages/invite_member_page.dart';
 import 'package:dory_app/features/team/presentation/pages/team_members_page.dart';
@@ -304,6 +307,23 @@ List<RouteBase> _businessManagementRoutes() {
           path: 'insights',
           builder: (context, state) =>
               BusinessInsightsPage(businessId: business(state)),
+        ),
+        GoRoute(
+          path: 'subscription',
+          builder: (context, state) =>
+              SubscriptionPage(businessId: business(state)),
+          routes: <RouteBase>[
+            GoRoute(
+              path: 'plans',
+              builder: (context, state) =>
+                  PlansPage(businessId: business(state)),
+            ),
+            GoRoute(
+              path: 'history',
+              builder: (context, state) =>
+                  BillingHistoryPage(businessId: business(state)),
+            ),
+          ],
         ),
         GoRoute(
           path: 'team',

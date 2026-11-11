@@ -12,13 +12,21 @@ final Provider<IntelligenceRepository> intelligenceRepositoryProvider =
 
 /// Insights of a business (owners and managers; the server decides).
 final insightsProvider = FutureProvider.autoDispose
-    .family<InsightsReport, String>((ref, businessId) {
-      ref.watch(currentUserIdProvider);
-      return ref.watch(intelligenceRepositoryProvider).insights(businessId);
-    }, name: 'insightsProvider');
+    .family<InsightsReport, String>(
+      (ref, businessId) {
+        ref.watch(currentUserIdProvider);
+        return ref.watch(intelligenceRepositoryProvider).insights(businessId);
+      },
+      retry: noAutomaticRetry,
+      name: 'insightsProvider',
+    );
 
 final peakTimesProvider = FutureProvider.autoDispose
-    .family<PeakTimesReport, String>((ref, businessId) {
-      ref.watch(currentUserIdProvider);
-      return ref.watch(intelligenceRepositoryProvider).peakTimes(businessId);
-    }, name: 'peakTimesProvider');
+    .family<PeakTimesReport, String>(
+      (ref, businessId) {
+        ref.watch(currentUserIdProvider);
+        return ref.watch(intelligenceRepositoryProvider).peakTimes(businessId);
+      },
+      retry: noAutomaticRetry,
+      name: 'peakTimesProvider',
+    );

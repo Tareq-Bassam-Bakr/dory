@@ -13,10 +13,19 @@ This repository contains both parts of the product:
 | Mobile app | repository root (`lib/`, `android/`, `ios/`, …) | Flutter 3.44, Riverpod 3, GoRouter 18 |
 | API | [`backend/`](backend) | Laravel 13, PHP 8.4, MySQL/MariaDB, Sanctum |
 
-> **Status: Phase 07 complete.** Wait estimates use what is happening at the
+> **Status: Phase 08 complete.** Businesses have plans (Free, Pro, Business)
+> that limit what they can add (branches, queues, team seats) and unlock
+> insights, enforced by the server. Customers never pay. Plans, prices and
+> limits live in the database and are managed through an admin API. Payments
+> received by transfer, cash or mobile wallet are recorded by an admin; online
+> card payment through Mastercard Gateway is built but **not live**: it needs a
+> bank merchant account ([docs/SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md),
+> [docs/PAYMENTS.md](docs/PAYMENTS.md)).
+>
+> Phase 07 delivered intelligence: wait estimates use what is happening at the
 > counter, owners and managers see peak times and recommendations from their
-> own records, in English and Arabic. These are statistics and explicit rules,
-> with no external AI service ([docs/AI_ARCHITECTURE.md](docs/AI_ARCHITECTURE.md)).
+> own records. These are statistics and explicit rules, with no external AI
+> service ([docs/AI_ARCHITECTURE.md](docs/AI_ARCHITECTURE.md)).
 >
 > Phase 06 delivered real-time: queue changes reach tickets and staff
 > screens at once through Laravel Reverb (self-hosted WebSockets), with the
@@ -277,3 +286,11 @@ AI intelligence (Phase 07):
 | [AI_ARCHITECTURE.md](docs/AI_ARCHITECTURE.md) | Wait prediction, peak times, insights, adding a language model later |
 | [WAIT_TIME_ESTIMATION.md](docs/WAIT_TIME_ESTIMATION.md) | The estimate, its range and confidence |
 | [PHASE_07_REPORT.md](docs/PHASE_07_REPORT.md) | What Phase 07 delivered, test results, limitations |
+
+Subscriptions and payments (Phase 08):
+
+| Document | Contents |
+|---|---|
+| [SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md) | Plans and why these limits, lifecycle, entitlements, business and admin API |
+| [PAYMENTS.md](docs/PAYMENTS.md) | Provider evaluation, how a payment is verified, webhooks, security, setting up Mastercard Gateway |
+| [PHASE_08_REPORT.md](docs/PHASE_08_REPORT.md) | What Phase 08 delivered, test results, decisions and actions for the owner |

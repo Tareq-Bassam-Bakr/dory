@@ -1,3 +1,4 @@
+import 'package:dory_app/core/errors/app_failure.dart';
 import 'package:dory_app/core/network/api_client.dart';
 import 'package:dory_app/core/network/json.dart';
 import 'package:dory_app/features/analytics/domain/business_intelligence.dart';
@@ -9,15 +10,18 @@ class ApiIntelligenceRepository implements IntelligenceRepository {
   final ApiClient _api;
 
   @override
-  Future<InsightsReport> insights(String businessId) async => insightsFromJson(
-    (await _api.get('/businesses/$businessId/insights')).dataObject,
+  Future<InsightsReport> insights(String businessId) => AppFailure.guard(
+    () async => insightsFromJson(
+      (await _api.get('/businesses/$businessId/insights')).dataObject,
+    ),
   );
 
   @override
-  Future<PeakTimesReport> peakTimes(String businessId) async =>
-      peakTimesFromJson(
-        (await _api.get('/businesses/$businessId/peak-times')).dataObject,
-      );
+  Future<PeakTimesReport> peakTimes(String businessId) => AppFailure.guard(
+    () async => peakTimesFromJson(
+      (await _api.get('/businesses/$businessId/peak-times')).dataObject,
+    ),
+  );
 
   static InsightsReport insightsFromJson(JsonMap json) {
     final JsonMap metrics = json.object('metrics');

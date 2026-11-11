@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dory_app/app/localization/l10n.dart';
 import 'package:dory_app/app/router/app_routes.dart';
 import 'package:dory_app/app/theme/theme.dart';
@@ -6,6 +8,7 @@ import 'package:dory_app/core/widgets/widgets.dart';
 import 'package:dory_app/features/authentication/presentation/validation/auth_validators.dart';
 import 'package:dory_app/features/branch_management/domain/entities/branch.dart';
 import 'package:dory_app/features/branch_management/presentation/providers/branch_providers.dart';
+import 'package:dory_app/features/subscriptions/presentation/widgets/subscription_widgets.dart';
 import 'package:dory_app/features/team/domain/entities/team_entities.dart';
 import 'package:dory_app/features/team/presentation/providers/team_providers.dart';
 import 'package:dory_app/shared/components/failure_message.dart';
@@ -74,6 +77,15 @@ class _InviteMemberPageState extends ConsumerState<InviteMemberPage> {
     } on AppFailure catch (failure) {
       if (mounted) {
         setState(() => _failure = failure);
+        if (failure.isPlanLimit) {
+          unawaited(
+            showPlanLimitDialog(
+              context,
+              failure,
+              businessId: widget.businessId,
+            ),
+          );
+        }
       }
     } finally {
       if (mounted) {

@@ -2249,4 +2249,439 @@ class AppLocalizationsAr extends AppLocalizations {
   String ticketWaitRange(int low, int high) {
     return 'عادةً من $low إلى $high دقيقة';
   }
+
+  @override
+  String get subscriptionEntry => 'الخطة والفوترة';
+
+  @override
+  String get subscriptionTitle => 'الخطة والفوترة';
+
+  @override
+  String get subscriptionCurrentPlan => 'الخطة الحالية';
+
+  @override
+  String get subscriptionStatusTrialing => 'تجربة مجانية';
+
+  @override
+  String get subscriptionStatusActive => 'فعّالة';
+
+  @override
+  String get subscriptionStatusPastDue => 'الدفع مستحق';
+
+  @override
+  String get subscriptionStatusExpired => 'منتهية';
+
+  @override
+  String subscriptionTrialEnds(String date) {
+    return 'تنتهي تجربتك في $date.';
+  }
+
+  @override
+  String subscriptionDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'بقي $count يومًا',
+      few: 'بقيت $count أيام',
+      two: 'بقي يومان',
+      one: 'بقي يوم واحد',
+      zero: 'تنتهي اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subscriptionPaidUntil(String date) {
+    return 'مدفوعة حتى $date';
+  }
+
+  @override
+  String get subscriptionRenewalNote =>
+      'ادفع مجددًا قبل هذا التاريخ للاستمرار. لا تتجدّد الخطط ولا تُحصَّل أي مبالغ تلقائيًا.';
+
+  @override
+  String subscriptionEndsOn(String date) {
+    return 'تنتهي في $date ولن تستمر.';
+  }
+
+  @override
+  String subscriptionGrace(String date) {
+    return 'انتهت الفترة المدفوعة. ادفع قبل $date للاحتفاظ بهذه الخطة، وبعد ذلك تنتقل المنشأة إلى الخطة المجانية.';
+  }
+
+  @override
+  String subscriptionExpiredNotice(String plan) {
+    return 'انتهت خطة $plan. المنشأة الآن على الخطة المجانية، ولم يُحذف أي شيء.';
+  }
+
+  @override
+  String subscriptionScheduled(String plan, String date) {
+    return 'تنتقل إلى خطة $plan في $date.';
+  }
+
+  @override
+  String get subscriptionComplimentary => 'هذه الخطة مقدَّمة من DORY.';
+
+  @override
+  String get subscriptionBillingOff =>
+      'الخطط متوقفة حاليًا: جميع الميزات متاحة دون حدود.';
+
+  @override
+  String get subscriptionUsageTitle => 'الاستخدام';
+
+  @override
+  String subscriptionUsageOf(int used, int max) {
+    return '$used من $max';
+  }
+
+  @override
+  String subscriptionUsageUnlimited(int used) {
+    return '$used · بلا حدود';
+  }
+
+  @override
+  String get subscriptionUsageMembersHint =>
+      'تشمل مقاعد الفريق المالك والدعوات المعلّقة.';
+
+  @override
+  String get subscriptionOverLimit =>
+      'تجاوزت حد هذه الخطة: كل شيء يستمر بالعمل، لكن لا يمكن إضافة المزيد.';
+
+  @override
+  String get subscriptionIncludedTitle => 'مشمول في هذه الخطة';
+
+  @override
+  String get planLimitBranchesLabel => 'الفروع';
+
+  @override
+  String get planLimitQueuesLabel => 'الطوابير';
+
+  @override
+  String get planLimitMembersLabel => 'مقاعد الفريق';
+
+  @override
+  String get planFeatureEssentials =>
+      'الطوابير، الانضمام عبر رمز QR، التحديثات المباشرة والإشعارات';
+
+  @override
+  String get planFeatureInsights => 'الرؤى وأوقات الذروة';
+
+  @override
+  String get planFeatureBranchInsights => 'رؤى لكل فرع';
+
+  @override
+  String get subscriptionSeePlans => 'عرض الخطط';
+
+  @override
+  String get subscriptionHistory => 'سجل الفواتير';
+
+  @override
+  String get subscriptionCancel => 'إلغاء الاشتراك';
+
+  @override
+  String get subscriptionEndTrial => 'إنهاء التجربة';
+
+  @override
+  String get subscriptionCancelTitle => 'إلغاء الاشتراك؟';
+
+  @override
+  String subscriptionCancelMessage(String date) {
+    return 'تبقى الخطة حتى $date، ثم تنتقل المنشأة إلى الخطة المجانية. لن يُحذف أي شيء.';
+  }
+
+  @override
+  String get subscriptionCancelNowMessage =>
+      'تنتقل المنشأة إلى الخطة المجانية الآن. لن يُحذف أي شيء.';
+
+  @override
+  String get subscriptionCanceled => 'تم إلغاء الاشتراك';
+
+  @override
+  String get subscriptionResume => 'الإبقاء على هذه الخطة';
+
+  @override
+  String get subscriptionResumed => 'ستستمر خطتك';
+
+  @override
+  String get subscriptionOwnerOnly => 'يمكن لمالك المنشأة فقط تغيير الخطة.';
+
+  @override
+  String get plansTitle => 'الخطط';
+
+  @override
+  String get plansMonthly => 'شهري';
+
+  @override
+  String get plansYearly => 'سنوي';
+
+  @override
+  String plansPerMonth(String amount) {
+    return '$amount شهريًا';
+  }
+
+  @override
+  String plansPerYear(String amount) {
+    return '$amount سنويًا';
+  }
+
+  @override
+  String get plansFreePrice => 'مجانًا';
+
+  @override
+  String get plansCurrentBadge => 'خطتك الحالية';
+
+  @override
+  String plansChoose(String plan) {
+    return 'اختيار $plan';
+  }
+
+  @override
+  String get plansRenew => 'الدفع للفترة التالية';
+
+  @override
+  String plansSwitchLater(String plan) {
+    return 'التحويل إلى $plan عند التجديد';
+  }
+
+  @override
+  String get plansNotForPeriod => 'غير متاحة لهذه الدورة';
+
+  @override
+  String plansDowngradeTitle(String plan) {
+    return 'التحويل إلى $plan؟';
+  }
+
+  @override
+  String plansDowngradeMessage(String plan, String date) {
+    return 'تحتفظ بخطتك الحالية حتى $date، ثم تبدأ خطة $plan. لن يُحذف أي شيء: ما يتجاوز حدود $plan يستمر بالعمل، لكن لا يمكنك إضافة المزيد.';
+  }
+
+  @override
+  String get plansDowngradeScheduled => 'تمت جدولة التغيير';
+
+  @override
+  String plansTrialNote(int days, String plan) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'تجرّب المنشآت الجديدة خطة $plan مجانًا لمدة $days يومًا.',
+      few: 'تجرّب المنشآت الجديدة خطة $plan مجانًا لمدة $days أيام.',
+      two: 'تجرّب المنشآت الجديدة خطة $plan مجانًا ليومين.',
+      one: 'تجرّب المنشآت الجديدة خطة $plan مجانًا ليوم واحد.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get plansCustomersFree =>
+      'العملاء لا يدفعون أبدًا: البحث عن المنشآت والانضمام إلى الطوابير مجانيان دائمًا.';
+
+  @override
+  String get plansCompareTitle => 'مقارنة الخطط';
+
+  @override
+  String get plansUnlimited => 'بلا حدود';
+
+  @override
+  String get plansIncluded => 'مشمول';
+
+  @override
+  String get plansNotIncluded => 'غير مشمول';
+
+  @override
+  String plansYearlySave(int percent) {
+    return 'وفّر $percent٪ مع الفوترة السنوية';
+  }
+
+  @override
+  String get paymentOfflineTitle => 'الدفع بتحويل أو نقدًا';
+
+  @override
+  String paymentOfflineMessage(String plan, String amount) {
+    return 'الدفع الإلكتروني بالبطاقة غير متاح بعد. للحصول على خطة $plan ($amount)، تواصل مع دعم DORY وادفع بتحويل بنكي أو نقدًا أو عبر محفظة إلكترونية. تبدأ الخطة فور تسجيل الدفعة.';
+  }
+
+  @override
+  String get paymentWaitingTitle => 'أكمل الدفع';
+
+  @override
+  String get paymentWaitingMessage =>
+      'ادفع في الصفحة الآمنة في متصفحك، ثم عُد إلى DORY.';
+
+  @override
+  String get paymentCheck => 'التحقق من الدفع';
+
+  @override
+  String get paymentPaid => 'تم استلام الدفعة. خطتك مفعّلة الآن.';
+
+  @override
+  String get paymentPending =>
+      'لم تُؤكَّد أي دفعة بعد. إن كنت قد دفعت، فقد يستغرق ذلك دقيقة.';
+
+  @override
+  String get paymentFailed => 'لم تتم عملية الدفع، ولم تتغيّر خطتك.';
+
+  @override
+  String get paymentExpired =>
+      'انتهت صلاحية عملية الدفع هذه. ابدأ من جديد عندما تكون جاهزًا.';
+
+  @override
+  String get paymentCouldNotOpen => 'تعذّر فتح صفحة الدفع.';
+
+  @override
+  String get billingHistoryTitle => 'سجل الفواتير';
+
+  @override
+  String get billingHistoryEmpty => 'لا توجد مدفوعات بعد.';
+
+  @override
+  String get billingStatusPaid => 'مدفوعة';
+
+  @override
+  String get billingStatusFailed => 'فشلت';
+
+  @override
+  String get billingStatusVoid => 'ملغاة';
+
+  @override
+  String get billingStatusOpen => 'مفتوحة';
+
+  @override
+  String billingPeriodRange(String start, String end) {
+    return 'من $start إلى $end';
+  }
+
+  @override
+  String get billingMethodCard => 'بطاقة';
+
+  @override
+  String get billingMethodBankTransfer => 'تحويل بنكي';
+
+  @override
+  String get billingMethodCash => 'نقدًا';
+
+  @override
+  String get billingMethodMobileWallet => 'محفظة إلكترونية';
+
+  @override
+  String get billingMethodOther => 'طريقة أخرى';
+
+  @override
+  String get planLimitTitle => 'تم بلوغ حد الخطة';
+
+  @override
+  String planLimitBranches(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: 'تتضمن هذه الخطة حتى $max فرعًا. قم بالترقية لإضافة المزيد.',
+      few: 'تتضمن هذه الخطة حتى $max فروع. قم بالترقية لإضافة المزيد.',
+      two: 'تتضمن هذه الخطة فرعين. قم بالترقية لإضافة المزيد.',
+      one: 'تتضمن هذه الخطة فرعًا واحدًا. قم بالترقية لإضافة المزيد.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planLimitQueues(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other: 'تتضمن هذه الخطة حتى $max طابورًا. قم بالترقية لإضافة المزيد.',
+      few: 'تتضمن هذه الخطة حتى $max طوابير. قم بالترقية لإضافة المزيد.',
+      two: 'تتضمن هذه الخطة طابورين. قم بالترقية لإضافة المزيد.',
+      one: 'تتضمن هذه الخطة طابورًا واحدًا. قم بالترقية لإضافة المزيد.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planLimitMembers(int max) {
+    String _temp0 = intl.Intl.pluralLogic(
+      max,
+      locale: localeName,
+      other:
+          'تتضمن هذه الخطة حتى $max مقعدًا في الفريق، بما فيها المالك والدعوات المعلّقة. قم بالترقية لإضافة المزيد.',
+      few:
+          'تتضمن هذه الخطة حتى $max مقاعد في الفريق، بما فيها المالك والدعوات المعلّقة. قم بالترقية لإضافة المزيد.',
+      two: 'تتضمن هذه الخطة مقعدين في الفريق. قم بالترقية لإضافة المزيد.',
+      one:
+          'تتضمن هذه الخطة مقعدًا واحدًا في الفريق. قم بالترقية لإضافة المزيد.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planLimitNotNow => 'ليس الآن';
+
+  @override
+  String get planLockedTitle => 'غير مشمولة في خطتك';
+
+  @override
+  String get planLockedInsights =>
+      'الرؤى وأوقات الذروة جزء من الخطط المدفوعة، وتُحسب من سجلات طوابيرك الخاصة.';
+
+  @override
+  String get planLockedBranchInsights =>
+      'الرؤى لفرع واحد بمفرده متاحة في خطة أكبر.';
+
+  @override
+  String get errorPlanFeature => 'هذه الميزة غير مشمولة في الخطة الحالية.';
+
+  @override
+  String get errorPaymentsUnavailable =>
+      'الدفع الإلكتروني غير متاح بعد. تواصل مع دعم DORY للدفع بطريقة أخرى.';
+
+  @override
+  String get errorPaymentProvider =>
+      'تعذّر الوصول إلى خدمة الدفع. حاول مرة أخرى لاحقًا.';
+
+  @override
+  String get errorPlanNotAvailable => 'هذه الخطة أو هذا السعر غير متاح.';
+
+  @override
+  String get errorPlanChange => 'لا يمكن إجراء تغيير الخطة هذا الآن.';
+
+  @override
+  String get errorPlanChangeUseDowngrade =>
+      'تبدأ الخطة الأصغر في نهاية الفترة المدفوعة. قم بجدولة التحويل بدلًا من ذلك.';
+
+  @override
+  String get errorPlanChangeManaged => 'هذه الخطة تُدار من قِبل دعم DORY.';
+
+  @override
+  String subscriptionBannerTrial(int count, String plan) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تجربة $plan: بقي $count يومًا',
+      few: 'تجربة $plan: بقيت $count أيام',
+      two: 'تجربة $plan: بقي يومان',
+      one: 'تجربة $plan: بقي يوم واحد',
+      zero: 'تجربة $plan: تنتهي اليوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String subscriptionBannerPastDue(String date) {
+    return 'الدفع مستحق: تبقى خطتك حتى $date.';
+  }
+
+  @override
+  String subscriptionBannerExpired(String plan) {
+    return 'انتهت خطة $plan، والمنشأة الآن على الخطة المجانية.';
+  }
+
+  @override
+  String subscriptionTileSubtitle(String plan, String status) {
+    return 'الخطة: $plan · $status';
+  }
+
+  @override
+  String get planLimitKeepsWorking => 'كل ما لديك حاليًا يستمر بالعمل.';
+
+  @override
+  String get invitationNoSeat =>
+      'لا يوجد مقعد متاح في فريق المنشأة ضمن خطتها الحالية. اطلب من المالك ترقية الخطة، ثم اقبل الدعوة مجددًا.';
 }

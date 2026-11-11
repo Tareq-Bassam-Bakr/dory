@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dory_app/app/localization/l10n.dart';
 import 'package:dory_app/app/router/app_routes.dart';
 import 'package:dory_app/app/theme/theme.dart';
@@ -10,6 +12,7 @@ import 'package:dory_app/features/queues/presentation/providers/queue_providers.
 import 'package:dory_app/features/queues/presentation/widgets/queue_labels.dart';
 import 'package:dory_app/features/services/domain/entities/service.dart';
 import 'package:dory_app/features/services/presentation/providers/service_providers.dart';
+import 'package:dory_app/features/subscriptions/presentation/widgets/subscription_widgets.dart';
 import 'package:dory_app/shared/components/async_value_view.dart';
 import 'package:dory_app/shared/components/confirm_dialog.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -167,6 +170,7 @@ class _ServicePicker extends ConsumerWidget {
             const SizedBox(height: AppSpacing.xl),
             QueueForm(
               key: ValueKey<String>('queue-form-${service.id}'),
+              businessId: businessId,
               branchId: branchId,
               initial: QueueDraft(
                 serviceId: service.id,
@@ -221,9 +225,13 @@ class QueueForm extends ConsumerStatefulWidget {
     required this.branchId,
     required this.initial,
     this.queueId,
+    this.businessId,
   });
 
   final String branchId;
+
+  /// For the plan prompt when a new queue is over the plan's limit.
+  final String? businessId;
 
   /// Null when creating.
   final String? queueId;
@@ -353,6 +361,12 @@ class _QueueFormState extends ConsumerState<QueueForm> {
     } on AppFailure catch (failure) {
       if (mounted) {
         setState(() => _failure = failure);
+        final String? businessId = widget.businessId;
+        if (failure.isPlanLimit && businessId != null) {
+          unawaited(
+            showPlanLimitDialog(context, failure, businessId: businessId),
+          );
+        }
       }
     } finally {
       if (mounted) {

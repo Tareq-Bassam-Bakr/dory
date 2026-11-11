@@ -54,6 +54,9 @@ Every response is built by `App\Support\ApiResponse`.
   translated.
 - `errors` holds field errors for validation failures and is `null`
   otherwise.
+- `details` is present on some errors only, with machine-readable context.
+  For example a plan limit (Phase 08, [SUBSCRIPTIONS.md](SUBSCRIPTIONS.md#entitlements)):
+  `"details": {"limit": "branches", "max": 1, "used": 1, "plan": "free"}`.
 - With `APP_DEBUG=true` (local only), server errors add a `debug` object:
   exception class, message, and file:line. There is never a stack trace, and
   nothing is added in production.
@@ -72,6 +75,8 @@ Every response is built by `App\Support\ApiResponse`.
 | 404 | `business_not_found` | Business does not exist **or** caller is not an active member |
 | 405 | `method_not_allowed` | Wrong HTTP method |
 | 409 | `membership_exists` | Duplicate business membership |
+| 403 | `plan_limit_reached` | The business's plan does not allow adding one more (`details`). See [SUBSCRIPTIONS.md](SUBSCRIPTIONS.md#business-api) for every billing code |
+| 403 | `feature_not_in_plan` | The business's plan does not include the feature (`details`) |
 | 422 | `validation_failed` | Invalid input (`errors` lists fields) |
 | 429 | `too_many_requests` | Rate limit hit (`Retry-After` header) |
 | 500 | `server_error` | Unexpected failure (details only in logs) |

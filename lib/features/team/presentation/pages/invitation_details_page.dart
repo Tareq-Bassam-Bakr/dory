@@ -97,6 +97,9 @@ class _InvitationDetailsPageState extends ConsumerState<InvitationDetailsPage> {
           return l10n.invitationWrongAccount;
         case 'membership_exists':
           return l10n.inviteErrorMember;
+        // The business's plan has no free seat (docs/SUBSCRIPTIONS.md).
+        case 'plan_limit_reached':
+          return l10n.invitationNoSeat;
       }
     }
     return failureMessage(l10n, failure);
