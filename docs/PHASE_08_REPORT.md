@@ -26,8 +26,8 @@ the one suitable option found for Syria. It is tested against a faked
 gateway only. No payment account, credential or paid service was created or
 assumed, and nothing was charged.
 
-The 3 new migrations are **not** applied to `dory_db`: that needs your
-approval ([Required actions](#required-actions)).
+The 3 new migrations were applied to `dory_db` after your approval, with a
+backup first ([below](#applying-the-migrations-to-dory_db)).
 
 ## Delivered
 
@@ -162,7 +162,8 @@ reloaded to see the payment, and both fixes are covered by widget tests.
 3. **The limits and the trial.** The proposed limits, Pro for 14 days once
    per owner, and 7 grace days. All of them can be changed.
 4. **Businesses created before Phase 08** start on Free. An admin can give
-   them a trial or a plan instead.
+   them a trial or a plan instead. `dory_db` has no businesses yet, so this
+   affects none today.
 5. **Launch timing.** `BILLING_ENABLED=false` gives every business
    everything until you are ready to charge.
 6. **Who the platform admins are.** The flag is set in the database only; no
@@ -172,14 +173,10 @@ reloaded to see the payment, and both fixes are covered by widget tests.
 
 ## Required actions
 
-1. **Approve applying the 3 Phase 08 migrations to `dory_db`.** I would back
-   it up first, as for Phase 06. Until they run, on `dory_db`:
-   - creating a business, branch or queue, sending or accepting invitations,
-     and insights fail;
-   - customer access, discovery, joining and queue operations keep working.
-
-   `start_dory.bat` will also offer to run them; please answer **no** there
-   until you have decided, or let me do it with a backup.
+1. ~~Approve applying the 3 Phase 08 migrations to `dory_db`~~: **done**
+   with your approval, after a backup
+   ([Applying the migrations](#applying-the-migrations-to-dory_db)).
+   `start_dory.bat` now finds no pending migrations.
 2. For online payment (when you decide to): the bank's merchant account and
    its credentials, entered by you in `backend/.env` on the server only
    ([PAYMENTS.md](PAYMENTS.md#setting-up-mastercard-gateway)).
@@ -202,9 +199,51 @@ reloaded to see the payment, and both fixes are covered by widget tests.
    plans are per business. The trial is once per owner.
 7. iOS was not built or checked (it needs a Mac).
 
+## Applying the migrations to dory_db
+
+Done on 2026-11-11 after your approval ("Yes, with a backup"), in this order.
+
+1. **Connection:** Laravel's default connection was `mariadb` on
+   127.0.0.1:3306, database `dory_db` (`SELECT DATABASE()`), MariaDB
+   10.4.32: XAMPP's server, untouched. No `DB_*` variable overrode
+   `backend/.env`.
+2. **Before:** 29 tables and 75 rows. That is the 11 categories, your 1 test
+   account with its 3 sign-in tokens and 1 notification preference, the
+   cache and 27 migration records. There are no businesses yet.
+3. **Pending:** exactly the three Phase 08 migrations. None of their 7 tables
+   existed. They only create tables and write the default plans. No existing
+   table is altered and nothing is updated or deleted.
+4. **Backup**, outside the repository:
+   - file: `D:\dory-backups\dory_db-before-phase08-20261111-202940.sql`;
+   - made with XAMPP's `mysqldump`, `--single-transaction`, routines,
+     triggers and events;
+   - 51,537 bytes: 29 tables, 6 tables of data, ending in "Dump completed";
+   - SHA-256 `96342CCE5A54E24F38D8CA68194605F6F6B802C1C99754080FA5C7F480EEC520`.
+
+   To restore it: `D:\xampp\mysql\bin\mysql.exe -u root < "<file>"`. This
+   replaces the current `dory_db`.
+5. **Run:** `php artisan migrate` (the normal command, nothing else). All
+   three reported DONE, in batch 6.
+6. **After:**
+   - `migrate:status`: 30 run, 0 pending;
+   - all 29 existing tables are present, with identical row counts;
+   - the 7 new tables exist with their indexes and foreign keys;
+   - the plans are as configured: Free 1, 3, 3; Pro 3, 15, 10 with insights,
+     15.00 and 150.00 USD; Business unlimited, 49.00 and 490.00 USD;
+   - no column in `dory_db` updates itself (no `ON UPDATE`).
+7. **API on `dory_db`** (read only):
+   - the health check answers;
+   - `GET /api/v1/billing/plans` returns the three plans in Arabic with
+     their limits and prices, the 14-day Pro trial, 7 grace days and no
+     online payment;
+   - one run of `billing:sweep` reports nothing to change;
+   - the row counts were the same afterwards.
+
 ## Local changes outside the repository
 
-- `dory_db`: **unchanged**. No migration was applied and no data written.
+- `dory_db`: the 3 Phase 08 migrations, applied with your approval: 7 new
+  tables and the 3 default plans with their 4 prices. No other change.
+- The backup taken before them: `D:\dory-backups\dory_db-before-phase08-20261111-202940.sql`.
 - `dory_db_testing` held the check's data; the final MariaDB run reset it, as
   every run does.
 - The MySQL 8.4 test server was started for its runs and stopped afterwards.
@@ -224,7 +263,8 @@ was verified. The repository remains private. No paid service was activated.
 | Commit | Content |
 |---|---|
 | `aadd0c0` | API: plans, subscriptions, entitlements, admin API, payments, scheduler, tests |
-| *(this commit)* | App: plan and billing screens, limit prompts; documentation and this report |
+| `e46513b` | App: plan and billing screens, limit prompts; documentation and this report |
+| *(this commit)* | Phase 08 migrations applied to `dory_db`, with a backup; report updated |
 
 ## Next
 
