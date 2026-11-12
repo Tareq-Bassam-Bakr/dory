@@ -20,6 +20,16 @@ class RecordPaymentRequest extends FormRequest
     }
 
     /**
+     * Currency codes in any case ("usd") are accepted, as before.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (is_string($this->input('currency'))) {
+            $this->merge(['currency' => strtoupper(trim($this->input('currency')))]);
+        }
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -27,7 +37,7 @@ class RecordPaymentRequest extends FormRequest
         return [
             'plan' => ['required', 'string', 'max:40'],
             'billing_period' => ['required', 'string', Rule::in(BillingPeriod::values())],
-            'currency' => ['nullable', 'string', 'size:3', 'alpha'],
+            'currency' => ['nullable', 'string', 'size:3', Rule::in((array) config('billing.currencies'))],
             // Defaults to the plan's price for the period and currency.
             'amount_minor' => ['nullable', 'integer', 'min:0', 'max:1000000000'],
             'method' => ['required', 'string', Rule::in(array_map(fn (PaymentMethod $m) => $m->value, PaymentMethod::cases()))],
@@ -36,7 +46,8 @@ class RecordPaymentRequest extends FormRequest
                 'nullable', 'string', 'max:120',
                 Rule::unique('billing_invoices', 'provider_reference')->where('provider', 'manual'),
             ],
-            'paid_at' => ['nullable', 'date', 'before_or_equal:now'],
+            // When the money arrived (bank or cash book date).
+            'received_at' => ['nullable', 'date', 'before_or_equal:now'],
             'notes' => ['nullable', 'string', 'max:500'],
         ];
     }

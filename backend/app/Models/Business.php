@@ -73,7 +73,24 @@ class Business extends Model
             'status' => BusinessStatus::class,
             'rating_average' => 'float',
             'rating_count' => 'integer',
+            'approved_at' => 'datetime',
+            'suspended_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The platform admin who approved the business (docs/ADMIN_DASHBOARD.md).
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function approvedBy(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->approved_at !== null;
     }
 
     /**
@@ -101,9 +118,6 @@ class Business extends Model
     }
 
     /**
-     * @return HasMany<Branch, $this>
-     */
-    /**
      * The business's subscription (docs/SUBSCRIPTIONS.md).
      *
      * @return HasOne<BusinessSubscription, $this>
@@ -113,6 +127,9 @@ class Business extends Model
         return $this->hasOne(BusinessSubscription::class);
     }
 
+    /**
+     * @return HasMany<Branch, $this>
+     */
     public function branches(): HasMany
     {
         return $this->hasMany(Branch::class);
@@ -175,7 +192,8 @@ class Business extends Model
     /**
      * What the public may see (docs/BUSINESS_DISCOVERY.md): an active
      * business with at least one active branch. Inactive, suspended and
-     * archived businesses never appear in discovery.
+     * archived businesses never appear in discovery. When platform approval
+     * is required (docs/ADMIN_DASHBOARD.md), only approved businesses.
      *
      * @param  Builder<Business>  $query
      */
@@ -183,6 +201,7 @@ class Business extends Model
     protected function publiclyVisible(Builder $query): void
     {
         $query->where('businesses.status', BusinessStatus::Active->value)
+            ->when(config('dory.businesses.require_approval'), fn (Builder $approved) => $approved->whereNotNull('businesses.approved_at'))
             ->whereHas('branches', function (Builder $branches): void {
                 $branches->publiclyVisible();
             });

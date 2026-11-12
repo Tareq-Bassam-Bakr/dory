@@ -22,6 +22,19 @@ class SavePlanRequest extends FormRequest
         return true;
     }
 
+    /**
+     * Currency codes in any case ("usd") are accepted, as before.
+     */
+    protected function prepareForValidation(): void
+    {
+        $prices = $this->input('prices');
+        if (is_array($prices)) {
+            $this->merge(['prices' => array_map(fn ($price) => is_array($price) && is_string($price['currency'] ?? null)
+                ? ['currency' => strtoupper(trim($price['currency']))] + $price
+                : $price, $prices)]);
+        }
+    }
+
     public function plan(): ?SubscriptionPlan
     {
         $plan = $this->route('billingPlan');
@@ -57,7 +70,8 @@ class SavePlanRequest extends FormRequest
             'sort_order' => ['sometimes', 'integer', 'min:0', 'max:1000'],
             'prices' => ['sometimes', 'array', 'max:20'],
             'prices.*.billing_period' => ['required', 'string', Rule::in(BillingPeriod::values())],
-            'prices.*.currency' => ['required', 'string', 'size:3', 'alpha'],
+            // Only the currencies DORY accepts (setting "Currencies").
+            'prices.*.currency' => ['required', 'string', 'size:3', Rule::in((array) config('billing.currencies'))],
             'prices.*.amount_minor' => ['required', 'integer', 'min:0', 'max:1000000000'],
             'prices.*.is_active' => ['sometimes', 'boolean'],
         ];

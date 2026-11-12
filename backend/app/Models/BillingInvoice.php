@@ -64,7 +64,45 @@ class BillingInvoice extends Model
             'issued_at' => 'datetime',
             'paid_at' => 'datetime',
             'failed_at' => 'datetime',
+            'received_at' => 'datetime',
+            'reviewed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The platform admin who recorded a payment received outside DORY.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function recorder(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'recorded_by');
+    }
+
+    /**
+     * The platform admin who approved or rejected it.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function reviewer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    /**
+     * Recorded by an admin, not yet approved or rejected.
+     */
+    public function awaitsApproval(): bool
+    {
+        return $this->status === InvoiceStatus::Open && $this->provider === 'manual';
+    }
+
+    /**
+     * Confirmed with the payment provider itself (an online payment).
+     */
+    public function isGatewayVerified(): bool
+    {
+        return $this->status === InvoiceStatus::Paid && ! in_array($this->provider, ['manual', 'admin'], true);
     }
 
     /**

@@ -49,6 +49,7 @@
         ],
         "test:mariadb": [
             "Composer\\Config::disableProcessTimeout",
+            "@putenv DORY_DATABASE_SERVER=mariadb",
             "@putenv DB_CONNECTION=mariadb",
             "@putenv DB_DATABASE=dory_db_testing",
             "@php artisan config:clear --ansi @no_additional_args",
@@ -56,6 +57,7 @@
         ],
         "test:mysql": [
             "Composer\\Config::disableProcessTimeout",
+            "@putenv DORY_DATABASE_SERVER=mysql",
             "@putenv DB_CONNECTION=mysql",
             "@putenv DB_DATABASE=dory_db_testing",
             "@php artisan config:clear --ansi @no_additional_args",

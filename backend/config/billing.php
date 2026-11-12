@@ -36,6 +36,24 @@ return [
     // Default currency for checkouts when the request does not name one.
     'currency' => env('BILLING_CURRENCY', 'USD'),
 
+    // Seller name printed on invoices. The legal name, address and tax
+    // number an invoice must carry depend on the country of the company
+    // that sells (docs/PRODUCTION_READINESS.md, "Invoices").
+    'seller_name' => env('BILLING_SELLER_NAME', 'DORY'),
+
+    // Currencies plans may be priced in (admin dashboard, plan prices).
+    'currencies' => array_values(array_filter(array_map(
+        fn (string $code): string => strtoupper(trim($code)),
+        explode(',', (string) env('BILLING_CURRENCIES', 'USD')),
+    ))),
+
+    // Payments received outside DORY are recorded first and count only once a
+    // platform admin approved them. With four_eyes on, the approver must be a
+    // different admin from the one who recorded the payment.
+    'manual_payments' => [
+        'four_eyes' => (bool) env('BILLING_FOUR_EYES', false),
+    ],
+
     // An unpaid checkout link stops working after this many minutes.
     'checkout_expires_minutes' => (int) env('BILLING_CHECKOUT_EXPIRES_MINUTES', 60),
 
@@ -43,6 +61,11 @@ return [
     // are recorded by platform admins) or "mastercard" (Mastercard Gateway
     // through an acquiring bank). See docs/PAYMENTS.md.
     'provider' => env('PAYMENT_PROVIDER', 'none'),
+
+    // Live online payments stay off until this is switched on deliberately,
+    // after the provider was tested with the bank
+    // (docs/PAYMENT_GATEWAY_CHECKLIST.md). Credentials alone never enable them.
+    'online_payments' => (bool) env('BILLING_ONLINE_PAYMENTS', false),
 
     'providers' => [
         'mastercard' => [

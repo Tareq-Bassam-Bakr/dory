@@ -6,9 +6,11 @@ use App\Contracts\InsightNarrator;
 use App\Contracts\InvitationNotifier;
 use App\Contracts\PaymentGateway;
 use App\Contracts\WaitTimeEstimator;
+use App\Enums\InvoiceStatus;
 use App\Events\QueueActivity;
 use App\Exceptions\BusinessNotFoundException;
 use App\Exceptions\NotificationException;
+use App\Models\BillingInvoice;
 use App\Models\Business;
 use App\Models\PushDevice;
 use App\Models\Queue;
@@ -24,19 +26,23 @@ use App\Services\Intelligence\TemplateInsightNarrator;
 use App\Services\Invitations\MailInvitationNotifier;
 use App\Services\Payments\MastercardGateway;
 use App\Services\Payments\UnavailablePaymentGateway;
+use App\Services\Platform\PlatformSettings;
 use App\Services\Push\DisabledPushSender;
 use App\Services\Push\FirebasePushSender;
 use App\Services\Push\PushSender;
 use App\Services\Queues\HistoricalWaitTimeEstimator;
 use App\Services\Queues\PublicQueueResolver;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route as RouteInstance;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Kreait\Firebase\Contract\Messaging;
@@ -67,6 +73,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(InsightNarrator::class, fn () => match (config('dory.intelligence.narrator')) {
             default => new TemplateInsightNarrator,
         });
+
+        // Settings platform admins change at run time (docs/ADMIN_DASHBOARD.md).
+        $this->app->singleton(PlatformSettings::class);
 
         // Plans (docs/SUBSCRIPTIONS.md): one catalogue per request or job, so
         // an admin's change of a plan is seen by every service at once.
@@ -100,6 +109,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // First: admins' run-time settings override config/ for everything below.
+        $this->app->make(PlatformSettings::class)->apply();
+        $this->configureAdminAuthorization();
+        $this->configureAdminViews();
         $this->configureModels();
         $this->configurePasswordRules();
         $this->configureRateLimiting();
@@ -109,6 +122,48 @@ class AppServiceProvider extends ServiceProvider
         // Committed queue changes: broadcasts and notifications
         // (docs/REALTIME_ARCHITECTURE.md).
         Event::listen(QueueActivity::class, QueueActivityRelay::class);
+    }
+
+    /**
+     * Platform administration (docs/ADMIN_DASHBOARD.md, "Security"): active
+     * accounts flagged is_platform_admin, a flag set from the command line
+     * only (php artisan dory:admin). No business role ever counts. The admin
+     * API and the dashboard both check these abilities.
+     */
+    private function configureAdminAuthorization(): void
+    {
+        Gate::define('platform.admin', fn (User $user): Response => $user->isPlatformAdmin() && $user->isActive()
+            ? Response::allow()
+            : Response::deny(__('api.errors.forbidden')));
+
+        // Changing another account: never your own, never another admin's.
+        Gate::define('platform.manage-user', function (User $admin, User $target): Response {
+            if (! ($admin->isPlatformAdmin() && $admin->isActive())) {
+                return Response::deny(__('api.errors.forbidden'), 'forbidden');
+            }
+            if ($target->is($admin)) {
+                return Response::deny(__('api.admin.not_allowed.own_account'), 'own_account');
+            }
+            if ($target->isPlatformAdmin()) {
+                return Response::deny(__('api.admin.not_allowed.admin_account'), 'admin_account');
+            }
+
+            return Response::allow();
+        });
+    }
+
+    /**
+     * The admin dashboard's sidebar shows how many recorded payments wait for
+     * approval (docs/ADMIN_DASHBOARD.md).
+     */
+    private function configureAdminViews(): void
+    {
+        View::composer('admin.partials.sidebar', function ($view): void {
+            $view->with('awaitingApproval', BillingInvoice::query()
+                ->where('status', InvoiceStatus::Open->value)
+                ->where('provider', 'manual')
+                ->count());
+        });
     }
 
     /**
@@ -122,7 +177,8 @@ class AppServiceProvider extends ServiceProvider
         $publicIds = [
             'business', 'branch', 'service', 'member', 'invitation',
             'queue', 'queueSession', 'ticket', 'assignment', 'joinableQueue', 'myTicket', 'publicTicket',
-            'publicBranch', 'favoriteBusiness', 'device', 'checkout', 'billingBusiness',
+            'publicBranch', 'favoriteBusiness', 'device', 'checkout', 'billingBusiness', 'billingInvoice',
+            'adminBusiness', 'adminUser', 'adminInvoice',
         ];
         foreach ($publicIds as $parameter) {
             Route::pattern($parameter, '[0-9A-Za-z]{26}');
@@ -182,6 +238,24 @@ class AppServiceProvider extends ServiceProvider
         });
         Route::bind('billingPlan', fn (string $value) => SubscriptionPlan::query()->with('prices')
             ->where('code', $value)->firstOrFail());
+        Route::bind('billingInvoice', function (string $value) use ($user): BillingInvoice {
+            if (! ($user()?->isPlatformAdmin() ?? false)) {
+                abort(404);
+            }
+
+            return BillingInvoice::query()->where('public_id', $value)->firstOrFail();
+        });
+
+        // The admin dashboard (/admin, docs/ADMIN_DASHBOARD.md). AuthenticateAdmin
+        // runs before route bindings, so only signed-in platform admins reach these.
+        Route::pattern('adminPlan', '[a-z][a-z0-9_-]{1,39}');
+        Route::bind('adminBusiness', fn (string $value) => Business::query()->withTrashed()
+            ->where('public_id', $value)->firstOrFail());
+        Route::bind('adminUser', fn (string $value) => User::query()->where('public_id', $value)->firstOrFail());
+        Route::bind('adminPlan', fn (string $value) => SubscriptionPlan::query()->with('prices')
+            ->where('code', $value)->firstOrFail());
+        Route::bind('adminInvoice', fn (string $value) => BillingInvoice::query()
+            ->where('public_id', $value)->firstOrFail());
 
         // The signed-in user's own push devices and notifications only.
         Route::bind('device', fn (string $value) => PushDevice::query()
@@ -277,6 +351,12 @@ class AppServiceProvider extends ServiceProvider
         // Public discovery and search, per IP.
         RateLimiter::for('discovery', function (Request $request) {
             return Limit::perMinute(config('dory.rate_limits.discovery'))->by('discovery:'.$request->ip());
+        });
+
+        // The admin dashboard: requests per signed-in admin.
+        RateLimiter::for('admin', function (Request $request) {
+            return Limit::perMinute(config('admin.rate_limits.requests', 120))
+                ->by('admin:'.($request->user('admin')?->getAuthIdentifier() ?: $request->ip()));
         });
 
         // Insights read up to two months of tickets: per user.

@@ -54,6 +54,9 @@ class MastercardPaymentTest extends TestCase
         $this->travelTo(Carbon::parse('2026-11-11 10:00:00', 'UTC'));
         config([
             'billing.provider' => 'mastercard',
+            // Live online payments are off by default (Phase 09); these tests
+            // switch them on deliberately, against the faked gateway below.
+            'billing.online_payments' => true,
             'billing.providers.mastercard' => [
                 'gateway_url' => self::GATEWAY,
                 'api_version' => '100',
@@ -141,6 +144,17 @@ class MastercardPaymentTest extends TestCase
     }
 
     // ----- Starting ------------------------------------------------------------
+
+    public function test_live_payments_stay_off_until_switched_on_even_with_credentials(): void
+    {
+        config(['billing.online_payments' => false]);
+
+        $this->assertApiError($this->startCheckout(), 503, 'payments_unavailable');
+        $this->actingAsUser($this->owner, 'GET', '/api/v1/businesses/'.$this->business->public_id.'/subscription')
+            ->assertJsonPath('data.payments.online', false);
+        $this->assertSame(0, PaymentCheckout::query()->count());
+        Http::assertNothingSent();
+    }
 
     public function test_the_owner_starts_a_hosted_checkout(): void
     {

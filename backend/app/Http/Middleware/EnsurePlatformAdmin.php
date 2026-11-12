@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Support\ApiResponse;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -17,7 +18,8 @@ class EnsurePlatformAdmin
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! ($request->user()?->isPlatformAdmin() ?? false)) {
+        $user = $request->user();
+        if ($user === null || Gate::forUser($user)->denies('platform.admin')) {
             return ApiResponse::error(__('api.errors.forbidden'), 403, 'forbidden');
         }
 

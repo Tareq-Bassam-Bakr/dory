@@ -137,4 +137,15 @@ class User extends Authenticatable
     {
         return $this->is_platform_admin;
     }
+
+    /**
+     * No "remember me": the API uses tokens and the admin dashboard
+     * (docs/ADMIN_DASHBOARD.md) only short sessions, so the users table has
+     * no remember_token column. An empty name tells Laravel's session guard
+     * not to read or write one (signing out would fail otherwise).
+     */
+    public function getRememberTokenName(): string
+    {
+        return '';
+    }
 }

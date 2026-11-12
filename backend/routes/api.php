@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\BillingPaymentController;
 use App\Http\Controllers\Api\V1\Admin\BillingPlanController;
 use App\Http\Controllers\Api\V1\Admin\BillingSubscriptionController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
@@ -277,6 +278,13 @@ Route::prefix('v1')->name('api.v1.')->group(function (): void {
                 ->name('businesses.plan');
             Route::post('businesses/{billingBusiness}/expire', [BillingSubscriptionController::class, 'expire'])
                 ->name('businesses.expire');
+            Route::post('businesses/{billingBusiness}/cancel', [BillingSubscriptionController::class, 'cancel'])
+                ->name('businesses.cancel');
+            Route::post('businesses/{billingBusiness}/resume', [BillingSubscriptionController::class, 'resume'])
+                ->name('businesses.resume');
+            Route::get('payments', [BillingPaymentController::class, 'index'])->name('payments.index');
+            Route::post('payments/{billingInvoice}/approve', [BillingPaymentController::class, 'approve'])->name('payments.approve');
+            Route::post('payments/{billingInvoice}/reject', [BillingPaymentController::class, 'reject'])->name('payments.reject');
         });
 
     // Viewing an invitation works signed out, so the app can show what it is about.

@@ -143,6 +143,24 @@ return [
         'peak_times' => 'Peak times.',
     ],
 
+    'admin' => [
+        'payments' => 'Payments',
+        'payment_recorded' => 'Payment recorded. It counts once approved',
+        'payment_approved' => 'Payment approved',
+        'payment_rejected' => 'Payment rejected',
+        'not_allowed' => [
+            'own_account' => 'You cannot change your own account here',
+            'admin_account' => 'Platform admin accounts are changed from the command line only',
+            'already_suspended' => 'This is already suspended',
+            'not_suspended' => 'This is not suspended',
+            'not_suspendable' => 'Only an active or inactive business can be suspended',
+            'already_approved' => 'This business is already approved',
+            'not_awaiting_approval' => 'This payment is not awaiting approval',
+            'needs_another_admin' => 'Another admin must approve a payment you recorded',
+            'business_archived' => 'An archived business gets no new plan, trial or payment',
+        ],
+    ],
+
     'billing' => [
         'plans' => 'Plans',
         'subscription' => 'Subscription',

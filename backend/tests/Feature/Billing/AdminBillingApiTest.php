@@ -98,6 +98,8 @@ class AdminBillingApiTest extends TestCase
 
     public function test_an_admin_creates_a_plan_with_prices(): void
     {
+        // Prices only in currencies DORY accepts (setting "Currencies", Phase 09).
+        config(['billing.currencies' => ['USD', 'SYP']]);
         $response = $this->actingAsUser($this->admin, 'POST', $this->uri('plans'), [
             'code' => 'clinic-plus',
             'is_free' => false,
@@ -176,14 +178,24 @@ class AdminBillingApiTest extends TestCase
             'notes' => 'Received at the bank on 26 November',
         ]);
 
+        // Recorded only (Phase 09): nothing changes until an admin approves it.
         $this->assertApiSuccess($response, 201)
-            ->assertJsonPath('data.invoice.status', 'paid')
+            ->assertJsonPath('data.invoice.status', 'open')
+            ->assertJsonPath('data.invoice.number', null)
             ->assertJsonPath('data.invoice.amount', '490.00')
             ->assertJsonPath('data.invoice.payment_method', 'bank_transfer')
-            ->assertJsonPath('data.subscription.subscription.plan.code', 'business')
-            ->assertJsonPath('data.subscription.subscription.billing_period', 'yearly')
-            ->assertJsonPath('data.subscription.events.0.type', 'activated')
-            ->assertJsonPath('data.subscription.events.0.actor.id', $this->admin->public_id);
+            ->assertJsonPath('data.subscription.subscription.plan.code', 'free');
+
+        $approved = $this->actingAsUser($this->admin, 'POST', $this->uri('payments/'.$response->json('data.invoice.id').'/approve'));
+        $this->assertApiSuccess($approved)
+            ->assertJsonPath('data.status', 'paid')
+            ->assertJsonPath('data.amount', '490.00');
+        $this->assertMatchesRegularExpression('/^DORY-2026-\d{6}$/', (string) $approved->json('data.number'));
+        $this->actingAsUser($this->admin, 'GET', $this->businessUri())->assertOk()
+            ->assertJsonPath('data.subscription.plan.code', 'business')
+            ->assertJsonPath('data.subscription.billing_period', 'yearly')
+            ->assertJsonPath('data.events.0.type', 'activated')
+            ->assertJsonPath('data.events.0.actor.id', $this->admin->public_id);
 
         // The same transfer cannot be recorded twice.
         $this->assertApiError($this->actingAsUser($this->admin, 'POST', $this->businessUri('payments'), [

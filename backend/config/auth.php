@@ -42,6 +42,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        // The platform admin dashboard (/admin, docs/ADMIN_DASHBOARD.md):
+        // platform admins only, with the admin session (config/admin.php).
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'users',
+        ],
     ],
 
     /*

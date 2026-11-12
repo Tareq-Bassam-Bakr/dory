@@ -40,9 +40,16 @@ final class CheckoutService
         private readonly Entitlements $entitlements,
     ) {}
 
+    /**
+     * Online payment needs billing on, a configured provider, and the
+     * deliberate live switch (BILLING_ONLINE_PAYMENTS, docs/PAYMENTS.md):
+     * credentials alone never start taking money.
+     */
     public function available(): bool
     {
-        return (bool) config('billing.enabled') && $this->gateway->isConfigured();
+        return (bool) config('billing.enabled')
+            && (bool) config('billing.online_payments')
+            && $this->gateway->isConfigured();
     }
 
     public function provider(): string

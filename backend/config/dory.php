@@ -96,6 +96,15 @@ return [
      * - min_ratings: real ratings a business needs before it shows a rating
      *   or takes part in "best rated" sorting.
      */
+    /*
+     * Platform review of businesses (docs/ADMIN_DASHBOARD.md). Off: every
+     * active business with an active branch appears in discovery, as before.
+     * On: only businesses a platform admin approved appear there.
+     */
+    'businesses' => [
+        'require_approval' => (bool) env('BUSINESS_APPROVAL_REQUIRED', false),
+    ],
+
     'discovery' => [
         'default_radius_km' => (int) env('DISCOVERY_DEFAULT_RADIUS_KM', 10),
         'max_radius_km' => (int) env('DISCOVERY_MAX_RADIUS_KM', 100),

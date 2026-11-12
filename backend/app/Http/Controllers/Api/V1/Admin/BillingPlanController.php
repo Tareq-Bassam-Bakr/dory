@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Billing\Admin\SavePlanRequest;
 use App\Http\Resources\Billing\AdminPlanResource;
 use App\Models\SubscriptionPlan;
-use App\Services\Billing\PlanCatalog;
+use App\Services\Admin\BillingAdministration;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 /**
  * Plans and prices, managed by platform admins without a deployment
@@ -20,7 +19,7 @@ use Illuminate\Support\Facades\DB;
  */
 class BillingPlanController extends Controller
 {
-    public function __construct(private readonly PlanCatalog $catalog) {}
+    public function __construct(private readonly BillingAdministration $billing) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -31,48 +30,24 @@ class BillingPlanController extends Controller
 
     public function store(SavePlanRequest $request): JsonResponse
     {
-        $plan = DB::transaction(function () use ($request): SubscriptionPlan {
-            $plan = new SubscriptionPlan;
-            $plan->forceFill($request->safe()->except('prices') + ['is_active' => true, 'sort_order' => 0])->saveOrFail();
-            $this->savePrices($plan, (array) $request->validated('prices', []));
+        $plan = $this->billing->createPlan(
+            $request->safe()->except('prices'),
+            array_values((array) $request->validated('prices', [])),
+            $request->user(),
+        );
 
-            return $plan;
-        });
-        $this->catalog->forget();
-
-        return ApiResponse::created(new AdminPlanResource($plan->load('prices')), __('api.billing.plan_saved'));
+        return ApiResponse::created(new AdminPlanResource($plan), __('api.billing.plan_saved'));
     }
 
     public function update(SavePlanRequest $request, SubscriptionPlan $billingPlan): JsonResponse
     {
-        DB::transaction(function () use ($request, $billingPlan): void {
-            $billingPlan->forceFill($request->safe()->except('prices'))->saveOrFail();
-            $this->savePrices($billingPlan, (array) $request->validated('prices', []));
-        });
-        $this->catalog->forget();
+        $plan = $this->billing->updatePlan(
+            $billingPlan,
+            $request->safe()->except('prices'),
+            array_values((array) $request->validated('prices', [])),
+            $request->user(),
+        );
 
-        return ApiResponse::success(new AdminPlanResource($billingPlan->refresh()->load('prices')), __('api.billing.plan_saved'));
-    }
-
-    /**
-     * Adds or changes prices by period and currency. Prices are never
-     * deleted (invoices refer to what was charged); deactivate them instead.
-     *
-     * @param  list<array{billing_period: string, currency: string, amount_minor: int, is_active?: bool}>  $prices
-     */
-    private function savePrices(SubscriptionPlan $plan, array $prices): void
-    {
-        foreach ($prices as $price) {
-            $plan->prices()->updateOrCreate(
-                [
-                    'billing_period' => $price['billing_period'],
-                    'currency' => strtoupper($price['currency']),
-                ],
-                [
-                    'amount_minor' => (int) $price['amount_minor'],
-                    'is_active' => (bool) ($price['is_active'] ?? true),
-                ],
-            );
-        }
+        return ApiResponse::success(new AdminPlanResource($plan), __('api.billing.plan_saved'));
     }
 }

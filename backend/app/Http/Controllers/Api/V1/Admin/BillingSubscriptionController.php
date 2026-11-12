@@ -18,10 +18,10 @@ use App\Models\PaymentCheckout;
 use App\Models\SubscriptionEvent;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
+use App\Services\Admin\BillingAdministration;
 use App\Services\Billing\Entitlements;
 use App\Services\Billing\PlanCatalog;
 use App\Services\Billing\SubscriptionResolver;
-use App\Services\Billing\SubscriptionService;
 use App\Services\Payments\CheckoutService;
 use App\Support\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -31,13 +31,14 @@ use Illuminate\Support\Carbon;
 /**
  * Business subscriptions for platform admins (docs/SUBSCRIPTIONS.md,
  * "Admin API"): look up any business, record payments received outside
- * DORY, extend trials, assign or end plans. Every change is in the
- * business's subscription history with the admin as actor.
+ * DORY (approved separately, BillingPaymentController), extend trials,
+ * assign, cancel, resume or end plans. Every change is in the business's
+ * subscription history and the platform audit log, with the admin as actor.
  */
 class BillingSubscriptionController extends Controller
 {
     public function __construct(
-        private readonly SubscriptionService $subscriptions,
+        private readonly BillingAdministration $billing,
         private readonly Entitlements $entitlements,
         private readonly PlanCatalog $catalog,
         private readonly CheckoutService $checkouts,
@@ -104,33 +105,29 @@ class BillingSubscriptionController extends Controller
             throw BillingException::planNotAvailable();
         }
 
-        $invoice = $this->subscriptions->recordPayment(
-            $billingBusiness,
-            $plan,
-            $period,
-            $currency,
-            (int) $amount,
-            [
-                'provider' => 'manual',
-                'method' => PaymentMethod::from((string) $request->validated('method')),
-                'reference' => $request->validated('reference'),
-                'paid_at' => $request->validated('paid_at') === null ? null : Carbon::parse($request->validated('paid_at')),
-                'notes' => $request->validated('notes'),
-                'recorded_by' => $request->user()->getKey(),
-            ],
-            $request->user(),
-        );
+        // Recorded only: it counts, and the plan changes, once an admin
+        // approved it (POST /admin/billing/payments/{payment}/approve).
+        $invoice = $this->billing->recordPayment($billingBusiness, [
+            'plan' => $plan,
+            'billing_period' => $period,
+            'currency' => $currency,
+            'amount_minor' => (int) $amount,
+            'method' => PaymentMethod::from((string) $request->validated('method')),
+            'reference' => $request->validated('reference'),
+            'received_at' => $request->validated('received_at') === null ? null : Carbon::parse($request->validated('received_at')),
+            'notes' => $request->validated('notes'),
+        ], $request->user());
 
         return ApiResponse::created([
             'invoice' => new BillingInvoiceResource($invoice->load('plan')),
             'subscription' => $this->detail($request, $billingBusiness),
-        ], __('api.billing.payment_recorded'));
+        ], __('api.admin.payment_recorded'));
     }
 
     public function extendTrial(ChangeSubscriptionRequest $request, Business $billingBusiness): JsonResponse
     {
         $code = $request->validated('plan');
-        $this->subscriptions->extendTrial(
+        $this->billing->extendTrial(
             $billingBusiness,
             (int) $request->validated('days'),
             is_string($code) ? $this->paidPlan($code) : null,
@@ -144,7 +141,7 @@ class BillingSubscriptionController extends Controller
     {
         $plan = $this->catalog->find((string) $request->validated('plan')) ?? throw BillingException::planNotAvailable();
         $until = $request->validated('until');
-        $this->subscriptions->assignPlan(
+        $this->billing->assignPlan(
             $billingBusiness,
             $plan,
             is_string($until) ? Carbon::parse($until) : null,
@@ -157,9 +154,27 @@ class BillingSubscriptionController extends Controller
 
     public function expire(ChangeSubscriptionRequest $request, Business $billingBusiness): JsonResponse
     {
-        $this->subscriptions->expireNow($billingBusiness, $request->user(), $request->validated('reason'));
+        $this->billing->endSubscription($billingBusiness, $request->user(), $request->validated('reason'));
 
         return ApiResponse::success($this->detail($request, $billingBusiness), __('api.billing.expired'));
+    }
+
+    /**
+     * On the owner's behalf: a paid plan stops at the end of its period; a
+     * trial or an overdue period ends now.
+     */
+    public function cancel(Request $request, Business $billingBusiness): JsonResponse
+    {
+        $this->billing->cancel($billingBusiness, $request->user());
+
+        return ApiResponse::success($this->detail($request, $billingBusiness), __('api.billing.canceled'));
+    }
+
+    public function resume(Request $request, Business $billingBusiness): JsonResponse
+    {
+        $this->billing->resume($billingBusiness, $request->user());
+
+        return ApiResponse::success($this->detail($request, $billingBusiness), __('api.billing.resumed'));
     }
 
     private function paidPlan(string $code): SubscriptionPlan
