@@ -230,6 +230,51 @@ passed. Two things prevent a repeat:
 [MYSQL_84_COMPATIBILITY.md](MYSQL_84_COMPATIBILITY.md) and the three earlier
 reports carry this note.
 
+## Applying the migrations to dory_db
+
+Done on 2026-11-12 after your approval ("Yes, with a backup"), in this order.
+
+1. **Connection:** Laravel's default connection `mariadb` on 127.0.0.1:3306,
+   database `dory_db`, MariaDB 10.4.32: XAMPP's server, untouched. No `DB_*`
+   variable overrode `backend/.env`. Every command ran with the cache in
+   memory, so booting the app wrote nothing to `dory_db` on the side.
+2. **Before:** 36 tables and 85 rows: your 1 test account with its 3 sign-in
+   tokens and 1 notification preference, 11 categories, the 3 plans with 4
+   prices, 32 cache rows and 30 migration records. No businesses.
+3. **Pending:** exactly the two Phase 09 migrations. None of their tables or
+   columns existed. `migrate --pretend` showed only new tables, indexes,
+   foreign keys and nullable columns: nothing dropped, updated or deleted.
+4. **Backup**, outside the repository:
+   - file: `D:\dory-backups\dory_db-before-phase09-20261112-145104.sql`;
+   - made with XAMPP's `mysqldump`, `--single-transaction`, routines,
+     triggers and events;
+   - 66,781 bytes: 36 tables, ending in "Dump completed";
+   - SHA-256 `B79DC2B8EA3489055C039C07BB392E7E4E8CF02EFE32B47E49F7000764C9F30D`.
+
+   To restore it: `D:\xampp\mysql\bin\mysql.exe -u root < "<file>"`. This
+   replaces the current `dory_db`.
+5. **Run:** `php artisan migrate` (the normal command, nothing else). Both
+   reported DONE, in batch 7.
+6. **After:**
+   - `migrate:status`: 32 run, 0 pending;
+   - all 36 existing tables are present with identical row counts (only the
+     two migration records were added);
+   - `admin_sessions`, `platform_audit_logs` and `platform_settings` exist,
+     empty, with their indexes and foreign keys;
+   - the 5 new `businesses` columns and the 3 new `billing_invoices`
+     columns exist and are all empty;
+   - no column in `dory_db` updates itself (no `ON UPDATE`);
+     `platform_audit_logs.created_at` defaults to the current time.
+7. **API and dashboard on `dory_db`** (read only, cache and sessions kept in
+   memory for the check):
+   - the health check answers;
+   - `GET /api/v1/billing/plans` returns the three plans with unchanged
+     limits and prices, and online payment off;
+   - discovery answers (no businesses yet);
+   - the dashboard's sign-in page answers with its security headers, and
+     signed-out pages redirect to it;
+   - the row counts were the same afterwards.
+
 ## Decisions for you
 
 1. **Several Free businesses under one owner**: recommendation, one automatic
@@ -249,20 +294,12 @@ Details: [COMMERCIAL_DECISIONS.md](COMMERCIAL_DECISIONS.md),
 
 ## Required actions
 
-1. **Approve applying the 2 Phase 09 migrations to `dory_db`** (with a
-   backup first, as in Phase 08). Until then the dashboard cannot sign anyone
-   in on `dory_db` (no `admin_sessions` table), and `start_dory.bat` asks
-   about them. The API and the app keep working without them: checked on
-   the test database with the two migrations rolled back (sign-up, a new
-   business with its trial, its plan, plans and discovery all answered
-   normally; `/admin` answered 500), then migrated again.
-   - `2026_11_12_100100_create_platform_admin_tables`: `admin_sessions`,
-     `platform_audit_logs`, `platform_settings`.
-   - `2026_11_12_100200_add_platform_review_columns`: approval and
-     suspension columns on `businesses`, review columns on
-     `billing_invoices`. Only new nullable columns; no data changes.
-2. Then make the first admin on your machine (it asks for the password,
-   hidden):
+1. ~~Approve applying the 2 Phase 09 migrations to `dory_db`~~: **done**
+   with your approval, after a backup
+   ([Applying the migrations](#applying-the-migrations-to-dory_db)).
+   `start_dory.bat` now finds no pending migrations.
+2. Make the first admin on your machine (it asks for the password,
+   hidden). `dory_db` has no admin yet:
 
    ```bash
    php artisan dory:admin create you@example.com --name="Your Name"
@@ -297,19 +334,21 @@ was verified. The repository remains private. No paid service was activated.
 | Commit | Content |
 |---|---|
 | `cb9c347` | Backend: admin dashboard, platform services, billing administration API, migrations, 90 tests |
-| *(this commit)* | Documentation, this report, the MySQL 8.4 correction in earlier reports, `start_dory` address |
+| `ce64ed9` | Documentation, this report, the MySQL 8.4 correction in earlier reports, `start_dory` address |
+| *(this commit)* | Phase 09 migrations applied to `dory_db`, with a backup; report updated |
 
 ## Next
 
 Phase 10 has **not** been started and will not be without your explicit
-approval. Suggested first, whatever Phase 10 becomes: the two required
-actions above (migrations on `dory_db`, the first admin account), account
-deletion in the app, and your answers on the commercial decisions.
+approval. Suggested first, whatever Phase 10 becomes: your first admin
+account, account deletion in the app, and your answers on the commercial
+decisions.
 
 ## What was touched
 
-- `dory_db` and XAMPP's configuration: **not touched**. No migration, seed or
-  query was run against `dory_db`.
+- `dory_db`: only the two Phase 09 migrations, applied after your approval
+  and a backup ([below](#applying-the-migrations-to-dory_db)). No seed, no
+  account, no data. XAMPP's configuration: not touched.
 - `dory_db_testing` (MariaDB): reset by the test suite, then filled with the
   walk data; reset again by the final suite.
 - The local MySQL 8.4 test server (3307): started for its runs and stopped
