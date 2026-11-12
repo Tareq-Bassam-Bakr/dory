@@ -13,13 +13,21 @@ This repository contains both parts of the product:
 | Mobile app | repository root (`lib/`, `android/`, `ios/`, …) | Flutter 3.44, Riverpod 3, GoRouter 18 |
 | API | [`backend/`](backend) | Laravel 13, PHP 8.4, MySQL/MariaDB, Sanctum |
 
-> **Status: Phase 08 complete.** Businesses have plans (Free, Pro, Business)
-> that limit what they can add (branches, queues, team seats) and unlock
-> insights, enforced by the server. Customers never pay. Plans, prices and
-> limits live in the database and are managed through an admin API. Payments
-> received by transfer, cash or mobile wallet are recorded by an admin; online
-> card payment through Mastercard Gateway is built but **not live**: it needs a
-> bank merchant account ([docs/SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md),
+> **Status: Phase 09 complete.** A platform admin dashboard at `/admin`
+> (English and Arabic): platform statistics, business review (approve,
+> suspend, reactivate), accounts, subscriptions, plans and prices, payment
+> records with approval, revenue from verified payments only, the audit log
+> and run-time settings. Admins are made on the server only
+> (`php artisan dory:admin`). Live online payments stay **off** by default
+> ([docs/ADMIN_DASHBOARD.md](docs/ADMIN_DASHBOARD.md),
+> [docs/PRODUCTION_READINESS.md](docs/PRODUCTION_READINESS.md)).
+>
+> Phase 08 delivered plans (Free, Pro, Business) that limit what a business
+> can add and unlock insights, enforced by the server. Customers never pay.
+> Payments received by transfer, cash or mobile wallet are recorded and
+> approved by admins; online card payment through Mastercard Gateway is built
+> but **not live**: it needs a bank merchant account
+> ([docs/SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md),
 > [docs/PAYMENTS.md](docs/PAYMENTS.md)).
 >
 > Phase 07 delivered intelligence: wait estimates use what is happening at the
@@ -294,3 +302,13 @@ Subscriptions and payments (Phase 08):
 | [SUBSCRIPTIONS.md](docs/SUBSCRIPTIONS.md) | Plans and why these limits, lifecycle, entitlements, business and admin API |
 | [PAYMENTS.md](docs/PAYMENTS.md) | Provider evaluation, how a payment is verified, webhooks, security, setting up Mastercard Gateway |
 | [PHASE_08_REPORT.md](docs/PHASE_08_REPORT.md) | What Phase 08 delivered, test results, decisions and actions for the owner |
+
+Platform administration and commercial readiness (Phase 09):
+
+| Document | Contents |
+|---|---|
+| [ADMIN_DASHBOARD.md](docs/ADMIN_DASHBOARD.md) | The admin dashboard: admin accounts, pages, billing administration, settings, audit log, security |
+| [PAYMENT_GATEWAY_CHECKLIST.md](docs/PAYMENT_GATEWAY_CHECKLIST.md) | Steps and test cases for the first real-bank test of online payment |
+| [COMMERCIAL_DECISIONS.md](docs/COMMERCIAL_DECISIONS.md) | Free businesses per owner, prices and currency, trial and limits: options and recommendations |
+| [PRODUCTION_READINESS.md](docs/PRODUCTION_READINESS.md) | Environment, secrets, backups, scheduler, workers, Reverb, TLS, logging, rate limits, retention, invoices |
+| [PHASE_09_REPORT.md](docs/PHASE_09_REPORT.md) | What Phase 09 delivered, test results, decisions and actions for the owner |

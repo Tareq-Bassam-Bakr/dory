@@ -2,14 +2,40 @@
 
 Production targets MySQL 8.4 LTS; local development uses XAMPP's MariaDB 10.4.
 
-## Status (2026-11-11, end of Phase 08)
+## Status (2026-11-12, end of Phase 09)
 
 | Database | How | Result |
 |---|---|---|
-| SQLite (in memory) | `composer test` | ✅ 722 passed, 9 skipped (tests that need MySQL/MariaDB) |
-| MariaDB 10.4 (XAMPP) | `composer test:mariadb` | ✅ 731 passed, including all 8 concurrency tests and the full migration rollback test |
-| **MySQL 8.4.13 LTS** (local, see below) | `composer test:mysql` | ✅ **731 passed** (6553 assertions), including all 8 multi-process concurrency tests and the full migration rollback test (with the three Phase 08 billing migrations) |
+| SQLite (in memory) | `composer test` | ✅ 811 passed, 10 skipped (the tests that need MySQL or MariaDB, and the server check) |
+| MariaDB 10.4 (XAMPP) | `composer test:mariadb` | ✅ 821 passed (10152 assertions), including all 8 concurrency tests, the full migration rollback test and the server check |
+| **MySQL 8.4.13 LTS** (local, see below) | `composer test:mysql` | ✅ **821 passed** (10152 assertions), including all 8 multi-process concurrency tests, the full migration rollback test (now with the Phase 08 and 09 migrations) and the server check; run on 2026-11-12 with the server confirmed as 8.4.13 on port 3307 |
 | MySQL 8.4 in GitHub Actions | `.github/workflows/backend-tests.yml`, job `mysql84` | ⚠️ not run: every run of this private repository still ends in `startup_failure` with zero jobs, which points to an account-level Actions setting (minutes, spending limit or verification), not to the workflow |
+
+### Correction (Phase 09)
+
+The MySQL 8.4 results reported at the end of Phases 07 and 08 did not come
+from MySQL 8.4. Their runner script started the 3307 server but did not load
+its credentials, so `composer test:mysql` read `backend/.env` and connected to
+XAMPP's MariaDB on 3306 with the MySQL driver.
+
+- Phase 08 (731 passed): certain; the MySQL 8.4 test database never received
+  the Phase 08 migrations.
+- Phase 07 (663 passed): the log of that same runner, so almost certainly
+  MariaDB.
+- Phase 05 and a Phase 06 run on 8 November did reach MySQL 8.4 (its test
+  database holds the Phase 06 migrations); the final Phase 06 figure (640)
+  cannot be traced to a run that did.
+
+The first real MySQL 8.4 run since then (Phase 09) failed only three new
+Phase 09 tests, which compared audit-log JSON objects in key order (point 2
+below); every test from Phases 06 to 08 passed. To prevent a repeat:
+
+- `composer test:mysql` and `composer test:mariadb` declare the server they
+  are for (`DORY_DATABASE_SERVER`), and
+  `tests/Feature/Database/DatabaseServerTest.php` fails the run when the
+  suite reached another server ("reached 10.4.32-MariaDB");
+- load the credentials as shown in [The local test server](#the-local-test-server)
+  every time.
 
 Migrations on MySQL 8.4: `migrate:fresh` → `migrate:rollback --step=6` (the
 six queue migrations) → `migrate` → `migrate:refresh` → `migrate:reset` →

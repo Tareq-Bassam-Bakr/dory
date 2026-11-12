@@ -49,7 +49,7 @@ All on 2026-11-09, on this machine, on the final code.
 
 | Suite | Result |
 |---|---|
-| Backend, MySQL 8.4.13 (`composer test:mysql`, local) | ✅ **663 passed** (5708 assertions) |
+| Backend, MySQL 8.4.13 (`composer test:mysql`, local) | ⚠️ **Not confirmed on MySQL 8.4** (correction, Phase 09): the 663 passed came from a runner that did not load the MySQL 8.4 credentials, so almost certainly from MariaDB. The real MySQL 8.4 run in Phase 09 passed every Phase 07 test ([PHASE_09_REPORT.md](PHASE_09_REPORT.md#correction-mysql-84-results)) |
 | Backend, MariaDB 10.4 (`composer test:mariadb`) | ✅ **663 passed** (5708 assertions) |
 | Backend, SQLite (`composer test`) | ✅ **654 passed, 9 skipped** (5516 assertions). The 9 need MySQL or MariaDB |
 | Pint | ✅ passed |

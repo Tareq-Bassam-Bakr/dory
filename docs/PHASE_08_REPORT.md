@@ -62,7 +62,7 @@ All on 2026-11-11, on this machine, on the final code.
 
 | Suite | Result |
 |---|---|
-| Backend, MySQL 8.4.13 (`composer test:mysql`, local) | ✅ **731 passed** (6553 assertions), including the 8 multi-process concurrency tests and the full migration rollback test |
+| Backend, MySQL 8.4.13 (`composer test:mysql`, local) | ⚠️ **Not run on MySQL 8.4** (correction, Phase 09): the 731 passed were on MariaDB, because the runner did not load the MySQL 8.4 credentials. The real MySQL 8.4 run in Phase 09 passed every Phase 08 test ([PHASE_09_REPORT.md](PHASE_09_REPORT.md#correction-mysql-84-results)) |
 | Backend, MariaDB 10.4 (`composer test:mariadb`) | ✅ **731 passed** (6553 assertions), the same |
 | Backend, SQLite (`composer test`) | ✅ **722 passed, 9 skipped** (6361 assertions). The 9 need MySQL or MariaDB |
 | Pint | ✅ passed |

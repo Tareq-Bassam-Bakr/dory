@@ -73,19 +73,30 @@ what customers do.
 | `BILLING_TRIAL_PLAN` / `BILLING_TRIAL_DAYS` | `pro` / `14` | The trial of new businesses. `0` days: no trials |
 | `BILLING_TRIAL_ONCE_PER_OWNER` | `true` | An owner gets one trial, not one per business |
 | `BILLING_GRACE_DAYS` | `7` | After a paid period ends unpaid, the plan stays this long |
-| `BILLING_CURRENCY` | `USD` | Currency of checkouts that name none |
+| `BILLING_CURRENCY` | `USD` | Currency of checkouts and payments that name none |
+| `BILLING_CURRENCIES` | `USD` | Comma-separated currencies plans may be priced and paid in, for example `USD,SYP` |
+| `BILLING_FOUR_EYES` | `false` | `true`: a payment recorded by one admin must be approved by another |
 | `BILLING_CHECKOUT_EXPIRES_MINUTES` | `60` | How long a payment link works |
 | `PAYMENT_PROVIDER` | `none` | Online payments ([PAYMENTS.md](PAYMENTS.md)) |
+| `BILLING_ONLINE_PAYMENTS` | `false` | Live online payments. Off until the gateway passed the bank test ([PAYMENT_GATEWAY_CHECKLIST.md](PAYMENT_GATEWAY_CHECKLIST.md)); credentials alone never turn them on |
+| `BILLING_SELLER_NAME` | `DORY` | Seller name printed on invoices |
+
+Platform admins can override the plan switch, the trial, grace days,
+currencies and four-eyes approval while DORY runs (admin dashboard,
+Settings: [ADMIN_DASHBOARD.md](ADMIN_DASHBOARD.md#settings)); each change is
+audited. The payment provider and the live switch are server settings only.
 
 The plans in the config file are **defaults only**. The first migration
 copies them into the database, and from then on the database is the source
 of truth: platform admins change names, limits, features, prices and
-currencies through the [admin API](#admin-api) without a deployment. A
+currencies in the [admin dashboard](ADMIN_DASHBOARD.md#billing) or through
+the [admin API](#admin-api), without a deployment. A
 plan's code and whether it is free never change. Prices are never deleted
 (invoices refer to them); they are deactivated instead.
 
-A plan can have prices in several currencies (for example USD and SYP) and
-for monthly and yearly billing. `null` limits are unlimited.
+A plan can have prices in several of the accepted currencies
+(`BILLING_CURRENCIES`, for example USD and SYP) and for monthly and yearly
+billing. `null` limits are unlimited.
 
 ## Lifecycle
 
@@ -180,15 +191,17 @@ The subscription belongs to the business, never to a person.
 
 | | Owner | Manager | Employee | Platform admin |
 |---|---|---|---|---|
-| See the plan, limits and usage | ✓ | ✓ | – | admin API |
-| See billing history | ✓ | – | – | admin API |
-| Pay, change, cancel, resume | ✓ | – | – | admin API (assign, extend, expire, record payments) |
+| See the plan, limits and usage | ✓ | ✓ | – | dashboard, admin API |
+| See billing history | ✓ | – | – | dashboard, admin API |
+| Pay, change, cancel, resume | ✓ | – | – | dashboard, admin API (record and approve payments, extend, assign, cancel, resume, end) |
 
 Non-members get `404 business_not_found`, as for every business resource. A
 suspended business still shows its plan and history, but its owner cannot
 change it (`403 business_suspended`). The platform admin flag gives no
-rights inside a business; admins use the admin API. No endpoint can make
-anyone a platform admin: the flag is set in the database only.
+rights inside a business; admins use the
+[admin dashboard](ADMIN_DASHBOARD.md) and the admin API. No endpoint can
+make anyone a platform admin: only `php artisan dory:admin` on the server
+can.
 
 ## Business API
 
@@ -234,15 +247,29 @@ exist.
 | `PUT /plans/{code}` | Change names, limits, features, order, active flag; add or change prices (`{billing_period, currency, amount_minor, is_active}`) |
 | `GET /subscriptions?status=&plan=&search=` | Businesses with their state now (and the stored status) |
 | `GET /businesses/{id}` | One business: state, usage, history, invoices, payment attempts |
-| `POST /businesses/{id}/payments` | Record a payment received outside DORY: `{plan, billing_period, method, currency?, amount_minor?, reference?, paid_at?, notes?}`. `method`: `bank_transfer`, `cash`, `mobile_wallet`, `card`, `other`. A reference can be recorded once |
+| `POST /businesses/{id}/payments` | Record a payment received outside DORY: `{plan, billing_period, method, currency?, amount_minor?, reference?, received_at?, notes?}`. `method`: `bank_transfer`, `cash`, `mobile_wallet`, `card`, `other`; `currency`: one of the accepted currencies. **Recorded only**: `201` with an open invoice, and nothing changes until it is approved. A reference can be recorded once |
+| `GET /payments?status=` | Payment records, newest first: `awaiting_approval`, `paid`, `failed` or `void` (rejected) |
+| `POST /payments/{id}/approve` | Approve a recorded payment: the plan period starts and the invoice is numbered. `409 admin_action_not_allowed` (`details.reason`: `not_awaiting_approval`) once approved or rejected; `403 forbidden` (`needs_another_admin`) for the admin who recorded it, with four-eyes approval on |
+| `POST /payments/{id}/reject` | `{reason}`: reject a recorded payment. Nothing changes and it never counts |
 | `POST /businesses/{id}/trial` | `{days (1–90), plan?}`: extend or restart a trial (not while a paid plan runs) |
 | `POST /businesses/{id}/plan` | `{plan, until?, note?}`: give a plan without payment. With `until`, it ends then without grace days; without, it stays until an admin changes it |
+| `POST /businesses/{id}/cancel` | On the owner's behalf: a paid plan stops at the end of its period; a trial or an overdue period ends now |
+| `POST /businesses/{id}/resume` | Undo a cancellation or a scheduled smaller plan |
 | `POST /businesses/{id}/expire` | `{reason?}`: end the plan now (the Free plan applies) |
 
-Example: recording a bank transfer for one year of Business.
+An archived business gets no new trial, plan or payment
+(`409 admin_action_not_allowed`, `business_archived`). Every change is also
+in the platform audit log.
+
+Example: recording a bank transfer for one year of Business, then approving
+it after checking the bank statement.
 
 ```bash
 curl -X POST "$API/admin/billing/businesses/$BUSINESS/payments" -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: application/json" -d '{"plan":"business","billing_period":"yearly","method":"bank_transfer","reference":"TRX-2026-0042"}'
+```
+
+```bash
+curl -X POST "$API/admin/billing/payments/$PAYMENT/approve" -H "Authorization: Bearer $ADMIN_TOKEN"
 ```
 
 ## Scheduler
@@ -263,7 +290,7 @@ run any number of times, and does nothing before the billing tables exist.
 | `subscription_plan_prices` | Per plan: period, currency, amount in minor units (cents), active |
 | `business_subscriptions` | One per business: plan, status, trial end, paid period, grace end, cancellation, scheduled plan, amount, provider |
 | `subscription_events` | The history (see [Lifecycle](#lifecycle)) |
-| `billing_invoices` | Paid and failed payments: number, plan, period, amount, method, provider reference, who recorded it |
+| `billing_invoices` | Payments: recorded and awaiting approval (`open`), paid, rejected (`void`) and failed. Number (once paid), plan, period, amount, method, provider reference, when received, who recorded and who reviewed it |
 | `payment_checkouts` | Online payment attempts ([PAYMENTS.md](PAYMENTS.md)) |
 | `payment_webhook_events` | Provider notifications, once per notification id |
 
@@ -273,6 +300,10 @@ decimals per currency (`App\Support\Money`).
 **Businesses created before Phase 08** have no subscription record and are
 on the Free plan. A platform admin can extend a trial or assign a plan to
 them.
+
+Only approved payments and payments verified online are revenue: the admin
+dashboard's revenue page counts paid invoices only and shows the two kinds
+apart ([ADMIN_DASHBOARD.md](ADMIN_DASHBOARD.md#billing)).
 
 ## In the app
 
@@ -298,8 +329,8 @@ All of it in English and Arabic (right to left).
 
 ## Limitations
 
-1. **No automatic renewal.** Each period is paid by the owner, or recorded by
-   an admin. Charging a saved card each month needs card storage at the
+1. **No automatic renewal.** Each period is paid by the owner, or recorded
+   and approved by admins. Charging a saved card each month needs card storage at the
    bank (tokenization), a later step.
 2. **Online payment is not live** ([PAYMENTS.md](PAYMENTS.md)).
 3. **Invoices are payment records, not tax invoices.** Company details, tax
@@ -308,4 +339,6 @@ All of it in English and Arabic (right to left).
    time until the end of the period.
 5. **Upgrade credit needs the same currency.** Paying in another currency
    starts the new plan without credit.
-6. **The admin API has no screens.** It is for support tools and scripts.
+6. **An owner can create several businesses**, each with its own Free plan
+   (the trial is once per owner). Options are in
+   [COMMERCIAL_DECISIONS.md](COMMERCIAL_DECISIONS.md).

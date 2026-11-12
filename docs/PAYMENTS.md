@@ -5,8 +5,8 @@ credentials were assumed, and nothing has been charged. What exists:
 
 | | Status |
 |---|---|
-| Payments received outside DORY (bank transfer, cash, mobile wallet), recorded by a platform admin | **Works now.** The plan starts at once, with a numbered invoice ([admin API](SUBSCRIPTIONS.md#admin-api)) |
-| Online card payment through Mastercard Gateway (Hosted Checkout) via a Syrian acquiring bank | **Built, not live.** Tested against a faked gateway only; it needs a merchant account from a bank |
+| Payments received outside DORY (bank transfer, cash, mobile wallet), recorded and approved by platform admins | **Works now.** Recorded first; once an admin approves it, the plan starts with a numbered invoice ([admin dashboard](ADMIN_DASHBOARD.md#billing), [admin API](SUBSCRIPTIONS.md#admin-api)) |
+| Online card payment through Mastercard Gateway (Hosted Checkout) via a Syrian acquiring bank | **Built, not live, switched off.** Tested against a faked gateway only; it needs a merchant account from a bank, and `BILLING_ONLINE_PAYMENTS=true` after the bank test ([checklist](PAYMENT_GATEWAY_CHECKLIST.md)) |
 | Any other provider | Not built. The design has a place for one ([Adding a provider](#adding-a-provider)) |
 
 Plans, limits and the subscription lifecycle: [SUBSCRIPTIONS.md](SUBSCRIPTIONS.md).
@@ -51,8 +51,8 @@ wallets. No research was done on them in this phase.
 
 ### Recommendation
 
-1. **Now:** manual payments recorded by a platform admin. No provider, no
-   credentials, no cost.
+1. **Now:** payments received outside DORY, recorded and approved by
+   platform admins. No provider, no credentials, no cost.
 2. **Online:** Mastercard Gateway Hosted Checkout, through a Syrian
    acquiring bank that offers it. The integration is built; it needs the
    bank's merchant account ([Setting it up](#setting-up-mastercard-gateway)).
@@ -118,6 +118,10 @@ the app.
 
 ## Security
 
+- **Live payments are off by default.** `BILLING_ONLINE_PAYMENTS=false`
+  refuses every checkout (`503 payments_unavailable`), even with a provider
+  and credentials set (tested). Only the server environment can switch it
+  on; the admin dashboard cannot.
 - **No card data at DORY.** Cards are entered on the bank's hosted page only,
   which keeps DORY's servers out of card handling. Ask the bank which PCI DSS
   self-assessment applies.
@@ -163,24 +167,40 @@ When a bank offers a merchant account:
    notification secret. It needs a public HTTPS address, not `localhost`.
 4. Set `APP_URL` to the public HTTPS address: the payment link and the return
    address are built from it.
-5. Set prices in the currencies the bank settles (admin API).
-6. Test on the bank's test environment first: a paid, a declined and an
-   abandoned payment, and a webhook. Field names differ between API versions
-   (the move to version 100 changed some
+5. Set prices in the currencies the bank settles (admin dashboard → Plans,
+   after adding them to Settings → Accepted currencies).
+6. Test on the bank's test environment first, following
+   [PAYMENT_GATEWAY_CHECKLIST.md](PAYMENT_GATEWAY_CHECKLIST.md): paid,
+   declined and abandoned payments, and webhooks. Field names differ between
+   API versions (the move to version 100 changed some
    ([Mastercard: v100 migration][mpgs-v100])), so check them against what the
    bank's gateway returns. Then switch to the production credentials.
+7. Only after the sign-off: `BILLING_ONLINE_PAYMENTS=true`.
 
-Until then `PAYMENT_PROVIDER=none`: starting a checkout answers
-`503 payments_unavailable`, and the app explains how to pay by transfer,
-cash or mobile wallet.
+Until then (`PAYMENT_PROVIDER=none`, or the switch off): starting a checkout
+answers `503 payments_unavailable`, and the app explains how to pay by
+transfer, cash or mobile wallet.
 
 ## Recording a payment received outside DORY
 
-After confirming the money arrived, a platform admin records it:
-`POST /api/v1/admin/billing/businesses/{id}/payments` with the plan, period
-and method ([admin API](SUBSCRIPTIONS.md#admin-api)). The same rules apply
-as online: renewal, upgrade credit, trial days kept. A transfer reference
-can be recorded only once.
+Two steps (admin dashboard → Payments, or the
+[admin API](SUBSCRIPTIONS.md#admin-api)):
+
+1. **Record** what arrived: business, plan, period, currency, amount (the
+   plan's price by default), method, reference, date received. Nothing
+   changes for the business yet, and it does not count as revenue.
+2. **Approve** it after checking the bank statement or the cash book, or
+   **reject** it with a reason. On approval the same rules apply as online:
+   renewal, upgrade credit, trial days kept, and the invoice is numbered.
+
+With four-eyes approval on (`BILLING_FOUR_EYES` or Settings), the approver
+must be another admin. A transfer reference can be recorded only once. Card
+payments are never entered by hand in the dashboard: they come from the
+gateway, verified by the server.
+
+Every payment shows its source: recorded by an admin, verified online, or a
+plan given by an admin without payment. Revenue counts paid invoices only,
+with the first two apart.
 
 ## Adding a provider
 
@@ -204,7 +224,9 @@ faked gateway; no request leaves the tests):
 - a payment captured after the link expired still counts;
 - the webhook secret, a repeated notification, an unknown order, and a
   retry after the bank was unreachable;
-- the logs never contain the secrets.
+- the logs never contain the secrets;
+- with the live switch off, no checkout starts and nothing is sent to the
+  gateway, even with credentials set.
 
 **Not verified:** any real gateway, real cards or money, the bank's exact
 field names for its API version, 3-D Secure, refunds, settlement, and

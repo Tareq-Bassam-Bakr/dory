@@ -45,6 +45,32 @@ implemented and covered by tests unless marked *planned*.
 - Suspended accounts are rejected right after authentication, before route
   bindings touch tenant data.
 
+## Platform administration
+
+- The admin dashboard (`/admin`, [ADMIN_DASHBOARD.md](ADMIN_DASHBOARD.md))
+  and the admin API are for active accounts with `is_platform_admin` only.
+  That flag is set on the server only (`php artisan dory:admin`); no page or
+  endpoint can grant it.
+- The dashboard has its own database-backed session and guard: an
+  encrypted, HttpOnly, SameSite=Strict cookie for `/admin` only (Secure on
+  HTTPS), 30 minutes idle and 8 hours at most, a new session id at sign-in,
+  ended on the server at sign-out. CSRF tokens on every form; a strict
+  Content Security Policy without inline code; `no-store`; not indexed.
+- Every dashboard request re-reads the admin's account before any route
+  binding, so a revoked flag or a suspension ends access at once. Actions
+  are authorized on the server (gates `platform.admin` and
+  `platform.manage-user`), never by hiding buttons.
+- Sign-in: same answer and timing for every failure; 5 attempts a minute per
+  address and account, 20 per address; failures are audited with the address
+  masked. 120 dashboard requests a minute per admin.
+- Sensitive operations (sign-ins, businesses, accounts, plans,
+  subscriptions, payments, settings, admin grants) are in the append-only
+  `platform_audit_logs`, with the admin, IP address and details, never
+  passwords or tokens.
+- Payments received outside DORY count only after an admin approves them
+  (optionally a second admin). Live online payments are off until switched
+  on in the server environment.
+
 ## Data exposure
 
 - API responses use Resources with explicit fields. The password hash and

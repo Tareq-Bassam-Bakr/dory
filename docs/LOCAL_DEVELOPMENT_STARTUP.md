@@ -14,6 +14,15 @@ everything, then opens one window per service:
 To stop, double-click **`stop_dory.bat`**. It stops exactly these windows
 and nothing else.
 
+The **admin dashboard** is served by DORY-API at
+<http://127.0.0.1:8000/admin> ([ADMIN_DASHBOARD.md](ADMIN_DASHBOARD.md)).
+It needs an admin account, made from a terminal in `backend` (asks for the
+password, hidden):
+
+```bash
+php artisan dory:admin create you@example.com --name="Your Name"
+```
+
 The logic lives in `scripts/dev/start_dory.ps1` and `stop_dory.ps1`. The
 `.bat` files only call them with `-ExecutionPolicy Bypass` for that one run,
 so no system setting changes.
@@ -115,6 +124,8 @@ reverse` rules the start added are removed; the adb server keeps running.
   because the worker and Reverb keep the old code.
 - Watch real-time traffic: stop, then run Reverb by hand with `--debug`
   ([REVERB_SETUP.md](REVERB_SETUP.md#running)).
+- Admin dashboard pages and styles (`backend/resources/views/admin`,
+  `backend/public/dory-admin`) apply on the next page load; no build step.
 
 ## Troubleshooting
 

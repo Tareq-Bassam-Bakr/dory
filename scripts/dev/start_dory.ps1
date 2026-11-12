@@ -584,6 +584,7 @@ Write-State $services $extra
 Write-Host ''
 Write-Host 'DORY is running.' -ForegroundColor Green
 Write-Host "  API      http://127.0.0.1:$ApiPort/api/v1   (window DORY-API)"
+Write-Host "  Admin    http://127.0.0.1:$ApiPort/admin      (platform admins; php artisan dory:admin)"
 Write-Host "  Reverb   ws://127.0.0.1:$ReverbPort            (window DORY-REVERB)"
 Write-Host '  Worker   queues realtime, notifications, default (window DORY-QUEUE)'
 Write-Host '  Schedule billing:sweep every 15 minutes (window DORY-SCHEDULER)'
